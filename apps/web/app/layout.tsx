@@ -5,6 +5,8 @@ import {
   JetBrains_Mono,
   Noto_Sans_Devanagari,
 } from "next/font/google";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
 /* ── Fonts ──────────────────────────────────────────────────────────────── */
@@ -79,7 +81,10 @@ export default function RootLayout({
   return (
     <html lang="hi" className={fontClasses} suppressHydrationWarning>
       <body className="min-h-screen bg-background text-foreground antialiased">
-        {children}
+        <TooltipProvider>
+          {children}
+          <Toaster position="bottom-right" richColors />
+        </TooltipProvider>
       </body>
     </html>
   );

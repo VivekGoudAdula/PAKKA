@@ -31,3 +31,4 @@ Follow these rules without exception across all sessions and phases.
   (5) Decisions and deviations
   (6) Problems and open questions
   (7) Acceptance criteria checklist
+
