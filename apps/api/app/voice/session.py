@@ -16,6 +16,7 @@ import logging
 import time
 from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from sqlmodel import Session
@@ -90,6 +91,7 @@ class CallSession:
         self.metrics = CallSessionMetrics(call_sid=call_sid)
         self.brain = BookingFSM(handoff_phone=settings.telephony_handoff_number)
         self.transcript_messages: list[dict[str, Any]] = []
+        self._is_urgent_call = False
 
         self._bot_is_speaking = False
         self._bot_utterance_start_time: float = 0.0
@@ -367,6 +369,30 @@ class CallSession:
                         }
                     )
 
+                    if getattr(settings, "log_transcripts", False):
+                        try:
+                            log_path = (
+                                Path(__file__).resolve().parent.parent.parent
+                                / "reports"
+                                / "live_transcripts.jsonl"
+                            )
+                            log_path.parent.mkdir(parents=True, exist_ok=True)
+                            with open(log_path, "a", encoding="utf-8") as f:
+                                f.write(
+                                    json.dumps(
+                                        {
+                                            "timestamp": time.time(),
+                                            "call_id": self.call_sid,
+                                            "turn_id": self._current_turn_id,
+                                            "text": transcript.text,
+                                            "confidence": transcript.confidence,
+                                        }
+                                    )
+                                    + "\n"
+                                )
+                        except Exception as log_err:
+                            logger.warning("Failed to write to live_transcripts.jsonl: %s", log_err)
+
                     # Phase 3: Process turn via Booking Brain FSM
                     brain_result = self.brain.process_utterance(transcript.text)
 
@@ -433,11 +459,16 @@ class CallSession:
                         )
 
                     if brain_result.needs_handoff:
+                        if brain_result.is_urgent:
+                            self._is_urgent_call = True
                         await hub.broadcast(
                             "call.handoff",
                             {
                                 "call_id": self.call_sid,
-                                "reason": "human_requested_or_unresolved",
+                                "reason": "emergency_hazard"
+                                if brain_result.is_urgent
+                                else "human_requested_or_unresolved",
+                                "urgent": brain_result.is_urgent,
                             },
                         )
 
@@ -508,7 +539,13 @@ class CallSession:
                     "booked"
                     if self.brain.state == BookingState.BOOKED
                     else (
-                        "needs_human" if self.brain.state == BookingState.HANDOFF else "completed"
+                        "urgent"
+                        if self._is_urgent_call
+                        else (
+                            "needs_human"
+                            if self.brain.state == BookingState.HANDOFF
+                            else "completed"
+                        )
                     )
                 )
                 duration_s = int(

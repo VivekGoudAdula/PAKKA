@@ -93,3 +93,5 @@ class BusinessSettings(SQLModel, table=True):
     outbound_end: str = "20:00"
     auto_stop_wrong_number: bool = True
     never_deny_ai: bool = True
+    custom_areas_json: str = "[]"
+    auto_dispatch: bool = False

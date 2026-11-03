@@ -105,6 +105,10 @@ class Settings(BaseSettings):
         default="+91 98765 43210",
         description="Phone number for human owner handoff on caller escalation",
     )
+    log_transcripts: bool = Field(
+        default=False,
+        description="When True (LOG_TRANSCRIPTS=1), append final STT transcripts to reports/live_transcripts.jsonl",
+    )
 
     @property
     def effective_exotel_sid(self) -> str:

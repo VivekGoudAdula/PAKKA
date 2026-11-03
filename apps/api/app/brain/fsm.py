@@ -19,6 +19,7 @@ from app.brain.replies import (
     BARGAINING_HOLD,
     BOOKING_SUCCESS,
     CALL_ABANDONED,
+    EMERGENCY_SAFETY_INSTRUCTION,
     HANDOFF_MESSAGE,
     REASK_ADDRESS,
     REASK_PROBLEM,
@@ -80,6 +81,7 @@ class BrainTurnResult:
     slots: BookingSlots
     is_terminal: bool = False
     needs_handoff: bool = False
+    is_urgent: bool = False
     ai_disclosure_triggered: bool = False
     job_payload: dict[str, Any] | None = None
 
@@ -95,10 +97,11 @@ class BookingFSM:
         self,
         handoff_phone: str = "+91 98765 43210",
         price_catalog: dict[str, tuple[int, int]] | None = None,
+        custom_areas: list[str] | None = None,
     ) -> None:
         self.state: BookingState = BookingState.GREETING
         self.slots = BookingSlots()
-        self.extractor = RuleBasedExtractor()
+        self.extractor = RuleBasedExtractor(custom_areas=custom_areas)
         self.handoff_phone = handoff_phone
         self.pricing = price_catalog or DEFAULT_PRICING
 
@@ -156,6 +159,19 @@ class BookingFSM:
 
         # Reset silence counter on speech
         self.silence_count = 0
+
+        # 1b. Priority: Emergency Safety Hazard -> Immediate halt & safety instructions
+        if "emergency_hazard" in extraction.intents or extraction.is_emergency:
+            self.state = BookingState.HANDOFF
+            logger.warning("Emergency hazard detected on caller utterance: '%s'", utterance)
+            return BrainTurnResult(
+                bot_reply=EMERGENCY_SAFETY_INSTRUCTION,
+                current_state=self.state,
+                slots=self.slots,
+                is_terminal=True,
+                needs_handoff=True,
+                is_urgent=True,
+            )
 
         # 2. Priority: Sincere Robot/AI Inquiry -> Answer Honestly
         if "are_you_a_robot" in extraction.intents and not self.ai_disclosure_given:

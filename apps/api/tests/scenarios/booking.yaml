@@ -341,3 +341,71 @@
       landmark_address: "Mayur Vihar Pocket 1"
       time_slot: "Immediate / Emergency"
     is_terminal: true
+
+- id: scenario_23_emergency_electric_current
+  name: "Hazard: Electric current shock from geyser"
+  description: "Caller reports current shock; bot halts booking and delivers safety instruction"
+  dialogue:
+    - user: "Geyser se current aa raha hai, paani chhoo nahi sakte"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+
+- id: scenario_24_emergency_sparking_smoke
+  name: "Hazard: Sparking and smoke from wiring"
+  description: "Caller reports sparks and smoke from geyser unit"
+  dialogue:
+    - user: "Geyser mein spark ho raha hai aur dhuan nikal raha hai"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+
+- id: scenario_25_emergency_pipe_burst_flooding
+  name: "Hazard: Pipe burst with severe flooding"
+  description: "Bathroom flooded with gushing water and paani bhar gaya"
+  dialogue:
+    - user: "Pipe phat gaya hai bathroom mein paani bhar gaya poora flood aa gaya"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+
+- id: scenario_26_emergency_fire
+  name: "Hazard: Fire outbreak in appliance"
+  description: "Caller reports fire around the geyser"
+  dialogue:
+    - user: "Geyser mein aag lag gayi hai jaldi aao"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+
+- id: scenario_27_emergency_gas_leak
+  name: "Hazard: Strong gas smell from gas geyser"
+  description: "Caller detects strong gas smell / leakage"
+  dialogue:
+    - user: "Gas geyser se gas smell aa rahi hai badbu hai"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+
+- id: scenario_28_emergency_devanagari_shock
+  name: "Hazard: Devanagari electric current shock report"
+  description: "Caller reports severe electric shock in Hindi Devanagari script"
+  dialogue:
+    - user: "नल में करंट आ रहा है, बहुत तेज बिजली का झटका लगा"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+
+

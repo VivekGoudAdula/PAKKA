@@ -5,9 +5,47 @@ Handles both Latin transliteration and Devanagari script (STT codemix).
 
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any, Protocol
+
+AREAS_FILE = Path(__file__).parent / "data" / "areas.json"
+
+
+def _load_default_areas() -> list[str]:
+    """Load areas from data/areas.json with fallback."""
+    if AREAS_FILE.exists():
+        try:
+            with open(AREAS_FILE, encoding="utf-8") as f:
+                data = json.load(f)
+                if isinstance(data, list):
+                    return [str(a).lower() for a in data]
+        except Exception:
+            pass
+    return [
+        "mayur vihar",
+        "karol bagh",
+        "lajpat nagar",
+        "saket",
+        "rohini",
+        "malviya nagar",
+        "dwarka",
+        "janakpuri",
+        "patel nagar",
+        "connaught place",
+        "pitampura",
+        "hauz khas",
+        "laxmi nagar",
+        "noida",
+        "chhatarpur",
+        "मयूर विहार",
+        "करोल बाग",
+        "लाजपत नगर",
+        "साकेत",
+        "रोहिणी",
+    ]
 
 
 @dataclass
@@ -22,6 +60,7 @@ class ExtractionResult:
     intents: list[str] = field(default_factory=list)
     confidence: float = 0.0
     updated_fields: list[str] = field(default_factory=list)
+    is_emergency: bool = False
 
 
 class Extractor(Protocol):
@@ -156,28 +195,28 @@ class RuleBasedExtractor:
         "गली",
     ]
 
-    KNOWN_AREAS: list[str] = [
-        "mayur vihar",
-        "karol bagh",
-        "lajpat nagar",
-        "saket",
-        "rohini",
-        "malviya nagar",
-        "dwarka",
-        "janakpuri",
-        "patel nagar",
-        "connaught place",
-        "pitampura",
-        "hauz khas",
-        "laxmi nagar",
-        "noida",
-        "chhatarpur",
-        "मयूर विहार",
-        "करोल बाग",
-        "लाजपत नगर",
-        "साकेत",
-        "रोहिणी",
+    KNOWN_AREAS: list[str] = _load_default_areas()
+
+    EMERGENCY_PATTERNS: list[str] = [
+        r"(current aa raha|current lag raha|current lag|करंट)",
+        r"(shock lag|electric shock|शॉक|बिजली का झटका)",
+        r"(spark ho raha|sparking|sparks|चिनगारी|स्पार्क)",
+        r"(aag lag gayi|aag lag|aag\b|आग लग|आग\b)",
+        r"(dhuan nikal raha|dhuan aa raha|dhuan\b|धुआं|धुआँ)",
+        r"(gas smell|gas ki badbu|gas leak|गैस लीक|गैस की बदबू)",
+        r"(pipe phat gaya.*?flood|pipe burst.*?flood|flooding|paani bhar gaya|पानी भर गया)",
     ]
+
+    def __init__(self, custom_areas: list[str] | None = None) -> None:
+        default_areas = _load_default_areas()
+        if custom_areas:
+            self.known_areas = list(
+                dict.fromkeys(
+                    default_areas + [a.lower().strip() for a in custom_areas if a.strip()]
+                )
+            )
+        else:
+            self.known_areas = default_areas
 
     def extract(self, utterance: str, state: Any = None) -> ExtractionResult:
         """Analyze caller utterance and extract slots and intent flags."""
@@ -190,27 +229,32 @@ class RuleBasedExtractor:
             return res
 
         # 1. Check Global Intents
-        # 1a. Are you a robot / AI
+        # 1a. Emergency Danger Hazard (Danger to life/property)
+        if self._check_emergency(text_lower):
+            res.intents.append("emergency_hazard")
+            res.is_emergency = True
+
+        # 1b. Are you a robot / AI
         if self._check_robot_intent(text_lower):
             res.intents.append("are_you_a_robot")
 
-        # 1b. Human / Owner request
+        # 1c. Human / Owner request
         if self._check_human_request(text_lower):
             res.intents.append("human_request")
 
-        # 1c. Bargaining / Price objection
+        # 1d. Bargaining / Price objection
         if self._check_bargaining(text_lower):
             res.intents.append("bargaining")
 
-        # 1d. Correction
+        # 1e. Correction
         if self._check_correction(text_lower):
             res.intents.append("correction")
 
-        # 1e. Yes / Confirmation
+        # 1f. Yes / Confirmation
         if self._check_yes(text_lower) and "correction" not in res.intents:
             res.intents.append("yes")
 
-        # 1f. No / Refusal
+        # 1g. No / Refusal
         if self._check_no(text_lower) and "correction" not in res.intents:
             res.intents.append("no")
 
@@ -241,6 +285,9 @@ class RuleBasedExtractor:
 
         res.confidence = 0.9 if res.updated_fields or res.intents else 0.4
         return res
+
+    def _check_emergency(self, text: str) -> bool:
+        return any(re.search(p, text) for p in self.EMERGENCY_PATTERNS)
 
     def _check_robot_intent(self, text: str) -> bool:
         patterns = [
@@ -333,7 +380,7 @@ class RuleBasedExtractor:
 
     def _extract_address(self, raw_text: str, text_lower: str) -> str | None:
         has_landmark = any(kw in text_lower for kw in self.LANDMARK_KEYWORDS)
-        has_area = any(area in text_lower for area in self.KNOWN_AREAS)
+        has_area = any(area in text_lower for area in self.known_areas)
 
         if has_landmark or has_area:
             # Check if text contains multiple clauses separated by comma / punctuation
@@ -360,7 +407,7 @@ class RuleBasedExtractor:
                 for c in clauses:
                     c_low = c.lower()
                     c_has_land = any(kw in c_low for kw in self.LANDMARK_KEYWORDS)
-                    c_has_area = any(area in c_low for area in self.KNOWN_AREAS)
+                    c_has_area = any(area in c_low for area in self.known_areas)
                     if (c_has_land or c_has_area) and not any(p in c_low for p in problem_words):
                         return c
 

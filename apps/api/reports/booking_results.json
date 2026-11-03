@@ -1,12 +1,20 @@
 {
-  "timestamp": "2026-11-03T14:43:08.129865+00:00",
-  "total_scenarios": 22,
-  "passed_scenarios": 22,
+  "timestamp": "2026-11-03T15:14:37.052091+00:00",
+  "total_scenarios": 28,
+  "passed_scenarios": 28,
   "pass_rate_percent": 100.0,
   "total_slots_checked": 51,
   "correct_slots": 51,
   "slot_accuracy_percent": 100.0,
   "extractor_type": "RuleBasedExtractor",
+  "holdout": {
+    "total_scenarios": 0,
+    "passed_scenarios": 0,
+    "pass_rate_percent": 0.0,
+    "slot_accuracy_percent": 0.0,
+    "status": "empty_awaiting_unseen_data",
+    "results": []
+  },
   "results": [
     {
       "id": "scenario_01_all_in_one",
@@ -15,7 +23,7 @@
       "turns_count": 3,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 26.11,
+      "duration_ms": 0.28,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -48,7 +56,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.97,
+      "duration_ms": 0.3,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_leak",
@@ -81,7 +89,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.66,
+      "duration_ms": 0.32,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -114,7 +122,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.2,
+      "duration_ms": 0.36,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -147,7 +155,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.35,
+      "duration_ms": 0.32,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -180,7 +188,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.0,
+      "duration_ms": 0.27,
       "slot_checks": {
         "problem_key": {
           "expected": "unknown",
@@ -213,7 +221,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.79,
+      "duration_ms": 0.27,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -246,7 +254,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.48,
+      "duration_ms": 0.22,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -274,7 +282,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.48,
+      "duration_ms": 0.26,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -302,7 +310,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.48,
+      "duration_ms": 0.47,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -330,7 +338,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.58,
+      "duration_ms": 0.31,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -363,7 +371,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.12,
+      "duration_ms": 0.07,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -380,7 +388,7 @@
       "turns_count": 2,
       "final_state": "ABANDONED",
       "expected_state": "ABANDONED",
-      "duration_ms": 0.02,
+      "duration_ms": 0.01,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -397,7 +405,7 @@
       "turns_count": 1,
       "final_state": "ABANDONED",
       "expected_state": "ABANDONED",
-      "duration_ms": 0.13,
+      "duration_ms": 0.07,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -414,7 +422,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.38,
+      "duration_ms": 0.19,
       "slot_checks": {
         "problem_key": {
           "expected": "pipe_burst",
@@ -447,7 +455,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.49,
+      "duration_ms": 0.27,
       "slot_checks": {
         "problem_key": {
           "expected": "drain_blocked",
@@ -480,7 +488,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.52,
+      "duration_ms": 0.28,
       "slot_checks": {
         "problem_key": {
           "expected": "motor_pump",
@@ -513,7 +521,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.47,
+      "duration_ms": 0.24,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_leak",
@@ -546,7 +554,7 @@
       "turns_count": 3,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.28,
+      "duration_ms": 0.18,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -563,7 +571,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.46,
+      "duration_ms": 0.25,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -596,7 +604,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.46,
+      "duration_ms": 0.26,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -629,7 +637,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.41,
+      "duration_ms": 0.22,
       "slot_checks": {
         "problem_key": {
           "expected": "pipe_burst",
@@ -653,6 +661,108 @@
         "landmark_address": "Mayur Vihar Pocket 1",
         "time_slot": "Immediate / Emergency",
         "price_estimate": "₹300 – ₹500"
+      }
+    },
+    {
+      "id": "scenario_23_emergency_electric_current",
+      "name": "Hazard: Electric current shock from geyser",
+      "passed": true,
+      "turns_count": 1,
+      "final_state": "HANDOFF",
+      "expected_state": "HANDOFF",
+      "duration_ms": 0.67,
+      "slot_checks": {},
+      "extracted_slots": {
+        "problem": null,
+        "problem_key": null,
+        "landmark_address": null,
+        "time_slot": null,
+        "price_estimate": null
+      }
+    },
+    {
+      "id": "scenario_24_emergency_sparking_smoke",
+      "name": "Hazard: Sparking and smoke from wiring",
+      "passed": true,
+      "turns_count": 1,
+      "final_state": "HANDOFF",
+      "expected_state": "HANDOFF",
+      "duration_ms": 0.43,
+      "slot_checks": {},
+      "extracted_slots": {
+        "problem": null,
+        "problem_key": null,
+        "landmark_address": null,
+        "time_slot": null,
+        "price_estimate": null
+      }
+    },
+    {
+      "id": "scenario_25_emergency_pipe_burst_flooding",
+      "name": "Hazard: Pipe burst with severe flooding",
+      "passed": true,
+      "turns_count": 1,
+      "final_state": "HANDOFF",
+      "expected_state": "HANDOFF",
+      "duration_ms": 0.22,
+      "slot_checks": {},
+      "extracted_slots": {
+        "problem": null,
+        "problem_key": null,
+        "landmark_address": null,
+        "time_slot": null,
+        "price_estimate": null
+      }
+    },
+    {
+      "id": "scenario_26_emergency_fire",
+      "name": "Hazard: Fire outbreak in appliance",
+      "passed": true,
+      "turns_count": 1,
+      "final_state": "HANDOFF",
+      "expected_state": "HANDOFF",
+      "duration_ms": 0.15,
+      "slot_checks": {},
+      "extracted_slots": {
+        "problem": null,
+        "problem_key": null,
+        "landmark_address": null,
+        "time_slot": null,
+        "price_estimate": null
+      }
+    },
+    {
+      "id": "scenario_27_emergency_gas_leak",
+      "name": "Hazard: Strong gas smell from gas geyser",
+      "passed": true,
+      "turns_count": 1,
+      "final_state": "HANDOFF",
+      "expected_state": "HANDOFF",
+      "duration_ms": 0.15,
+      "slot_checks": {},
+      "extracted_slots": {
+        "problem": null,
+        "problem_key": null,
+        "landmark_address": null,
+        "time_slot": null,
+        "price_estimate": null
+      }
+    },
+    {
+      "id": "scenario_28_emergency_devanagari_shock",
+      "name": "Hazard: Devanagari electric current shock report",
+      "passed": true,
+      "turns_count": 1,
+      "final_state": "HANDOFF",
+      "expected_state": "HANDOFF",
+      "duration_ms": 0.16,
+      "slot_checks": {},
+      "extracted_slots": {
+        "problem": null,
+        "problem_key": null,
+        "landmark_address": null,
+        "time_slot": null,
+        "price_estimate": null
       }
     }
   ]

@@ -18,6 +18,7 @@ import yaml
 from app.brain.fsm import BookingFSM
 
 SCENARIOS_PATH = Path(__file__).parent / "scenarios" / "booking.yaml"
+HOLDOUT_PATH = Path(__file__).parent / "scenarios" / "holdout.yaml"
 REPORT_PATH = Path(__file__).parent.parent / "reports" / "booking_results.json"
 
 
@@ -30,6 +31,17 @@ def load_scenarios() -> list[dict[str, Any]]:
         f"Expected >= 20 scenarios, found {len(data)}"
     )
     return data
+
+
+def load_holdout_scenarios() -> list[dict[str, Any]]:
+    """Load unseen holdout test scenarios if available."""
+    if not HOLDOUT_PATH.exists():
+        return []
+    with open(HOLDOUT_PATH, encoding="utf-8") as f:
+        data = yaml.safe_load(f)
+    if isinstance(data, list):
+        return data
+    return []
 
 
 @pytest.fixture(scope="module")
@@ -90,6 +102,18 @@ def test_execute_all_booking_scenarios(scenarios: list[dict[str, Any]]) -> None:
                 f"Scenario {sc_id} terminal mismatch: expected {expected['is_terminal']}, got {last_turn_res.is_terminal}"
             )
 
+        # Check Urgent Flag
+        if "is_urgent" in expected:
+            assert last_turn_res.is_urgent == expected["is_urgent"], (
+                f"Scenario {sc_id} urgent mismatch: expected {expected['is_urgent']}, got {last_turn_res.is_urgent}"
+            )
+
+        # Check Expected Bot Reply
+        if "expected_bot_reply" in expected:
+            assert last_turn_res.bot_reply == expected["expected_bot_reply"], (
+                f"Scenario {sc_id} reply mismatch: expected '{expected['expected_bot_reply']}', got '{last_turn_res.bot_reply}'"
+            )
+
         # Check Expected Slots
         slot_checks = {}
         scenario_slots_ok = True
@@ -143,6 +167,53 @@ def test_execute_all_booking_scenarios(scenarios: list[dict[str, Any]]) -> None:
         (correct_slots_count / total_slots_checked * 100) if total_slots_checked else 100.0
     )
 
+    # Execute holdout scenarios separately (Holdout evaluation set)
+    holdout_scenarios = load_holdout_scenarios()
+    holdout_results: list[dict[str, Any]] = []
+    holdout_passed = 0
+    holdout_total_slots = 0
+    holdout_correct_slots = 0
+
+    for sc in holdout_scenarios:
+        fsm_h = BookingFSM(handoff_phone="+91 98765 43210")
+        h_last = None
+        for turn in sc.get("dialogue", []):
+            h_last = fsm_h.process_utterance(turn["user"])
+
+        h_expected = sc.get("expected", {})
+        h_state_match = h_last and h_last.current_state.value == h_expected.get("final_state")
+        h_slots_ok = True
+        for slot_k, exp_v in h_expected.get("slots", {}).items():
+            holdout_total_slots += 1
+            if getattr(fsm_h.slots, slot_k, None) == exp_v:
+                holdout_correct_slots += 1
+            else:
+                h_slots_ok = False
+
+        if h_state_match and h_slots_ok:
+            holdout_passed += 1
+
+        holdout_results.append(
+            {
+                "id": sc.get("id"),
+                "passed": bool(h_state_match and h_slots_ok),
+                "final_state": h_last.current_state.value if h_last else None,
+            }
+        )
+
+    holdout_report = {
+        "total_scenarios": len(holdout_scenarios),
+        "passed_scenarios": holdout_passed,
+        "pass_rate_percent": round((holdout_passed / len(holdout_scenarios) * 100), 2)
+        if holdout_scenarios
+        else 0.0,
+        "slot_accuracy_percent": round((holdout_correct_slots / holdout_total_slots * 100), 2)
+        if holdout_total_slots
+        else 0.0,
+        "status": "evaluated" if holdout_scenarios else "empty_awaiting_unseen_data",
+        "results": holdout_results,
+    }
+
     # Save structured results to JSON
     report_data = {
         "timestamp": datetime.now(UTC).isoformat(),
@@ -153,6 +224,7 @@ def test_execute_all_booking_scenarios(scenarios: list[dict[str, Any]]) -> None:
         "correct_slots": correct_slots_count,
         "slot_accuracy_percent": round(slot_accuracy, 2),
         "extractor_type": "RuleBasedExtractor",
+        "holdout": holdout_report,
         "results": results,
     }
 

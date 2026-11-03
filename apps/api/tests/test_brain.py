@@ -157,3 +157,23 @@ class TestBookingFSM:
         assert fsm.slots.price_min == 450
         assert fsm.slots.price_max == 750
         assert fsm.slots.price_estimate == "₹450 – ₹750"
+
+    def test_emergency_hazard_handling(self) -> None:
+        """Emergency hazard halts routine booking with exact safety instruction."""
+        fsm = BookingFSM()
+        res = fsm.process_utterance("Geyser se current aa raha hai, paani chhoo nahi sakte")
+        assert res.current_state == BookingState.HANDOFF
+        assert res.is_terminal is True
+        assert res.needs_handoff is True
+        assert res.is_urgent is True
+        assert (
+            res.bot_reply
+            == "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+        )
+
+    def test_custom_areas_extraction(self) -> None:
+        """Extractor recognizes custom areas passed from settings."""
+        extractor = RuleBasedExtractor(custom_areas=["Vasant Kunj", "Gurgaon Sector 56"])
+        res = extractor.extract("Mera address hai Vasant Kunj Pocket C")
+        assert res.landmark_address is not None
+        assert "Vasant Kunj" in res.landmark_address

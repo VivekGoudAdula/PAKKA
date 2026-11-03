@@ -1,0 +1,22 @@
+# ==============================================================================
+# PAKKA HOLDOUT EVALUATION SCENARIOS
+# ==============================================================================
+# This file contains unseen holdout evaluation scenarios.
+# 
+# FORMAT SPECIFICATION:
+# - id: scenario_holdout_01
+#   name: "Description of scenario"
+#   dialogue:
+#     - user: "Caller utterance"
+#   expected:
+#     final_state: "BOOKED" | "HANDOFF" | "ABANDONED"
+#     is_terminal: true
+#     slots:
+#       problem_key: "geyser_not_heating"
+#       landmark_address: "Address clause"
+#       time_slot: "Extracted slot"
+#
+# RULE: NEVER edit the extractor or FSM rules to make a holdout test pass.
+# Report all holdout results separately and await explicit approval.
+# ==============================================================================
+[]

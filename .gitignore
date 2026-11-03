@@ -43,6 +43,8 @@ secrets/
 # ─── Logs ───────────────────────────────────────────────────────────────────
 *.log
 logs/
+live_transcripts.jsonl
+apps/api/reports/live_transcripts.jsonl
 
 # ─── Coverage ───────────────────────────────────────────────────────────────
 coverage/

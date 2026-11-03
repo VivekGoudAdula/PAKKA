@@ -30,6 +30,8 @@ class SettingsUpdateSchema(BaseModel):
     outbound_end: str | None = None
     auto_stop_wrong_number: bool | None = None
     never_deny_ai: bool | None = None
+    custom_areas: list[str] | None = None
+    auto_dispatch: bool | None = None
 
 
 @router.get("/jobs")
@@ -105,6 +107,10 @@ def update_settings(
         settings.auto_stop_wrong_number = payload.auto_stop_wrong_number
     if payload.never_deny_ai is not None:
         settings.never_deny_ai = payload.never_deny_ai
+    if payload.custom_areas is not None:
+        settings.custom_areas_json = json.dumps(payload.custom_areas)
+    if payload.auto_dispatch is not None:
+        settings.auto_dispatch = payload.auto_dispatch
 
     session.commit()
     session.refresh(settings)

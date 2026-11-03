@@ -33,6 +33,11 @@ BARGAINING_HOLD = "Yeh hamare dukaan ke standard rates hain. Agar aap chahein to
 
 HANDOFF_MESSAGE = "Maaf kijiyega, main samajh nahi paayi. Main Ramesh bhai ko aapka number de rahi hoon, ya aap unhe {phone} par call kar sakte hain."
 
+EMERGENCY_SAFETY_INSTRUCTION = (
+    "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. "
+    "Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+)
+
 SILENCE_PROMPT_1 = "Hello? Kya aap mujhe sun pa rahe hain?"
 
 SILENCE_PROMPT_2 = (
