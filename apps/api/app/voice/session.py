@@ -11,14 +11,20 @@ Manages:
 """
 
 import asyncio
+import json
 import logging
 import time
 from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
 from typing import Any
 
+from sqlmodel import Session
+
+from app.brain.fsm import BookingFSM, BookingState
 from app.config import settings
+from app.db import engine
 from app.events.hub import hub
+from app.models.domain import CallRecord, Job
 from app.voice.audio import EnergyVAD, ExotelAudioAccumulator, Rechunker, pcm_to_base64
 from app.voice.gnani_stt import GnaniSTTClient
 from app.voice.gnani_tts import GnaniTTSClient
@@ -82,6 +88,8 @@ class CallSession:
             required_consecutive_chunks=2,
         )
         self.metrics = CallSessionMetrics(call_sid=call_sid)
+        self.brain = BookingFSM(handoff_phone=settings.telephony_handoff_number)
+        self.transcript_messages: list[dict[str, Any]] = []
 
         self._bot_is_speaking = False
         self._bot_utterance_start_time: float = 0.0
@@ -125,6 +133,15 @@ class CallSession:
         self._stt_consumer_task = asyncio.create_task(self._consume_stt_stream())
 
         # Speak mandatory disclosure greeting concurrently so WebSocket loop handles caller events
+        self.transcript_messages.append(
+            {
+                "id": "turn_0_bot",
+                "role": "bot",
+                "text": MANDATORY_GREETING,
+                "timestamp": time.strftime("%H:%M:%S"),
+                "is_disclosure": True,
+            }
+        )
         asyncio.create_task(self.speak(MANDATORY_GREETING, mark_name="greeting_done"))
 
     async def handle_caller_audio(self, pcm_chunk: bytes) -> None:
@@ -340,9 +357,89 @@ class CallSession:
                         transcript.text,
                     )
 
-                    # Phase 1 Echo Test: "Aapne kaha: <text>"
-                    echo_reply = f"Aapne kaha: {transcript.text}"
-                    await self.speak(echo_reply, mark_name=f"echo_turn_{self._current_turn_id}")
+                    # Record caller turn
+                    self.transcript_messages.append(
+                        {
+                            "id": f"turn_{self._current_turn_id}_caller",
+                            "role": "caller",
+                            "text": transcript.text,
+                            "timestamp": time.strftime("%H:%M:%S"),
+                        }
+                    )
+
+                    # Phase 3: Process turn via Booking Brain FSM
+                    brain_result = self.brain.process_utterance(transcript.text)
+
+                    # Record bot turn
+                    self.transcript_messages.append(
+                        {
+                            "id": f"turn_{self._current_turn_id}_bot",
+                            "role": "bot",
+                            "text": brain_result.bot_reply,
+                            "timestamp": time.strftime("%H:%M:%S"),
+                            "is_disclosure": brain_result.ai_disclosure_triggered,
+                        }
+                    )
+
+                    # Broadcast slot updates to frontend
+                    if brain_result.slots.problem:
+                        await hub.broadcast(
+                            "slot.updated",
+                            {
+                                "call_id": self.call_sid,
+                                "field": "problem",
+                                "value": brain_result.slots.problem,
+                            },
+                        )
+                    if brain_result.slots.landmark_address:
+                        await hub.broadcast(
+                            "slot.updated",
+                            {
+                                "call_id": self.call_sid,
+                                "field": "landmark_address",
+                                "value": brain_result.slots.landmark_address,
+                            },
+                        )
+                    if brain_result.slots.time_slot:
+                        await hub.broadcast(
+                            "slot.updated",
+                            {
+                                "call_id": self.call_sid,
+                                "field": "time_slot",
+                                "value": brain_result.slots.time_slot,
+                            },
+                        )
+
+                    # Speak bot reply
+                    await self.speak(
+                        brain_result.bot_reply,
+                        mark_name=f"brain_turn_{self._current_turn_id}",
+                    )
+
+                    # Broadcast booking or handoff events
+                    if (
+                        brain_result.current_state == BookingState.BOOKED
+                        and brain_result.job_payload
+                    ):
+                        job_id = f"job_{int(time.time())}"
+                        await hub.broadcast(
+                            "job.booked",
+                            {
+                                "job_id": job_id,
+                                "call_id": self.call_sid,
+                                "summary": brain_result.slots.problem,
+                                **brain_result.job_payload,
+                            },
+                        )
+
+                    if brain_result.needs_handoff:
+                        await hub.broadcast(
+                            "call.handoff",
+                            {
+                                "call_id": self.call_sid,
+                                "reason": "human_requested_or_unresolved",
+                            },
+                        )
 
                     total_turn_ms = (time.monotonic() - turn_start) * 1000.0
                     turn_metric = TurnLatency(
@@ -395,6 +492,64 @@ class CallSession:
                 "timestamp": time.time(),
             },
         )
+
+        # Persist CallRecord and Job to SQLite database
+        try:
+            with Session(engine) as db_session:
+                slots_dict = {
+                    "problem": self.brain.slots.problem,
+                    "problem_key": self.brain.slots.problem_key,
+                    "landmark_address": self.brain.slots.landmark_address,
+                    "time_slot": self.brain.slots.time_slot,
+                    "customer_name": self.brain.slots.customer_name,
+                    "price_estimate": self.brain.slots.price_estimate,
+                }
+                status_str = (
+                    "booked"
+                    if self.brain.state == BookingState.BOOKED
+                    else (
+                        "needs_human" if self.brain.state == BookingState.HANDOFF else "completed"
+                    )
+                )
+                duration_s = int(
+                    (self.metrics.end_time or time.monotonic()) - self.metrics.start_time
+                )
+                call_record = CallRecord(
+                    id=self.call_sid,
+                    caller_number=self.caller_number,
+                    caller_number_masked=self._mask_number(self.caller_number),
+                    customer_name=self.brain.slots.customer_name or "Caller",
+                    timestamp=time.strftime("%I:%M %p"),
+                    status=status_str,
+                    duration_seconds=max(duration_s, 1),
+                    summary=self.brain.slots.problem or "Inbound customer call",
+                    extracted_slots_json=json.dumps(slots_dict),
+                    transcript_json=json.dumps(self.transcript_messages),
+                )
+                db_session.add(call_record)
+
+                if self.brain.state == BookingState.BOOKED:
+                    job_id = f"job_{int(time.time())}"
+                    job = Job(
+                        id=job_id,
+                        call_id=self.call_sid,
+                        title=self.brain.slots.problem or "Service Repair",
+                        problem=self.brain.slots.problem or "Service Repair",
+                        landmark_address=self.brain.slots.landmark_address or "Customer address",
+                        time_slot=self.brain.slots.time_slot or "Standard slot",
+                        price_estimate=self.brain.slots.price_estimate or "Standard rates",
+                        price_min=self.brain.slots.price_min or 250,
+                        price_max=self.brain.slots.price_max or 500,
+                        status="booked",
+                        confirmed_at=time.strftime("%I:%M %p"),
+                        customer_name=self.brain.slots.customer_name or "Caller",
+                        customer_phone_masked=self._mask_number(self.caller_number),
+                    )
+                    db_session.add(job)
+
+                db_session.commit()
+        except Exception as db_err:
+            logger.error("Failed to persist call record to DB: %s", db_err)
 
         self._log_latency_table()
 

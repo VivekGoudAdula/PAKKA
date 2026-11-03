@@ -17,6 +17,8 @@ select = [
 ]
 ignore = [
   "ANN401", # Dynamically typed expressions (Any) OK in some places
+  "B008",   # FastAPI Depends() in route signatures
+  "E501",   # Line length handled by formatter
 ]
 
 [tool.ruff.lint.isort]

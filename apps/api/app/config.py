@@ -88,7 +88,7 @@ class Settings(BaseSettings):
         description="Evon vLLM base URL (OpenAI-compatible)",
     )
 
-    # ── Outbound call hours (24-hour IST) ──────────────────────────────────
+    # ── Outbound call hours (24-hour IST) & Telephony Handoff ──────────────
     outbound_hours_start: int = Field(
         default=9,
         ge=0,
@@ -100,6 +100,10 @@ class Settings(BaseSettings):
         ge=0,
         le=23,
         description="Latest hour to place outbound calls (IST)",
+    )
+    telephony_handoff_number: str = Field(
+        default="+91 98765 43210",
+        description="Phone number for human owner handoff on caller escalation",
     )
 
     @property

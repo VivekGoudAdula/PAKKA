@@ -125,8 +125,8 @@ def test_exotel_full_echo_turn() -> None:
                 echo_pcm.extend(pcm)
 
             elif event == "mark":
-                mark_name = msg.get("mark", {}).get("name")
-                if "echo_turn" in mark_name:
+                mark_name = msg.get("mark", {}).get("name", "")
+                if "turn" in mark_name:
                     received_echo_mark = True
 
         assert len(echo_pcm) > 0, "No echo reply audio received"

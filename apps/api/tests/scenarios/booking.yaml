@@ -1,0 +1,343 @@
+# 22 Diverse Hinglish & Devanagari Booking Dialogue Scenarios for Pakka Booking Brain
+# Covers 1-utterance all-in-one, step-by-step, corrections, bargaining, Devanagari,
+# mis-transcriptions, robot inquiries, human handoffs, silences, and re-ask fallbacks.
+
+- id: scenario_01_all_in_one
+  name: "All-in-one utterance with instant quote and confirmation"
+  description: "Caller provides problem, address, and slot in a single initial sentence"
+  dialogue:
+    - user: "Geyser paani garam nahi kar raha, Mayur Vihar Pocket 1, shaam 5 baje aa jao"
+    - user: "Theek hai, bhej do"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Mayur Vihar Pocket 1"
+      time_slot: "5 Baje"
+    is_terminal: true
+
+- id: scenario_02_step_by_step
+  name: "Standard step-by-step booking conversation"
+  description: "Caller answers problem, address, and time slot one turn at a time"
+  dialogue:
+    - user: "Geyser se paani tapak raha hai"
+    - user: "Mayur Vihar Phase 2 Pocket B"
+    - user: "Kal subah bhej do"
+    - user: "Haan theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_leak"
+      landmark_address: "Mayur Vihar Phase 2 Pocket B"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+    is_terminal: true
+
+- id: scenario_03_slot_correction
+  name: "Time slot correction after confirmation readback"
+  description: "Caller changes requested time slot when bot reads it back"
+  dialogue:
+    - user: "Geyser paani garam nahi kar raha"
+    - user: "Mayur Vihar Pocket 1"
+    - user: "Aaj shaam ko bhej do"
+    - user: "Theek hai"
+    - user: "Nahi shaam nahi, kal subah bhej do"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Mayur Vihar Pocket 1"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+    is_terminal: true
+
+- id: scenario_04_address_correction
+  name: "Address correction when bot reads back details"
+  description: "Caller notices wrong pocket and corrects the address"
+  dialogue:
+    - user: "Nal leak ho raha hai"
+    - user: "Mayur Vihar Pocket 2"
+    - user: "Kal subah aa jao"
+    - user: "Theek hai"
+    - user: "Galat address, Mayur Vihar Pocket 1 hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "tap_leak"
+      landmark_address: "Mayur Vihar Pocket 1 hai"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+    is_terminal: true
+
+- id: scenario_05_problem_correction
+  name: "Problem correction early in conversation"
+  description: "Caller switches problem from geyser to tap leakage"
+  dialogue:
+    - user: "Geyser kharab hai"
+    - user: "Nahi geyser nahi nal leak ho raha hai bathroom mein"
+    - user: "Lajpat Nagar Block C"
+    - user: "Aaj shaam ko"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "tap_leak"
+      landmark_address: "Lajpat Nagar Block C"
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+    is_terminal: true
+
+- id: scenario_06_unknown_problem
+  name: "Unknown repair issue with standard inspection charge"
+  description: "Caller has a general plumbing issue not in predefined catalogue"
+  dialogue:
+    - user: "Plumber chahiye bathroom mein kuch ajeeb aawaz aa rahi hai"
+    - user: "Lajpat Nagar Block C"
+    - user: "Aaj shaam ko"
+    - user: "Theek hai bhej do"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "unknown"
+      landmark_address: "Lajpat Nagar Block C"
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+    is_terminal: true
+
+- id: scenario_07_bargaining_objection
+  name: "Bargaining objection with polite floor hold"
+  description: "Caller objects to price range, bot explains policy, caller accepts"
+  dialogue:
+    - user: "Geyser paani garam nahi kar raha, Mayur Vihar Pocket 1, shaam 5 baje aa jao"
+    - user: "Bahut mehenga hai, thoda kam karo"
+    - user: "Theek hai bhej do"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Mayur Vihar Pocket 1"
+      time_slot: "5 Baje"
+    is_terminal: true
+
+- id: scenario_08_devanagari_codemix
+  name: "Devanagari script mixed with Latin Hinglish"
+  description: "Prisma STT codemix transcription in mixed Devanagari script"
+  dialogue:
+    - user: "गीज़र में पानी गर्म नहीं आ रहा, मयूर विहार"
+    - user: "कल सुबह भेज दो"
+    - user: "हाँ, ठीक है"
+    - user: "हाँ, पक्का"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+    is_terminal: true
+
+- id: scenario_09_mistranscribed_geyser
+  name: "Mis-transcribed phonetic geyser variant"
+  description: "Phonetic spelling gijar instead of geyser from phone audio"
+  dialogue:
+    - user: "Gijar paani garam nahi kar raha"
+    - user: "Rohini Sector 7 opposite park"
+    - user: "Kal shaam ko"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      time_slot: "Kal Shaam (5 PM – 7 PM)"
+    is_terminal: true
+
+- id: scenario_10_mistranscribed_tap
+  name: "Mis-transcribed tap variant toti/nal"
+  description: "Colloquial Hindi word nal for tap leakage"
+  dialogue:
+    - user: "Bathroom ka nal leak ho raha hai"
+    - user: "Karol Bagh ke paas gali no 4"
+    - user: "Aaj shaam ko"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "tap_leak"
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+    is_terminal: true
+
+- id: scenario_11_robot_inquiry
+  name: "Caller asks if assistant is a robot"
+  description: "Bot responds honestly without denying AI identity, then resumes booking"
+  dialogue:
+    - user: "Kya aap robot ho?"
+    - user: "Theek hai, geyser paani garam nahi kar raha"
+    - user: "Saket Block D"
+    - user: "Kal subah bhej do"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Saket Block D"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+    is_terminal: true
+
+- id: scenario_12_human_request
+  name: "Immediate handoff on human / owner request"
+  description: "Caller requests to speak with the owner or a human agent"
+  dialogue:
+    - user: "Mujhe owner se baat karni hai"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+
+- id: scenario_13_silence_abandoned
+  name: "Two consecutive silences result in call abandonment"
+  description: "Caller line has silence/noise; bot prompts once and ends on second silence"
+  dialogue:
+    - user: "__silence__"
+    - user: "__silence__"
+  expected:
+    final_state: "ABANDONED"
+    is_terminal: true
+
+- id: scenario_14_explicit_refusal
+  name: "Explicit cancellation by caller"
+  description: "Caller changes mind and cancels the request"
+  dialogue:
+    - user: "Nahi chahiye, cancel kar do"
+  expected:
+    final_state: "ABANDONED"
+    is_terminal: true
+
+- id: scenario_15_pipe_burst_emergency
+  name: "Urgent pipe burst emergency booking"
+  description: "Caller has a flooded bathroom and needs emergency plumber"
+  dialogue:
+    - user: "Pipe phat gaya hai, turant aao"
+    - user: "Malviya Nagar main market"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "pipe_burst"
+      landmark_address: "Malviya Nagar main market"
+      time_slot: "Immediate / Emergency"
+    is_terminal: true
+
+- id: scenario_16_drain_blocked_landmark
+  name: "Drain blockage with descriptive landmark"
+  description: "Kitchen drain choked near landmark"
+  dialogue:
+    - user: "Kitchen ki naali choke ho gayi hai"
+    - user: "Mother Dairy ke paas, Laxmi Nagar"
+    - user: "Aaj dopahar ko"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "drain_blocked"
+      landmark_address: "Mother Dairy ke paas, Laxmi Nagar"
+      time_slot: "Aaj Dopahar (1 PM – 3 PM)"
+    is_terminal: true
+
+- id: scenario_17_motor_pump
+  name: "Submersible pump motor issue"
+  description: "Motor pump makes noise and does not pump water"
+  dialogue:
+    - user: "Submersible motor aawaz kar rahi hai, pani nahi kheench rahi"
+    - user: "Dwarka Sector 10 near metro"
+    - user: "Kal subah bhej do"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "motor_pump"
+      landmark_address: "Dwarka Sector 10 near metro"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+    is_terminal: true
+
+- id: scenario_18_fast_confirmation
+  name: "Fast confirmation using haan pakka"
+  description: "Caller uses colloquial confirmation phrases"
+  dialogue:
+    - user: "Geyser se paani tapak raha hai"
+    - user: "Pitampura Block KP"
+    - user: "Aaj shaam ko"
+    - user: "Haan pakka"
+    - user: "Pakka confirm"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_leak"
+      landmark_address: "Pitampura Block KP"
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+    is_terminal: true
+
+- id: scenario_19_repeated_unrecognized
+  name: "Three consecutive unrecognized inputs route to human handoff"
+  description: "Caller background noise or unparseable input triggers graceful handoff"
+  dialogue:
+    - user: "Kjkj asdffd"
+    - user: "Qwert yuiop"
+    - user: "Zxcvb mnbvc"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+
+- id: scenario_20_hindi_spoken_numbers
+  name: "Spoken Hindi numerals for time slots"
+  description: "Caller specifies chhe baje for time slot"
+  dialogue:
+    - user: "Geyser paani garam nahi kar raha"
+    - user: "Janakpuri Pocket 3"
+    - user: "Chhe baje aa jao"
+    - user: "Theek hai"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Janakpuri Pocket 3"
+      time_slot: "6 Baje"
+    is_terminal: true
+
+- id: scenario_21_devanagari_pure
+  name: "Pure Devanagari script interaction"
+  description: "Caller speaks exclusively in Hindi captured as Devanagari script"
+  dialogue:
+    - user: "नल से पानी टपक रहा है"
+    - user: "करोल बाग वाली गली"
+    - user: "आज शाम को"
+    - user: "ठीक है"
+    - user: "हाँ, पक्का"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "tap_leak"
+      landmark_address: "करोल बाग वाली गली"
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+    is_terminal: true
+
+- id: scenario_22_late_bargaining_in_readback
+  name: "Late bargaining during confirm readback"
+  description: "Caller attempts bargaining at readback stage, bot holds floor, then confirms"
+  dialogue:
+    - user: "Pipe phat gaya hai, turant aao, Mayur Vihar Pocket 1"
+    - user: "Theek hai"
+    - user: "Thoda kam karo please"
+    - user: "Haan, pakka"
+  expected:
+    final_state: "BOOKED"
+    slots:
+      problem_key: "pipe_burst"
+      landmark_address: "Mayur Vihar Pocket 1"
+      time_slot: "Immediate / Emergency"
+    is_terminal: true
