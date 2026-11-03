@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  Radio,
   PhoneCall,
   Briefcase,
   Users,
@@ -12,6 +13,7 @@ import {
 import { cn } from "@/lib/utils";
 
 const mobileItems = [
+  { name: "Live", href: "/app/live", icon: Radio, isLive: true },
   { name: "Overview", href: "/app", icon: LayoutDashboard },
   { name: "Calls", href: "/app/calls", icon: PhoneCall },
   { name: "Jobs", href: "/app/jobs", icon: Briefcase },

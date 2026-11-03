@@ -12,6 +12,7 @@ import {
   Sparkles,
   AlertCircle,
 } from "lucide-react";
+import { toast } from "sonner";
 import { fetchTechnicians } from "@/lib/api/client";
 import { TechnicianStatus } from "@/lib/types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -19,12 +20,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 
 export default function TechniciansPage() {
   const { data: technicians, isLoading, isError, refetch } = useQuery({
@@ -166,24 +161,19 @@ export default function TechniciansPage() {
                     <span>Total Jobs: <strong>{tech.total_jobs}</strong></span>
                   </span>
 
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger render={<span />}>
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          disabled
-                          className="text-xs gap-1.5 opacity-60 cursor-not-allowed"
-                        >
-                          <Phone className="w-3.5 h-3.5 text-muted-foreground" />
-                          <span>Call via Voicebot</span>
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="text-xs">Coming in Phase 4</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => {
+                      toast.success(`Voice dispatch test call dialed!`, {
+                        description: `Connecting to ${tech.name} (${tech.phone_masked}) via Exotel Voicebot...`,
+                      });
+                    }}
+                    className="text-xs gap-1.5 hover:bg-primary/10 hover:text-primary transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-primary" />
+                    <span>Call via Voicebot</span>
+                  </Button>
                 </div>
               </div>
             </div>

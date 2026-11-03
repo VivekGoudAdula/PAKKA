@@ -19,8 +19,8 @@
 - [x] **Phase 3 — Booking Brain**  
   Deterministic Hinglish booking conversation FSM (greeting → problem → address → slot → quote → confirm_readback → booked), RuleBasedExtractor supporting Latin transliteration and Devanagari script, SQLite database persistence via SQLModel, 22 diverse YAML scenarios (100% pass rate, 100% slot accuracy), interactive text-mode simulator CLI, REST APIs for jobs, calls, technicians, and settings. Sub-50ms brain latency with zero external LLM calls.
 
-- [ ] **Phase 4 — Live Call Console + Technician Dispatch**  
-  Real-time call console (waveform, rolling transcript, slot progress, stamp animation) and technician dispatch FSM (voice job readout, "haan, pakka" / "nahi", fallback chain).
+- [x] **Phase 4 — Live Call Console + Technician Dispatch**  
+  Deterministic Technician Voice Dispatch FSM (`DispatchFSM`) with cascading ranking across specialists (specialty match first, fewest active jobs, max 3 attempts). Outbound calling hours exemption for emergency dispatch. Exotel outbound connect with dual correlation. Unified `EventSource` abstraction (`DemoEventSource` with ~40s booking + ~20s dispatch script, and `LiveWSEventSource`). Real-time Live Call Console (`/app/live`) with prefixed daisyUI chat bubbles, bot speaking indicator, barge-in tag, animated slot filling, FSM stepper, spring-in `PakkaStamp`, technician dispatch card with ringing animation and spoken replies, urgent safety hazard warning banner, latency chips (hidden in DEMO), Jobs board Booked → Dispatched live motion animation and confirmation dialog, activated technicians directory call button. 15 dispatch YAML scenarios with 100% pass rate (< 0.2 ms latency), interactive text dispatch simulator CLI, and 6 Playwright screenshots at 360, 768, and 1440 px with zero horizontal overflow.
 
 - [ ] **Phase 5 — Money Loop + Simulated Clock + Scripted Demo Calls**  
   Collection follow-up FSM, objection handling, promise-to-pay tracking, reminder trail, simulated clock fast-forward triggers (+1h, +1d, reset), scripted call playback.

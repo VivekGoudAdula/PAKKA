@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
+  Radio,
   PhoneCall,
   Briefcase,
   Users,
@@ -21,10 +22,18 @@ import { useModeStore } from "@/lib/stores/mode-store";
 
 const navItems = [
   {
+    name: "Live Console",
+    href: "/app/live",
+    icon: Radio,
+    badge: "LIVE",
+    isLive: true,
+  },
+  {
     name: "Overview",
     href: "/app",
     icon: LayoutDashboard,
     badge: null,
+    isLive: false,
   },
   {
     name: "Calls",
@@ -110,23 +119,34 @@ export function Sidebar() {
               )}
               title={collapsed ? item.name : undefined}
             >
-              <Icon
-                className={cn(
-                  "h-5 w-5 shrink-0 transition-transform group-hover:scale-105",
-                  isActive ? "text-primary" : "text-muted-foreground"
+              <div className="relative shrink-0">
+                <Icon
+                  className={cn(
+                    "h-5 w-5 transition-transform group-hover:scale-105",
+                    isActive ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+                {item.isLive && (
+                  <span className="absolute -top-1 -right-1 flex h-2.5 w-2.5">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+                  </span>
                 )}
-              />
+              </div>
               {!collapsed && <span className="truncate">{item.name}</span>}
 
               {!collapsed && item.badge && (
                 <span
                   className={cn(
-                    "ml-auto text-[11px] px-1.5 py-0.5 rounded-full font-bold",
-                    isActive
+                    "ml-auto text-[11px] px-1.5 py-0.5 rounded-full font-bold flex items-center gap-1",
+                    item.isLive
+                      ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300"
+                      : isActive
                       ? "bg-primary text-primary-foreground"
                       : "bg-muted text-muted-foreground"
                   )}
                 >
+                  {item.isLive && <span className="h-1.5 w-1.5 rounded-full bg-emerald-500" />}
                   {item.badge}
                 </span>
               )}
