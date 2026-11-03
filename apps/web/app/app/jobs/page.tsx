@@ -8,6 +8,7 @@ import {
   User,
   Plus,
   Briefcase,
+  AlertCircle,
 } from "lucide-react";
 import { fetchJobs } from "@/lib/api/client";
 import { Job, JobStatus } from "@/lib/types";
@@ -25,7 +26,7 @@ const COLUMNS: { id: JobStatus; title: string; color: string; dotColor: string }
 ];
 
 export default function JobsPage() {
-  const { data: jobs, isLoading } = useQuery({
+  const { data: jobs, isLoading, isError, refetch } = useQuery({
     queryKey: ["jobs"],
     queryFn: fetchJobs,
   });
@@ -57,7 +58,14 @@ export default function JobsPage() {
       </div>
 
       {/* 5-Column Kanban Board with mobile snap scrolling */}
-      {isLoading ? (
+      {isError ? (
+        <div className="p-8 text-center border border-destructive/30 rounded-2xl bg-destructive/5 space-y-2">
+          <AlertCircle className="w-8 h-8 text-destructive mx-auto" />
+          <h3 className="text-base font-bold text-ink">Failed to load jobs</h3>
+          <p className="text-xs text-muted-foreground">Unable to fetch jobs board data. Please try again.</p>
+          <Button size="sm" variant="outline" onClick={() => refetch()} className="text-xs">Retry</Button>
+        </div>
+      ) : isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
           {[1, 2, 3, 4, 5].map((i) => (
             <div key={i} className="space-y-3">

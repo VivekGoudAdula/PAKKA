@@ -11,6 +11,7 @@ import {
   Volume2,
   CheckCircle2,
   Filter,
+  AlertCircle,
 } from "lucide-react";
 import { fetchCalls } from "@/lib/api/client";
 import { Call, CallStatus } from "@/lib/types";
@@ -38,7 +39,7 @@ export default function CallsPage() {
   const [activeFilter, setActiveFilter] = useState("all");
   const [selectedCall, setSelectedCall] = useState<Call | null>(null);
 
-  const { data: calls, isLoading } = useQuery({
+  const { data: calls, isLoading, isError, refetch } = useQuery({
     queryKey: ["calls", activeFilter],
     queryFn: () => fetchCalls(activeFilter),
   });
@@ -104,7 +105,14 @@ export default function CallsPage() {
       </div>
 
       {/* Calls List */}
-      {isLoading ? (
+      {isError ? (
+        <div className="p-8 text-center border border-destructive/30 rounded-2xl bg-destructive/5 space-y-2">
+          <AlertCircle className="w-8 h-8 text-destructive mx-auto" />
+          <h3 className="text-base font-bold text-ink">Failed to load calls</h3>
+          <p className="text-xs text-muted-foreground">Unable to fetch call records. Please try again.</p>
+          <Button size="sm" variant="outline" onClick={() => refetch()} className="text-xs">Retry</Button>
+        </div>
+      ) : isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3, 4, 5].map((i) => (
             <Skeleton key={i} className="h-24 w-full rounded-2xl" />
@@ -200,25 +208,25 @@ export default function CallsPage() {
                 {selectedCall.customer_name || "Caller"} &bull; {selectedCall.caller_number_masked} &bull; {selectedCall.timestamp} ({selectedCall.duration_seconds}s)
               </SheetDescription>
 
-              {/* Audio playback simulator */}
+              {/* Audio playback indicator */}
               <div className="mt-3 p-3 rounded-xl bg-background border border-border flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white">
+                  <div className="w-8 h-8 rounded-full bg-muted flex items-center justify-center text-muted-foreground">
                     <Play className="w-4 h-4 ml-0.5" />
                   </div>
                   <div>
-                    <span className="text-xs font-semibold text-ink block">Recorded Call Audio</span>
-                    <span className="text-[10px] text-muted-foreground">8000 Hz Linear PCM &bull; Synthetic Demo</span>
+                    <span className="text-xs font-semibold text-ink block">Audio not recorded in demo</span>
+                    <span className="text-[10px] text-muted-foreground">Telephony audio capture is active only during live Exotel calls.</span>
                   </div>
                 </div>
-                <Volume2 className="w-4 h-4 text-muted-foreground" />
+                <Volume2 className="w-4 h-4 text-muted-foreground opacity-50" />
               </div>
             </SheetHeader>
 
             {/* Extracted Slots Badges */}
             <div className="p-4 border-b border-border bg-primary/5">
               <span className="text-[11px] font-bold text-primary uppercase tracking-wider block mb-2">
-                Evon v3.3 Extracted Slots
+                Extracted slots (rule-based)
               </span>
               <div className="grid grid-cols-2 gap-2 text-xs">
                 <div className="p-2 rounded-lg bg-background border border-border">

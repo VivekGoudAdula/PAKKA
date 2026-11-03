@@ -186,7 +186,7 @@ export default function SettingsPage() {
               />
             </div>
             <span className="text-[10px] text-muted-foreground block">
-              Default 9 AM to 8 PM IST. Server refuses calls outside window.
+              Default 9 AM to 8 PM IST (customizable by business owner). Server enforces calls within this window.
             </span>
           </div>
         </div>
@@ -233,7 +233,7 @@ export default function SettingsPage() {
             <div>
               <h2 className="text-base font-bold text-ink">Service Rate Card (Price List)</h2>
               <p className="text-xs text-muted-foreground">
-                Used by Evon v3.3 to quote price ranges during customer inbound bookings.
+                Used by the booking brain to quote price ranges during customer inbound bookings.
               </p>
             </div>
           </div>

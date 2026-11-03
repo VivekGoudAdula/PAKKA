@@ -36,7 +36,7 @@ export default function PaymentsPage() {
     queryFn: () => fetchOverviewStats(daysOffset),
   });
 
-  const { data: promises, isLoading } = useQuery({
+  const { data: promises, isLoading, isError, refetch } = useQuery({
     queryKey: ["payment-promises", daysOffset],
     queryFn: () => fetchPaymentPromises(daysOffset),
   });
@@ -155,7 +155,14 @@ export default function PaymentsPage() {
       </div>
 
       {/* Promises List */}
-      {isLoading ? (
+      {isError ? (
+        <div className="p-8 text-center border border-destructive/30 rounded-2xl bg-destructive/5 space-y-2">
+          <AlertTriangle className="w-8 h-8 text-destructive mx-auto" />
+          <h3 className="text-base font-bold text-ink">Failed to load payment promises</h3>
+          <p className="text-xs text-muted-foreground">Unable to fetch collections data. Please try again.</p>
+          <Button size="sm" variant="outline" onClick={() => refetch()} className="text-xs">Retry</Button>
+        </div>
+      ) : isLoading ? (
         <div className="space-y-3">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-28 w-full rounded-2xl" />

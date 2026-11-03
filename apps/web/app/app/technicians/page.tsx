@@ -1,7 +1,6 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
 import {
   Users,
   Phone,
@@ -11,17 +10,24 @@ import {
   Wrench,
   Clock,
   Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { fetchTechnicians } from "@/lib/api/client";
-import { Technician, TechnicianStatus } from "@/lib/types";
+import { TechnicianStatus } from "@/lib/types";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 export default function TechniciansPage() {
-  const { data: technicians, isLoading } = useQuery({
+  const { data: technicians, isLoading, isError, refetch } = useQuery({
     queryKey: ["technicians"],
     queryFn: fetchTechnicians,
   });
@@ -52,12 +58,6 @@ export default function TechniciansPage() {
     }
   };
 
-  const handleSimulateDispatch = (tech: Technician) => {
-    toast.success(`Voicebot outbound call placed to ${tech.name}`, {
-      description: `Reading pending job details in Hindi. Awaiting voice response "haan, pakka".`,
-    });
-  };
-
   const availableCount = technicians?.filter((t) => t.status === "available").length || 0;
 
   return (
@@ -82,7 +82,14 @@ export default function TechniciansPage() {
       </div>
 
       {/* Technicians Grid */}
-      {isLoading ? (
+      {isError ? (
+        <div className="p-8 text-center border border-destructive/30 rounded-2xl bg-destructive/5 space-y-2">
+          <AlertCircle className="w-8 h-8 text-destructive mx-auto" />
+          <h3 className="text-base font-bold text-ink">Failed to load technicians</h3>
+          <p className="text-xs text-muted-foreground">Unable to fetch technician directory. Please try again.</p>
+          <Button size="sm" variant="outline" onClick={() => refetch()} className="text-xs">Retry</Button>
+        </div>
+      ) : isLoading ? (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-64 w-full rounded-2xl" />
@@ -159,15 +166,24 @@ export default function TechniciansPage() {
                     <span>Total Jobs: <strong>{tech.total_jobs}</strong></span>
                   </span>
 
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="text-xs gap-1.5 hover:border-primary hover:text-primary cursor-pointer"
-                    onClick={() => handleSimulateDispatch(tech)}
-                  >
-                    <Phone className="w-3.5 h-3.5 text-primary" />
-                    <span>Call via Voicebot</span>
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger render={<span />}>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          disabled
+                          className="text-xs gap-1.5 opacity-60 cursor-not-allowed"
+                        >
+                          <Phone className="w-3.5 h-3.5 text-muted-foreground" />
+                          <span>Call via Voicebot</span>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="text-xs">Coming in Phase 4</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
             </div>

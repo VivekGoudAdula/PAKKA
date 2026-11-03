@@ -11,6 +11,7 @@ import {
   ArrowRight,
   MapPin,
   Sparkles,
+  AlertCircle,
 } from "lucide-react";
 import { useClockStore } from "@/lib/stores/clock-store";
 import { fetchOverviewStats, fetchJobs } from "@/lib/api/client";
@@ -62,17 +63,18 @@ const OVERVIEW_TIMELINE_ITEMS: TimelineItem[] = [
 export default function OverviewPage() {
   const { daysOffset } = useClockStore();
 
-  const { data: stats, isLoading: statsLoading } = useQuery({
+  const { data: stats, isLoading: statsLoading, isError: statsError, refetch: refetchStats } = useQuery({
     queryKey: ["overview-stats", daysOffset],
     queryFn: () => fetchOverviewStats(daysOffset),
   });
 
-  const { data: jobs, isLoading: jobsLoading } = useQuery({
+  const { data: jobs, isLoading: jobsLoading, isError: jobsError, refetch: refetchJobs } = useQuery({
     queryKey: ["recent-jobs"],
     queryFn: fetchJobs,
   });
 
   const recentJobs = jobs?.slice(0, 4) || [];
+  const hasError = statsError || jobsError;
 
   return (
     <div className="space-y-8 animate-in fade-in duration-300">
@@ -102,6 +104,26 @@ export default function OverviewPage() {
           </Link>
         </div>
       </div>
+
+      {hasError && (
+        <div className="p-4 rounded-xl border border-destructive/30 bg-destructive/5 flex items-center justify-between gap-4 text-xs">
+          <div className="flex items-center gap-2 text-destructive font-semibold">
+            <AlertCircle className="w-4 h-4 shrink-0" />
+            <span>Some dashboard data could not be refreshed.</span>
+          </div>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              refetchStats();
+              refetchJobs();
+            }}
+            className="text-xs"
+          >
+            Retry
+          </Button>
+        </div>
+      )}
 
       {/* 4 Hero Stat Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">

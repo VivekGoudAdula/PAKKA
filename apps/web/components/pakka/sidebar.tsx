@@ -17,6 +17,7 @@ import {
 import { cn } from "@/lib/utils";
 import { PakkaLogo } from "@/components/pakka/pakka-logo";
 import { Button } from "@/components/ui/button";
+import { useModeStore } from "@/lib/stores/mode-store";
 
 const navItems = [
   {
@@ -60,6 +61,7 @@ const navItems = [
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { mode, wsConnected } = useModeStore();
 
   return (
     <aside
@@ -139,23 +141,57 @@ export function Sidebar() {
 
       {/* Voice pipeline indicator card */}
       {!collapsed ? (
-        <div className="m-3 p-3 rounded-xl border border-primary/20 bg-primary/5 text-xs">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-            </span>
-            <span className="font-semibold text-ink">Gnani Voice Stack</span>
-          </div>
-          <p className="text-[11px] text-muted-foreground leading-tight">
-            Prisma v3.0 STT &bull; Timbre TTS &bull; Evon v3.3
-          </p>
+        <div className="m-3 p-3 rounded-xl border border-border bg-card/80 text-xs shadow-2xs">
+          {mode === "DEMO" ? (
+            <>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="relative flex h-2 w-2">
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500" />
+                </span>
+                <span className="font-semibold text-ink">Demo (simulated)</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-tight">
+                Operating with seeded data &amp; simulated clock.
+              </p>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="relative flex h-2 w-2">
+                  {wsConnected && (
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                  )}
+                  <span
+                    className={cn(
+                      "relative inline-flex rounded-full h-2 w-2",
+                      wsConnected ? "bg-emerald-500" : "bg-amber-500"
+                    )}
+                  />
+                </span>
+                <span className="font-semibold text-ink">Live Telephony</span>
+              </div>
+              <p className="text-[11px] text-muted-foreground leading-tight">
+                {wsConnected
+                  ? "Connected to Exotel &amp; Gnani WS."
+                  : "Connecting to ws://localhost:8000..."}
+              </p>
+            </>
+          )}
         </div>
       ) : (
-        <div className="p-3 flex justify-center" title="Gnani Voice Stack Active">
-          <Headphones className="h-4 w-4 text-emerald-600" />
+        <div
+          className="p-3 flex justify-center"
+          title={mode === "DEMO" ? "Demo (simulated)" : "Live Telephony"}
+        >
+          <Headphones
+            className={cn(
+              "h-4 w-4",
+              mode === "DEMO" ? "text-amber-600" : wsConnected ? "text-emerald-600" : "text-muted-foreground"
+            )}
+          />
         </div>
       )}
     </aside>
   );
 }
+
