@@ -12,6 +12,7 @@ from typing import Any
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 from app.voice.audio import base64_to_pcm
+from app.voice.dispatch_registry import dispatch_registry
 from app.voice.session import CallSession
 
 logger = logging.getLogger(__name__)
@@ -74,14 +75,31 @@ async def exotel_ws_endpoint(ws: WebSocket) -> None:
                 custom_live = str(custom_params.get("live_gnani", "")).lower() in ("true", "1")
                 use_live_gnani = query_live or custom_live
 
+                # Check for dispatch call correlation
+                query_dispatch = ws.query_params.get("dispatch", "").lower() in ("true", "1")
+                custom_dispatch = str(custom_params.get("dispatch", "")).lower() in ("true", "1")
+                job_id_param = ws.query_params.get("job_id") or custom_params.get("job_id")
+
+                pending = dispatch_registry.get_by_call_sid(call_sid)
+                if not pending and job_id_param:
+                    pending = dispatch_registry.get_latest_by_job(job_id_param)
+                    if pending:
+                        dispatch_registry.link_call_sid(call_sid, job_id_param)
+
+                is_dispatch = query_dispatch or custom_dispatch or (pending is not None)
+
+                dispatch_fsm = pending.fsm if pending else None
+                dispatch_context = pending if pending else None
+
                 logger.info(
                     "[Exotel Call Start] call_sid=%s, stream_sid=%s, from=%s, "
-                    "sample_rate=%d, live_gnani=%s",
+                    "sample_rate=%d, live_gnani=%s, is_dispatch=%s",
                     call_sid,
                     stream_sid,
                     from_num,
                     call_sample_rate,
                     use_live_gnani,
+                    is_dispatch,
                 )
 
                 stt_client = None
@@ -100,6 +118,8 @@ async def exotel_ws_endpoint(ws: WebSocket) -> None:
                     send_to_exotel=send_to_exotel,
                     stt_client=stt_client,
                     tts_client=tts_client,
+                    dispatch_fsm=dispatch_fsm,
+                    dispatch_context=dispatch_context,
                 )
                 active_sessions[stream_sid] = session
                 await session.start()

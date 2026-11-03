@@ -1,0 +1,200 @@
+# 15 Deterministic Technician Dispatch Scenarios for Pakka Voice Assistant
+# Tests acceptance, rejection, repeat requests, Devanagari phonetics, unclear audio, and silence.
+
+scenarios:
+  - id: scenario_01_accept_haan_pakka
+    name: "Standard Hinglish acceptance with 'haan, pakka'"
+    technician: "Ramesh Kumar"
+    problem: "Geyser heating problem"
+    address: "B-42 Mayur Vihar Phase 2"
+    slot: "Kal Subah"
+    turns:
+      - caller: "Haan, pakka main kar dunga."
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_02_accept_kar_dunga
+    name: "Colloquial affirmative 'kar dunga'"
+    technician: "Mohan Lal"
+    problem: "Bathroom tap leak"
+    address: "Block C, Lajpat Nagar"
+    slot: "Aaj Dopahar"
+    turns:
+      - caller: "Haan kar dunga koi dikkat nahi."
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_03_accept_aa_jaunga
+    name: "Affirmative 'theek hai aa jaunga'"
+    technician: "Suresh Sharma"
+    problem: "Kitchen sink blockage"
+    address: "Sector 14, Noida"
+    slot: "Shaam ko"
+    turns:
+      - caller: "Theek hai aa jaunga."
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_04_accept_devanagari_pakka
+    name: "Devanagari acceptance 'पक्का'"
+    technician: "Anil Verma"
+    problem: "Water motor repair"
+    address: "Pocket 1, Dwarka"
+    slot: "Kal dopahar"
+    turns:
+      - caller: "पक्का"
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_05_accept_devanagari_haan_ji
+    name: "Devanagari polite acceptance 'जी हाँ, बिल्कुल'"
+    technician: "Deepak Rawat"
+    problem: "Pipe fitting"
+    address: "Vasant Kunj Sector C"
+    slot: "Subah 11 baje"
+    turns:
+      - caller: "जी हाँ, बिल्कुल हो जाएगा"
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_06_accept_english_yes
+    name: "English affirmative 'yes, ok'"
+    technician: "Ravi Shankar"
+    problem: "Geyser thermostat replacement"
+    address: "GK 1 M Block"
+    slot: "Kal shaam"
+    turns:
+      - caller: "Yes okay, I will do it."
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_07_decline_nahi
+    name: "Direct decline 'nahi'"
+    technician: "Vikram Singh"
+    problem: "Under-sink drainage leakage"
+    address: "Preet Vihar"
+    slot: "Aaj shaam"
+    turns:
+      - caller: "Nahi, abhi nahi kar paunga."
+        expected_state: "DECLINED"
+        expected_terminal: true
+        expected_accepted: false
+
+  - id: scenario_08_decline_busy_hoon
+    name: "Decline due to being busy 'busy hoon'"
+    technician: "Sunil Kumar"
+    problem: "Geyser dripping water"
+    address: "Rohini Sector 7"
+    slot: "Kal subah"
+    turns:
+      - caller: "Main busy hoon, kisi aur ko bhej do."
+        expected_state: "DECLINED"
+        expected_terminal: true
+        expected_accepted: false
+
+  - id: scenario_09_decline_devanagari_nahi
+    name: "Devanagari decline 'नहीं हो पाएगा'"
+    technician: "Mahesh Gupta"
+    problem: "Water tank valve replacement"
+    address: "Janakpuri C Block"
+    slot: "Aaj dopahar"
+    turns:
+      - caller: "नहीं हो पाएगा आज"
+        expected_state: "DECLINED"
+        expected_terminal: true
+        expected_accepted: false
+
+  - id: scenario_10_decline_fursat_nahi
+    name: "Decline 'fursat nahi hai'"
+    technician: "Kailash Chand"
+    problem: "Shower mixer installation"
+    address: "Saket J Block"
+    slot: "Kal subah"
+    turns:
+      - caller: "Aaj fursat nahi hai dusri jagah hoon."
+        expected_state: "DECLINED"
+        expected_terminal: true
+        expected_accepted: false
+
+  - id: scenario_11_repeat_then_accept
+    name: "Technician asks for details again then accepts"
+    technician: "Ramesh Kumar"
+    problem: "Geyser wiring repair"
+    address: "Mayur Vihar Pocket 1"
+    slot: "Kal shaam"
+    turns:
+      - caller: "Dobara bolo address kya tha?"
+        expected_state: "LISTENING"
+        expected_terminal: false
+        expected_repeat: true
+      - caller: "Haan pakka kar dunga."
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_12_repeat_devanagari_then_accept
+    name: "Technician asks to repeat in Devanagari then accepts"
+    technician: "Mohan Lal"
+    problem: "Tap washer change"
+    address: "Karol Bagh"
+    slot: "Aaj shaam"
+    turns:
+      - caller: "एक बार और बताइए"
+        expected_state: "LISTENING"
+        expected_terminal: false
+        expected_repeat: true
+      - caller: "ठीक है, हो जाएगा"
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_13_unclear_once_then_accept
+    name: "Unclear utterance on turn 1, bot re-asks, then accepted"
+    technician: "Suresh Sharma"
+    problem: "Geyser element change"
+    address: "Indirapuram Sector 4"
+    slot: "Kal subah"
+    turns:
+      - caller: "kya bol rahe ho samajh nahi aaya"
+        expected_state: "UNCLEAR"
+        expected_terminal: false
+      - caller: "Haan ji kar lenge"
+        expected_state: "ACCEPTED"
+        expected_terminal: true
+        expected_accepted: true
+
+  - id: scenario_14_unclear_twice_unreachable
+    name: "Unclear twice leads to unreachable terminal state"
+    technician: "Deepak Rawat"
+    problem: "Water leakage"
+    address: "Noida Sector 62"
+    slot: "Aaj dopahar"
+    turns:
+      - caller: "hello hello awaz kat rahi hai"
+        expected_state: "UNCLEAR"
+        expected_terminal: false
+      - caller: "kaun bol raha hai kuch nahi sun raha"
+        expected_state: "UNREACHABLE"
+        expected_terminal: true
+        expected_accepted: false
+
+  - id: scenario_15_silence_then_decline
+    name: "Silence on first turn, re-ask, then decline"
+    technician: "Anil Verma"
+    problem: "Geyser no hot water"
+    address: "Lajpat Nagar 4"
+    slot: "Kal subah"
+    turns:
+      - caller: "__silence__"
+        expected_state: "UNCLEAR"
+        expected_terminal: false
+      - caller: "Nahi bhai, abhi possible nahi hai"
+        expected_state: "DECLINED"
+        expected_terminal: true
+        expected_accepted: false

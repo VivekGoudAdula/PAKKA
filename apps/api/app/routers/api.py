@@ -115,3 +115,45 @@ def update_settings(
     session.commit()
     session.refresh(settings)
     return {"status": "ok", "settings": settings.model_dump()}
+
+
+class DispatchRequestSchema(BaseModel):
+    """Payload for manual or automatic dispatch trigger."""
+
+    technician_id: str | None = None
+    simulate: bool = True
+
+
+@router.post("/jobs/{job_id}/dispatch")
+async def trigger_dispatch(
+    job_id: str,
+    payload: DispatchRequestSchema | None = None,
+) -> dict[str, Any]:
+    """
+    Trigger voice dispatch for a booked job.
+    Ranks technicians and initiates outbound phone call to specialist.
+    """
+    from app.services.dispatch_service import DispatchService
+
+    tech_id = payload.technician_id if payload else None
+    simulate = payload.simulate if payload else True
+
+    try:
+        return await DispatchService.dispatch_job(
+            job_id=job_id,
+            preferred_tech_id=tech_id,
+            simulate_dialogue=simulate,
+        )
+    except ValueError as exc:
+        return {"status": "error", "message": str(exc)}
+
+
+@router.get("/jobs/{job_id}/dispatch")
+def get_dispatch_details(job_id: str) -> dict[str, Any]:
+    """
+    Fetch the dispatch status, assigned technician, and confirmation history.
+    """
+    from app.services.dispatch_service import DispatchService
+
+    return DispatchService.get_dispatch_status(job_id)
+

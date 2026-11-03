@@ -25,6 +25,7 @@ class Technician(SQLModel, table=True):
     id: str = Field(primary_key=True)
     name: str
     phone_masked: str
+    phone: str | None = None
     avatar: str = "T"
     trade: str
     status: str = "available"  # available, on_job, off_duty
@@ -32,6 +33,15 @@ class Technician(SQLModel, table=True):
     last_confirmation_time: str = ""
     accept_rate: int = 85
     total_jobs: int = 0
+    active_jobs_count: int = 0
+
+    @property
+    def specialty(self) -> str:
+        return self.trade
+
+    @property
+    def is_active(self) -> bool:
+        return self.status != "off_duty"
 
 
 class PriceItem(SQLModel, table=True):

@@ -1,0 +1,291 @@
+{
+  "timestamp": "2026-11-03T15:48:28.671032+00:00",
+  "total_scenarios": 15,
+  "passed_scenarios": 15,
+  "failed_scenarios": 0,
+  "scenario_accuracy_pct": 100.0,
+  "total_turns_evaluated": 20,
+  "average_fsm_latency_ms": 0.133,
+  "scenarios": [
+    {
+      "id": "scenario_01_accept_haan_pakka",
+      "name": "Standard Hinglish acceptance with 'haan, pakka'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Haan, pakka main kar dunga.",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 1.137
+        }
+      ]
+    },
+    {
+      "id": "scenario_02_accept_kar_dunga",
+      "name": "Colloquial affirmative 'kar dunga'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Haan kar dunga koi dikkat nahi.",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.033
+        }
+      ]
+    },
+    {
+      "id": "scenario_03_accept_aa_jaunga",
+      "name": "Affirmative 'theek hai aa jaunga'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Theek hai aa jaunga.",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.018
+        }
+      ]
+    },
+    {
+      "id": "scenario_04_accept_devanagari_pakka",
+      "name": "Devanagari acceptance 'पक्का'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "पक्का",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.328
+        }
+      ]
+    },
+    {
+      "id": "scenario_05_accept_devanagari_haan_ji",
+      "name": "Devanagari polite acceptance 'जी हाँ, बिल्कुल'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "जी हाँ, बिल्कुल हो जाएगा",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.025
+        }
+      ]
+    },
+    {
+      "id": "scenario_06_accept_english_yes",
+      "name": "English affirmative 'yes, ok'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Yes okay, I will do it.",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.012
+        }
+      ]
+    },
+    {
+      "id": "scenario_07_decline_nahi",
+      "name": "Direct decline 'nahi'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Nahi, abhi nahi kar paunga.",
+          "bot_reply": "Theek hai ji, koi baat nahi. Agle kaam ke liye call karenge.",
+          "state": "DECLINED",
+          "is_terminal": true,
+          "is_accepted": false,
+          "latency_ms": 0.404
+        }
+      ]
+    },
+    {
+      "id": "scenario_08_decline_busy_hoon",
+      "name": "Decline due to being busy 'busy hoon'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Main busy hoon, kisi aur ko bhej do.",
+          "bot_reply": "Theek hai ji, koi baat nahi. Agle kaam ke liye call karenge.",
+          "state": "DECLINED",
+          "is_terminal": true,
+          "is_accepted": false,
+          "latency_ms": 0.127
+        }
+      ]
+    },
+    {
+      "id": "scenario_09_decline_devanagari_nahi",
+      "name": "Devanagari decline 'नहीं हो पाएगा'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "नहीं हो पाएगा आज",
+          "bot_reply": "Theek hai ji, koi baat nahi. Agle kaam ke liye call karenge.",
+          "state": "DECLINED",
+          "is_terminal": true,
+          "is_accepted": false,
+          "latency_ms": 0.286
+        }
+      ]
+    },
+    {
+      "id": "scenario_10_decline_fursat_nahi",
+      "name": "Decline 'fursat nahi hai'",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Aaj fursat nahi hai dusri jagah hoon.",
+          "bot_reply": "Theek hai ji, koi baat nahi. Agle kaam ke liye call karenge.",
+          "state": "DECLINED",
+          "is_terminal": true,
+          "is_accepted": false,
+          "latency_ms": 0.017
+        }
+      ]
+    },
+    {
+      "id": "scenario_11_repeat_then_accept",
+      "name": "Technician asks for details again then accepts",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "Dobara bolo address kya tha?",
+          "bot_reply": "Main dobara bata deti hoon: Geyser wiring repair, Mayur Vihar Pocket 1, Kal shaam. Kya aap yeh kaam kar sakte hain?",
+          "state": "LISTENING",
+          "is_terminal": false,
+          "is_accepted": false,
+          "latency_ms": 0.012
+        },
+        {
+          "technician_input": "Haan pakka kar dunga.",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.014
+        }
+      ]
+    },
+    {
+      "id": "scenario_12_repeat_devanagari_then_accept",
+      "name": "Technician asks to repeat in Devanagari then accepts",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "एक बार और बताइए",
+          "bot_reply": "Main dobara bata deti hoon: Tap washer change, Karol Bagh, Aaj shaam. Kya aap yeh kaam kar sakte hain?",
+          "state": "LISTENING",
+          "is_terminal": false,
+          "is_accepted": false,
+          "latency_ms": 0.009
+        },
+        {
+          "technician_input": "ठीक है, हो जाएगा",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.012
+        }
+      ]
+    },
+    {
+      "id": "scenario_13_unclear_once_then_accept",
+      "name": "Unclear utterance on turn 1, bot re-asks, then accepted",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "kya bol rahe ho samajh nahi aaya",
+          "bot_reply": "Main theek se sun nahi paayi. Kya aap yeh kaam kar sakte hain? Haan ya nahi mein bataiye.",
+          "state": "UNCLEAR",
+          "is_terminal": false,
+          "is_accepted": false,
+          "latency_ms": 0.017
+        },
+        {
+          "technician_input": "Haan ji kar lenge",
+          "bot_reply": "Dhanyavaad. Pakka. Main customer ko bata dungi.",
+          "state": "ACCEPTED",
+          "is_terminal": true,
+          "is_accepted": true,
+          "latency_ms": 0.009
+        }
+      ]
+    },
+    {
+      "id": "scenario_14_unclear_twice_unreachable",
+      "name": "Unclear twice leads to unreachable terminal state",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "hello hello awaz kat rahi hai",
+          "bot_reply": "Main theek se sun nahi paayi. Kya aap yeh kaam kar sakte hain? Haan ya nahi mein bataiye.",
+          "state": "UNCLEAR",
+          "is_terminal": false,
+          "is_accepted": false,
+          "latency_ms": 0.014
+        },
+        {
+          "technician_input": "kaun bol raha hai kuch nahi sun raha",
+          "bot_reply": "Theek hai ji, koi baat nahi. Agle kaam ke liye call karenge.",
+          "state": "UNREACHABLE",
+          "is_terminal": true,
+          "is_accepted": false,
+          "latency_ms": 0.149
+        }
+      ]
+    },
+    {
+      "id": "scenario_15_silence_then_decline",
+      "name": "Silence on first turn, re-ask, then decline",
+      "passed": true,
+      "failures": [],
+      "turns": [
+        {
+          "technician_input": "__silence__",
+          "bot_reply": "Main theek se sun nahi paayi. Kya aap yeh kaam kar sakte hain? Haan ya nahi mein bataiye.",
+          "state": "UNCLEAR",
+          "is_terminal": false,
+          "is_accepted": false,
+          "latency_ms": 0.014
+        },
+        {
+          "technician_input": "Nahi bhai, abhi possible nahi hai",
+          "bot_reply": "Theek hai ji, koi baat nahi. Agle kaam ke liye call karenge.",
+          "state": "DECLINED",
+          "is_terminal": true,
+          "is_accepted": false,
+          "latency_ms": 0.014
+        }
+      ]
+    }
+  ]
+}

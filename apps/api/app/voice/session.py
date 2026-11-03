@@ -21,6 +21,7 @@ from typing import Any
 
 from sqlmodel import Session
 
+from app.brain.dispatch import DispatchFSM
 from app.brain.fsm import BookingFSM, BookingState
 from app.config import settings
 from app.db import engine
@@ -74,11 +75,15 @@ class CallSession:
         send_to_exotel: Callable[[dict[str, Any]], Coroutine[Any, Any, None]] | None = None,
         stt_client: GnaniSTTClient | None = None,
         tts_client: GnaniTTSClient | None = None,
+        dispatch_fsm: DispatchFSM | None = None,
+        dispatch_context: Any | None = None,
     ) -> None:
         self.call_sid = call_sid
         self.stream_sid = stream_sid
         self.caller_number = caller_number
         self.send_to_exotel = send_to_exotel
+        self.dispatch_fsm = dispatch_fsm
+        self.dispatch_context = dispatch_context
 
         self.stt = stt_client or GnaniSTTClient()
         self.tts = tts_client or GnaniTTSClient()
@@ -134,17 +139,23 @@ class CallSession:
         # Start background consumer for incoming transcripts
         self._stt_consumer_task = asyncio.create_task(self._consume_stt_stream())
 
+        greeting_text = (
+            self.dispatch_fsm.get_initial_greeting()
+            if self.dispatch_fsm
+            else MANDATORY_GREETING
+        )
+
         # Speak mandatory disclosure greeting concurrently so WebSocket loop handles caller events
         self.transcript_messages.append(
             {
                 "id": "turn_0_bot",
                 "role": "bot",
-                "text": MANDATORY_GREETING,
+                "text": greeting_text,
                 "timestamp": time.strftime("%H:%M:%S"),
                 "is_disclosure": True,
             }
         )
-        asyncio.create_task(self.speak(MANDATORY_GREETING, mark_name="greeting_done"))
+        asyncio.create_task(self.speak(greeting_text, mark_name="greeting_done"))
 
     async def handle_caller_audio(self, pcm_chunk: bytes) -> None:
         """
@@ -393,6 +404,98 @@ class CallSession:
                         except Exception as log_err:
                             logger.warning("Failed to write to live_transcripts.jsonl: %s", log_err)
 
+                    # Phase 4 Dispatch vs Phase 3 Booking Brain
+                    if self.dispatch_fsm:
+                        dispatch_turn = self.dispatch_fsm.process_utterance(transcript.text)
+                        self.transcript_messages.append(
+                            {
+                                "id": f"turn_{self._current_turn_id}_bot",
+                                "role": "bot",
+                                "text": dispatch_turn.bot_reply,
+                                "timestamp": time.strftime("%H:%M:%S"),
+                            }
+                        )
+                        job_id = getattr(self.dispatch_context, "job_id", "")
+                        tech_id = getattr(self.dispatch_context, "technician_id", "")
+                        tech_name = getattr(self.dispatch_context, "technician_name", "")
+
+                        await hub.broadcast(
+                            "dispatch.transcript",
+                            {
+                                "job_id": job_id,
+                                "role": "technician",
+                                "text": transcript.text,
+                                "timestamp": time.time(),
+                            },
+                        )
+                        await hub.broadcast(
+                            "dispatch.transcript",
+                            {
+                                "job_id": job_id,
+                                "role": "bot",
+                                "text": dispatch_turn.bot_reply,
+                                "timestamp": time.time(),
+                            },
+                        )
+                        await self.speak(
+                            dispatch_turn.bot_reply,
+                            mark_name=f"dispatch_turn_{self._current_turn_id}",
+                        )
+
+                        if dispatch_turn.is_terminal:
+                            if dispatch_turn.is_accepted:
+                                if self.dispatch_context:
+                                    self.dispatch_context.status = "accepted"
+                                    self.dispatch_context.confirmation_phrase = (
+                                        dispatch_turn.confirmation_phrase
+                                    )
+                                    self.dispatch_context.confirmed_at = time.strftime("%I:%M %p")
+
+                                with Session(engine) as db:
+                                    if job_id:
+                                        db_job = db.get(Job, job_id)
+                                        if db_job:
+                                            db_job.status = "dispatched"
+                                            db_job.technician_id = tech_id
+                                            db.add(db_job)
+                                    if tech_id:
+                                        from app.models.domain import Technician
+
+                                        db_tech = db.get(Technician, tech_id)
+                                        if db_tech:
+                                            db_tech.status = "on_job"
+                                            db_tech.active_jobs_count += 1
+                                            db.add(db_tech)
+                                    db.commit()
+
+                                await hub.broadcast(
+                                    "dispatch.accepted",
+                                    {
+                                        "job_id": job_id,
+                                        "technician_id": tech_id,
+                                        "technician_name": tech_name,
+                                        "confirmation_phrase": dispatch_turn.confirmation_phrase,
+                                        "confirmed_at": time.strftime("%I:%M %p"),
+                                        "timestamp": time.time(),
+                                    },
+                                )
+                            elif dispatch_turn.is_declined:
+                                if self.dispatch_context:
+                                    self.dispatch_context.status = "declined"
+                                await hub.broadcast(
+                                    "dispatch.declined",
+                                    {
+                                        "job_id": job_id,
+                                        "technician_id": tech_id,
+                                        "technician_name": tech_name,
+                                        "timestamp": time.time(),
+                                    },
+                                )
+                                from app.services.dispatch_service import DispatchService
+
+                                asyncio.create_task(DispatchService.dispatch_job(job_id=job_id))
+                        continue
+
                     # Phase 3: Process turn via Booking Brain FSM
                     brain_result = self.brain.process_utterance(transcript.text)
 
@@ -457,6 +560,24 @@ class CallSession:
                                 **brain_result.job_payload,
                             },
                         )
+
+                        # Auto-dispatch if enabled in BusinessSettings
+                        try:
+                            from sqlmodel import select
+
+                            from app.models.domain import BusinessSettings
+                            from app.services.dispatch_service import DispatchService
+
+                            with Session(engine) as db:
+                                b_settings = db.exec(select(BusinessSettings)).first()
+                                if b_settings and b_settings.auto_dispatch:
+                                    logger.info(
+                                        "Auto-dispatch enabled; triggering dispatch for job %s",
+                                        job_id,
+                                    )
+                                    asyncio.create_task(DispatchService.dispatch_job(job_id=job_id))
+                        except Exception as auto_err:
+                            logger.warning("Auto-dispatch trigger failed: %s", auto_err)
 
                     if brain_result.needs_handoff:
                         if brain_result.is_urgent:
