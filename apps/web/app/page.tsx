@@ -18,10 +18,16 @@ export default function HomePage() {
 
       <nav className="flex flex-col items-center gap-3 sm:flex-row">
         <Link
-          href="/design"
-          className="rounded-md bg-primary px-6 py-2.5 text-sm font-semibold text-primary-fg transition-colors hover:bg-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+          href="/app"
+          className="rounded-xl bg-primary px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-primary/90 focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
         >
-          Design QA →
+          Enter Dashboard →
+        </Link>
+        <Link
+          href="/design"
+          className="rounded-xl border border-border bg-card px-6 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-muted"
+        >
+          Design System QA
         </Link>
       </nav>
 

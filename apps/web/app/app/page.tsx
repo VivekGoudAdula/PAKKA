@@ -247,7 +247,7 @@ export default function OverviewPage() {
               <ShieldCheck className="w-4 h-4 text-emerald-600" />
               <span>Digital assistant identity announced</span>
             </span>
-            <span className="italic">"Main Ramesh bhai ki digital sahayak..."</span>
+            <span className="italic">&ldquo;Main Ramesh bhai ki digital sahayak...&rdquo;</span>
           </div>
         </div>
 

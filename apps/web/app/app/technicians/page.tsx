@@ -83,13 +83,13 @@ export default function TechniciansPage() {
 
       {/* Technicians Grid */}
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
             <Skeleton key={i} className="h-64 w-full rounded-2xl" />
           ))}
         </div>
       ) : technicians && technicians.length > 0 ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
           {technicians.map((tech) => (
             <div
               key={tech.id}
@@ -97,7 +97,7 @@ export default function TechniciansPage() {
             >
               <div>
                 {/* Tech Profile Row */}
-                <div className="flex items-start justify-between gap-3">
+                <div className="flex flex-wrap items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <Avatar size="lg" className="border-2 border-primary/20 bg-primary/10 text-primary font-bold">
                       <AvatarFallback className="bg-primary/10 text-primary font-bold">

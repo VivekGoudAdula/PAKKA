@@ -13,8 +13,8 @@
 - [ ] **Phase 1 — Voice Pipeline + Exotel Echo Test** (code complete, live test PENDING USER)  
   Exotel AgentStream bidirectional WS audio bridge, Gnani STT Prisma v3.0 & Timbre v2.5 TTS echo loop, Energy VAD barge-in with 500ms grace period, echo-loop guard (400ms), 10s connection timeouts, telephony simulator & smoke test scripts.
 
-- [ ] **Phase 2 — App Shell + Seeded Screens**  
-  Premium light dashboard working in DEMO mode with synthetic seed data. Collapsible sidebar, mobile bottom nav, simulated clock with fast-forward, command palette, LIVE/DEMO toggle. Screens: Overview, Calls, Jobs, Technicians, Payments, Settings.
+- [x] **Phase 2 — App Shell + Seeded Screens**  
+  Premium light dashboard working in DEMO mode with synthetic seed data. Collapsible sidebar, mobile bottom nav, simulated clock with fast-forward, command palette, LIVE/DEMO toggle. Screens: Overview, Calls, Jobs, Technicians, Payments, Settings. Captured 18 responsive screenshots at 360, 768, and 1440 px with zero horizontal overflow.
 
 - [ ] **Phase 3 — Booking Brain**  
   Booking conversation FSM (greeting → problem → address → slot → price_confirm → confirm → done), rule-based extractor, price list, booking database storage, full test suite.

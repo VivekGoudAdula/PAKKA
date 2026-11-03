@@ -68,14 +68,14 @@ export default function JobsPage() {
           ))}
         </div>
       ) : (
-        <div className="flex gap-4 overflow-x-auto pb-6 pt-1 snap-x snap-mandatory scroll-smooth -mx-4 px-4 sm:mx-0 sm:px-0">
+        <div className="flex gap-4 overflow-x-auto pb-6 pt-1 snap-x snap-mandatory scroll-smooth w-full max-w-full">
           {COLUMNS.map((column) => {
             const columnJobs = getJobsByColumn(column.id);
 
             return (
               <div
                 key={column.id}
-                className="w-[85vw] sm:w-[320px] shrink-0 snap-center flex flex-col rounded-2xl border border-border bg-card/60 p-3 shadow-2xs"
+                className="w-[280px] sm:w-[320px] shrink-0 snap-center flex flex-col rounded-2xl border border-border bg-card/60 p-3 shadow-2xs"
               >
                 {/* Column Header */}
                 <div className="flex items-center justify-between px-2 py-2 mb-2">

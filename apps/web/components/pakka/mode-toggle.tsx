@@ -34,7 +34,7 @@ export function ModeToggle({ className }: { className?: string }) {
         size="sm"
         onClick={() => mode !== "DEMO" && handleToggle()}
         className={cn(
-          "h-7 rounded-full px-3 text-xs font-semibold transition-all",
+          "h-6 sm:h-7 rounded-full px-2 sm:px-3 text-[11px] sm:text-xs font-semibold transition-all",
           mode === "DEMO"
             ? "bg-primary text-primary-fg shadow-xs"
             : "text-muted hover:text-ink"
@@ -47,7 +47,7 @@ export function ModeToggle({ className }: { className?: string }) {
         size="sm"
         onClick={() => mode !== "LIVE" && handleToggle()}
         className={cn(
-          "h-7 rounded-full px-3 text-xs font-semibold transition-all",
+          "h-6 sm:h-7 rounded-full px-2 sm:px-3 text-[11px] sm:text-xs font-semibold transition-all",
           mode === "LIVE"
             ? "bg-success text-white shadow-xs"
             : "text-muted hover:text-ink"

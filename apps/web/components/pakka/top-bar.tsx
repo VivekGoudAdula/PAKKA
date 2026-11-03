@@ -27,9 +27,9 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-20 w-full h-16 border-b border-border bg-card/80 backdrop-blur-md px-3 sm:px-6 flex items-center justify-between gap-3">
+    <header className="sticky top-0 z-20 w-full h-16 border-b border-border bg-card/80 backdrop-blur-md px-2.5 sm:px-6 flex items-center justify-between gap-1.5 sm:gap-3">
       {/* Left: Mobile Brand / Title */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
         <div className="md:hidden">
           <PakkaLogo size="sm" showTagline={false} />
         </div>
@@ -47,14 +47,16 @@ export function TopBar({ onOpenCommand }: TopBarProps) {
       </div>
 
       {/* Right: Clock Chip + Mode Toggle + Settings */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-1 sm:gap-3 shrink-0">
         <ClockChip />
         <ModeToggle />
-        <Link href="/app/settings">
-          <Button variant="ghost" size="icon-sm" aria-label="Settings">
-            <Settings className="w-4 h-4 text-muted-foreground hover:text-foreground" />
-          </Button>
-        </Link>
+        <div className="hidden sm:block">
+          <Link href="/app/settings">
+            <Button variant="ghost" size="icon-sm" aria-label="Settings">
+              <Settings className="w-4 h-4 text-muted-foreground hover:text-foreground" />
+            </Button>
+          </Link>
+        </div>
       </div>
     </header>
   );

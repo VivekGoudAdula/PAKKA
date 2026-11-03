@@ -86,7 +86,7 @@ export default function CallsPage() {
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border overflow-x-auto">
+        <div className="flex items-center gap-1.5 p-1 bg-muted/60 rounded-xl border border-border overflow-x-auto max-w-full">
           {STATUS_FILTERS.map((f) => (
             <button
               key={f.value}
@@ -116,10 +116,10 @@ export default function CallsPage() {
             <div
               key={call.id}
               onClick={() => setSelectedCall(call)}
-              className="p-4 sm:p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all cursor-pointer shadow-xs hover:shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="p-4 sm:p-5 rounded-2xl border border-border bg-card hover:border-primary/50 transition-all cursor-pointer shadow-xs hover:shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 overflow-hidden"
             >
-              <div className="space-y-1.5">
-                <div className="flex items-center gap-2.5">
+              <div className="space-y-1.5 min-w-0 flex-1">
+                <div className="flex flex-wrap items-center gap-2">
                   <span className="font-bold text-base text-ink tracking-tight">
                     {call.customer_name || "Unknown Customer"}
                   </span>
@@ -135,25 +135,25 @@ export default function CallsPage() {
 
                 <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-muted-foreground pt-1">
                   <span className="flex items-center gap-1">
-                    <Clock className="w-3.5 h-3.5 text-primary" />
+                    <Clock className="w-3.5 h-3.5 text-primary shrink-0" />
                     <span>{call.timestamp} ({call.duration_seconds}s)</span>
                   </span>
                   {call.extracted_slots.landmark_address && (
-                    <span className="flex items-center gap-1">
-                      <MapPin className="w-3.5 h-3.5 text-primary" />
-                      <span>{call.extracted_slots.landmark_address}</span>
+                    <span className="flex items-center gap-1 min-w-0">
+                      <MapPin className="w-3.5 h-3.5 text-primary shrink-0" />
+                      <span className="truncate">{call.extracted_slots.landmark_address}</span>
                     </span>
                   )}
                   {call.extracted_slots.time_slot && (
                     <span className="flex items-center gap-1">
-                      <Calendar className="w-3.5 h-3.5 text-primary" />
+                      <Calendar className="w-3.5 h-3.5 text-primary shrink-0" />
                       <span>{call.extracted_slots.time_slot}</span>
                     </span>
                   )}
                 </div>
               </div>
 
-              <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40">
+              <div className="flex items-center justify-between sm:justify-end gap-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-border/40 shrink-0">
                 <div className="text-right hidden sm:block">
                   <span className="text-xs font-semibold text-emerald-700 block">
                     {call.extracted_slots.price_range_min && call.extracted_slots.price_range_max

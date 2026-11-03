@@ -49,11 +49,11 @@ export function ClockChip() {
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="outline" size="sm" />}>
         <div className="flex items-center gap-1.5 text-xs font-medium text-ink">
-          <Clock className="w-3.5 h-3.5 text-primary animate-pulse" />
-          <span className="font-semibold text-primary">{formattedDate}</span>
+          <Clock className="w-3.5 h-3.5 text-primary shrink-0 animate-pulse" />
+          <span className="hidden sm:inline font-semibold text-primary">{formattedDate}</span>
           <span className="text-muted-foreground">{formattedTime}</span>
           {isShifted && (
-            <span className="ml-1 rounded bg-primary/10 px-1 py-0.2 text-[10px] font-bold text-primary">
+            <span className="rounded bg-primary/10 px-1 py-0.2 text-[10px] font-bold text-primary">
               +{daysOffset > 0 ? `${daysOffset}d ` : ""}{hoursOffset > 0 ? `${hoursOffset % 24}h` : ""}
             </span>
           )}
