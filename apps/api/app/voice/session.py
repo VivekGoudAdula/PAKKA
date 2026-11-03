@@ -17,8 +17,9 @@ from collections.abc import Callable, Coroutine
 from dataclasses import dataclass, field
 from typing import Any
 
+from app.config import settings
 from app.events.hub import hub
-from app.voice.audio import ExotelAudioAccumulator, Rechunker, pcm_to_base64
+from app.voice.audio import EnergyVAD, ExotelAudioAccumulator, Rechunker, pcm_to_base64
 from app.voice.gnani_stt import GnaniSTTClient
 from app.voice.gnani_tts import GnaniTTSClient
 
@@ -76,9 +77,18 @@ class CallSession:
         self.tts = tts_client or GnaniTTSClient()
 
         self.rechunker = Rechunker(target_chunk_size=1024)
+        self.vad = EnergyVAD(
+            rms_threshold=settings.vad_energy_threshold,
+            required_consecutive_chunks=2,
+        )
         self.metrics = CallSessionMetrics(call_sid=call_sid)
 
         self._bot_is_speaking = False
+        self._bot_utterance_start_time: float = 0.0
+        self._barge_in_triggered_for_utterance: bool = False
+        self._barge_in_active: bool = False
+        self._last_playback_finished_time: float = 0.0
+
         self._current_tts_task: asyncio.Task[None] | None = None
         self._current_turn_id = 0
         self._is_active = True
@@ -120,17 +130,28 @@ class CallSession:
     async def handle_caller_audio(self, pcm_chunk: bytes) -> None:
         """
         Handle audio received from Exotel (caller).
+        - Analyzes chunk energy via VAD.
+        - Checks for barge-in ONLY if speech is detected (2 consecutive speech chunks)
+          and the 500 ms initial utterance grace period has passed.
         - Rechunks to 1024 bytes and streams to Gnani STT.
-        - Checks for barge-in if bot is speaking.
         """
         if not self._is_active or not pcm_chunk:
             return
 
         self.metrics.total_caller_audio_bytes += len(pcm_chunk)
 
-        # Check for barge-in: caller spoke while assistant was speaking
+        # Check for barge-in if assistant is speaking
         if self._bot_is_speaking:
-            await self.barge_in()
+            elapsed = time.monotonic() - self._bot_utterance_start_time
+            if elapsed >= 0.500:
+                # After 500 ms grace period, evaluate energy VAD
+                is_speech = self.vad.process_chunk(pcm_chunk)
+                if is_speech and not self._barge_in_triggered_for_utterance:
+                    logger.info("Barge-in triggered via energy VAD on call_sid=%s", self.call_sid)
+                    await self.barge_in()
+            else:
+                # Within initial 500 ms, ignore barge-in and reset VAD counter
+                self.vad.reset()
 
         # Rechunk and send to Gnani STT
         for frame in self.rechunker.add(pcm_chunk):
@@ -141,10 +162,16 @@ class CallSession:
         Interrupt ongoing bot speech:
         - Sends Exotel 'clear' event to flush telephony buffer.
         - Cancels ongoing TTS task.
+        - Guarantees triggering at most once per utterance.
         """
-        logger.info("Barge-in triggered on call_sid=%s: clearing Exotel buffer", self.call_sid)
-        self.metrics.barge_in_count += 1
+        if self._barge_in_triggered_for_utterance:
+            return
+
+        self._barge_in_triggered_for_utterance = True
+        self._barge_in_active = True
         self._bot_is_speaking = False
+        self.metrics.barge_in_count += 1
+        logger.info("Barge-in triggered on call_sid=%s: clearing Exotel buffer", self.call_sid)
 
         if self._current_tts_task and not self._current_tts_task.done():
             self._current_tts_task.cancel()
@@ -176,6 +203,11 @@ class CallSession:
     async def _stream_speech(self, text: str, mark_name: str | None = None) -> None:
         """Internal speech streamer."""
         self._bot_is_speaking = True
+        self._bot_utterance_start_time = time.monotonic()
+        self._barge_in_triggered_for_utterance = False
+        self._barge_in_active = False
+        self.vad.reset()
+
         logger.info("Bot speaking on %s: '%s'", self.call_sid, text[:60])
 
         await hub.broadcast(
@@ -223,6 +255,9 @@ class CallSession:
             logger.info("TTS speech streaming cancelled (barge-in)")
         finally:
             self._bot_is_speaking = False
+            if not self._barge_in_active:
+                # Approximate end of playback buffer if mark is delayed
+                self._last_playback_finished_time = time.monotonic()
 
     async def _send_media_to_exotel(self, pcm_data: bytes) -> None:
         """Helper to send a media frame to Exotel."""
@@ -260,7 +295,42 @@ class CallSession:
                     },
                 )
 
+                # STT-based barge-in: non-empty text arriving after 500 ms while bot is speaking
+                if self._bot_is_speaking:
+                    elapsed = time.monotonic() - self._bot_utterance_start_time
+                    if (
+                        elapsed >= 0.500
+                        and transcript.text.strip()
+                        and not self._barge_in_triggered_for_utterance
+                    ):
+                        logger.info(
+                            "Barge-in triggered via STT transcript on %s: '%s'",
+                            self.call_sid,
+                            transcript.text,
+                        )
+                        await self.barge_in()
+
                 if transcript.is_final:
+                    # Echo-loop guard: while bot is speaking or until 400 ms after playback ends,
+                    # discard STT finals, unless barge-in was explicitly triggered by user speech.
+                    now = time.monotonic()
+                    time_since_playback = now - self._last_playback_finished_time
+                    in_echo_guard = self._bot_is_speaking or (time_since_playback < 0.400)
+
+                    if in_echo_guard and not self._barge_in_active:
+                        logger.info(
+                            "Echo-loop guard: Discarded STT final '%s' on %s "
+                            "(bot_speaking=%s, time_since_end=%.3fs)",
+                            transcript.text,
+                            self.call_sid,
+                            self._bot_is_speaking,
+                            time_since_playback,
+                        )
+                        continue
+
+                    # Clear turn barge-in flag as we begin responding to caller's input
+                    self._barge_in_active = False
+
                     self._current_turn_id += 1
                     turn_start = time.monotonic()
                     logger.info(
@@ -290,7 +360,13 @@ class CallSession:
 
     async def handle_mark(self, mark_name: str) -> None:
         """Acknowledge mark event from Exotel (playback reached end)."""
-        logger.info("Mark reached on %s: %s", self.call_sid, mark_name)
+        self._last_playback_finished_time = time.monotonic()
+        logger.info(
+            "Mark reached on %s: %s (playback finished at %.3f)",
+            self.call_sid,
+            mark_name,
+            self._last_playback_finished_time,
+        )
 
     async def close(self, reason: str = "callended") -> None:
         """Tear down session, close STT, print observability latency table."""

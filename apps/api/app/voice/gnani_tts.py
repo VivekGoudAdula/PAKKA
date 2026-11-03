@@ -11,6 +11,8 @@ import contextlib
 import json
 import logging
 import math
+import socket
+import ssl
 import time
 from collections.abc import AsyncGenerator
 
@@ -80,16 +82,16 @@ class GnaniTTSClient:
         first_chunk_received = False
 
         if self.dry_run:
-            logger.info("GnaniTTSClient: [DRY_RUN] synthesizing text: '%s'", text[:60])
+            logger.info("GnaniTTSClient: [SYNTHETIC] synthesizing text: '%s'", text[:60])
             # Simulate realistic time-to-first-chunk ~250ms
             await asyncio.sleep(0.25)
-            # Yield ~1.5s of synthetic PCM in 3200-byte chunks
-            synth_pcm = generate_synthetic_pcm(duration_ms=1200, sample_rate=self.sample_rate)
+            # Yield ~2.4s of synthetic PCM in 3200-byte chunks at ~180ms cadence
+            synth_pcm = generate_synthetic_pcm(duration_ms=2400, sample_rate=self.sample_rate)
             chunk_size = 3200
             for i in range(0, len(synth_pcm), chunk_size):
                 chunk = synth_pcm[i : i + chunk_size]
                 yield chunk
-                await asyncio.sleep(0.04)
+                await asyncio.sleep(0.18)
             return
 
         headers = {"X-API-Key-ID": self.api_key}
@@ -103,14 +105,37 @@ class GnaniTTSClient:
 
         ws: WebSocketClientProtocol | None = None
         try:
-            ws = await websockets.connect(
-                self.ws_url,
-                additional_headers=headers,
-                ping_interval=20,
-                ping_timeout=10,
-                close_timeout=5,
-            )
+            async with asyncio.timeout(10.0):
+                ws = await websockets.connect(
+                    self.ws_url,
+                    additional_headers=headers,
+                    ping_interval=20,
+                    ping_timeout=10,
+                    close_timeout=5,
+                    open_timeout=10.0,
+                )
+        except TimeoutError as exc:
+            err_type = "Connection Timeout (10s exceeded)"
+            logger.error("Failed to connect to Gnani TTS: %s", err_type)
+            raise RuntimeError(f"Gnani TTS Failure: {err_type}") from exc
+        except websockets.InvalidStatusCode as exc:
+            err_type = f"Auth / HTTP Rejected (HTTP {exc.status_code})"
+            logger.error("Failed to connect to Gnani TTS: %s", err_type)
+            raise RuntimeError(f"Gnani TTS Failure: {err_type}") from exc
+        except ssl.SSLError as exc:
+            err_type = f"TLS / SSL Handshake Error ({type(exc).__name__})"
+            logger.error("Failed to connect to Gnani TTS: %s", err_type)
+            raise RuntimeError(f"Gnani TTS Failure: {err_type}") from exc
+        except (socket.gaierror, OSError) as exc:
+            err_type = f"DNS Resolution / Network Unreachable ({type(exc).__name__})"
+            logger.error("Failed to connect to Gnani TTS: %s", err_type)
+            raise RuntimeError(f"Gnani TTS Failure: {err_type}") from exc
+        except Exception as exc:
+            err_type = f"Connection Failed ({type(exc).__name__})"
+            logger.error("Failed to connect to Gnani TTS: %s", err_type)
+            raise RuntimeError(f"Gnani TTS Failure: {err_type}") from exc
 
+        try:
             # Build synthesis payload
             request_payload = {
                 "text": text.strip(),

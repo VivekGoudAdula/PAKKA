@@ -5,11 +5,13 @@ PacedSender math, base64 helpers, and Hindi number phonetization.
 """
 
 from app.voice.audio import (
+    EnergyVAD,
     ExotelAudioAccumulator,
     PacedSender,
     Rechunker,
     base64_to_pcm,
     calculate_pcm_duration_ms,
+    calculate_pcm_rms,
     number_to_spoken_words,
     pcm_to_base64,
 )
@@ -131,3 +133,49 @@ class TestNumberToSpokenWords:
         assert number_to_spoken_words(150) == "ek sau pachaas"
         assert number_to_spoken_words(450) == "chaar sau pachaas"
         assert number_to_spoken_words(1200) == "ek hazaar do sau"
+
+
+class TestEnergyVAD:
+    def test_rms_silence_and_noise(self) -> None:
+        """Silence (0) and low noise (amplitude 40) must have low RMS."""
+        silence = b"\x00" * 1600
+        assert calculate_pcm_rms(silence) == 0.0
+
+        # Low noise chunk: alternating +/- 40
+        noise_samples = [40 if i % 2 == 0 else -40 for i in range(800)]
+        import struct
+
+        noise_bytes = struct.pack(f"<{len(noise_samples)}h", *noise_samples)
+        rms = calculate_pcm_rms(noise_bytes)
+        assert 39.0 <= rms <= 41.0
+
+    def test_vad_consecutive_speech_threshold(self) -> None:
+        """VAD requires 2 consecutive speech chunks to declare speech."""
+        vad = EnergyVAD(rms_threshold=500.0, required_consecutive_chunks=2)
+        import struct
+
+        speech_samples = [3000 if i % 2 == 0 else -3000 for i in range(800)]
+        speech_bytes = struct.pack(f"<{len(speech_samples)}h", *speech_samples)
+
+        noise_samples = [50 if i % 2 == 0 else -50 for i in range(800)]
+        noise_bytes = struct.pack(f"<{len(noise_samples)}h", *noise_samples)
+
+        # 1st noise chunk -> False
+        assert vad.process_chunk(noise_bytes) is False
+        assert vad.consecutive_speech_chunks == 0
+
+        # 1st speech chunk -> False (needs 2 consecutive)
+        assert vad.process_chunk(speech_bytes) is False
+        assert vad.consecutive_speech_chunks == 1
+
+        # Interleaved noise -> resets counter back to 0
+        assert vad.process_chunk(noise_bytes) is False
+        assert vad.consecutive_speech_chunks == 0
+
+        # 1st speech chunk -> False
+        assert vad.process_chunk(speech_bytes) is False
+        assert vad.consecutive_speech_chunks == 1
+
+        # 2nd consecutive speech chunk -> True!
+        assert vad.process_chunk(speech_bytes) is True
+        assert vad.consecutive_speech_chunks == 2

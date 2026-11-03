@@ -65,16 +65,22 @@ async def run_simulator(
     audio_path: str = "samples/sample_plumber_request.wav",
     output_path: str = "samples/reply.wav",
     test_barge_in: bool = False,
+    live_gnani: bool = False,
 ) -> None:
     """Run full Exotel simulated call loop."""
     print("=" * 65)
     print("  PAKKA — EXOTEL TELEPHONY PROTOCOL SIMULATOR")
     print("=" * 65)
-    print(f"Target WebSocket: {ws_url}")
+    mode_str = "LIVE GNANI (api.vachana.ai)" if live_gnani else "DRY RUN (SYNTHETIC)"
+    print(f"Mode:            {mode_str}")
+    print(f"Target WebSocket:{ws_url}")
     print(f"Input audio:     {audio_path}")
     print(f"Output audio:    {output_path}")
     print(f"Barge-in test:   {test_barge_in}")
     print("-" * 65)
+
+    if live_gnani and "?" not in ws_url:
+        ws_url = f"{ws_url}?live_gnani=true"
 
     audio_file = Path(audio_path)
     if not audio_file.exists():
@@ -150,9 +156,10 @@ async def run_simulator(
 
             # 2. Send 'start' event
             logger.info(
-                "<< Sending 'start' event (stream_sid=%s, call_sid=%s)",
+                "<< Sending 'start' event (stream_sid=%s, call_sid=%s, live_gnani=%s)",
                 stream_sid,
                 call_sid,
+                live_gnani,
             )
             await ws.send(
                 json.dumps(
@@ -162,6 +169,9 @@ async def run_simulator(
                         "call_sid": call_sid,
                         "from": "+919876543210",
                         "to": "+918045678901",
+                        "custom_parameters": {
+                            "live_gnani": "true" if live_gnani else "false"
+                        },
                         "media_format": {
                             "encoding": "audio/x-l16",
                             "sample_rate": sample_rate,
@@ -291,6 +301,11 @@ def main() -> None:
     parser.add_argument(
         "--barge-in", action="store_true", help="Test barge-in interruption"
     )
+    parser.add_argument(
+        "--live-gnani",
+        action="store_true",
+        help="Run real Gnani STT/TTS pipeline instead of synthetic dry-run",
+    )
     args = parser.parse_args()
 
     asyncio.run(
@@ -299,6 +314,7 @@ def main() -> None:
             audio_path=args.audio,
             output_path=args.output,
             test_barge_in=args.barge_in,
+            live_gnani=args.live_gnani,
         )
     )
 

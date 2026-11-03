@@ -10,6 +10,7 @@ Follow these rules without exception across all sessions and phases.
 - Stop calling immediately on "wrong number". Never threaten or abuse anyone.
 - Only synthetic data (no real names, phone numbers, Aadhaar, PAN, recordings).
 - No secrets in repo (.env gitignored, .env.example kept current).
+- Never open, print or log .env or any secret value. Check only whether an env var is set (true/false).
 
 ## 2. Technology Guidelines
 - Web: Next.js App Router, TypeScript strict, Tailwind CSS, shadcn/ui, Framer Motion, lucide-react, sonner, TanStack Query, zustand.

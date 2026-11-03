@@ -121,6 +121,7 @@ End every phase with a **PHASE REPORT** in exactly this format:
 - `.env` is in `.gitignore`.
 - `.env.example` must always be up to date with every new variable added.
 - Never log or print actual secret values.
+- Never open, print or log .env or any secret value. Check only whether an env var is set (true/false).
 
 ---
 

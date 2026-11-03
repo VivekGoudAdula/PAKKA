@@ -9,6 +9,8 @@ import asyncio
 import contextlib
 import json
 import logging
+import socket
+import ssl
 import time
 from collections.abc import AsyncGenerator
 from dataclasses import dataclass
@@ -92,9 +94,9 @@ class GnaniSTTClient:
         }
 
     async def connect(self) -> None:
-        """Open the WebSocket connection to Gnani STT."""
+        """Open the WebSocket connection to Gnani STT with a 10s connect timeout."""
         if self.dry_run:
-            logger.info("GnaniSTTClient: [DRY_RUN] mode active. External connection skipped.")
+            logger.info("GnaniSTTClient: [SYNTHETIC] mode active. External connection skipped.")
             self._connected = True
             return
 
@@ -107,20 +109,42 @@ class GnaniSTTClient:
         )
 
         try:
-            # Pass upgrade headers using additional_headers for websockets v12+
-            self._ws = await websockets.connect(
-                self.ws_url,
-                additional_headers=headers,
-                ping_interval=20,
-                ping_timeout=10,
-                close_timeout=5,
-            )
-            self._connected = True
-            logger.info("Gnani STT WebSocket connected successfully")
+            async with asyncio.timeout(10.0):
+                self._ws = await websockets.connect(
+                    self.ws_url,
+                    additional_headers=headers,
+                    ping_interval=20,
+                    ping_timeout=10,
+                    close_timeout=5,
+                    open_timeout=10.0,
+                )
+                self._connected = True
+                logger.info("Gnani STT WebSocket connected successfully")
+        except TimeoutError as exc:
+            self._connected = False
+            err_type = "Connection Timeout (10s exceeded)"
+            logger.error("Failed to connect to Gnani STT: %s", err_type)
+            raise RuntimeError(f"Gnani STT Failure: {err_type}") from exc
+        except websockets.InvalidStatusCode as exc:
+            self._connected = False
+            err_type = f"Auth / HTTP Rejected (HTTP {exc.status_code})"
+            logger.error("Failed to connect to Gnani STT: %s", err_type)
+            raise RuntimeError(f"Gnani STT Failure: {err_type}") from exc
+        except ssl.SSLError as exc:
+            self._connected = False
+            err_type = f"TLS / SSL Handshake Error ({type(exc).__name__})"
+            logger.error("Failed to connect to Gnani STT: %s", err_type)
+            raise RuntimeError(f"Gnani STT Failure: {err_type}") from exc
+        except (socket.gaierror, OSError) as exc:
+            self._connected = False
+            err_type = f"DNS Resolution / Network Unreachable ({type(exc).__name__})"
+            logger.error("Failed to connect to Gnani STT: %s", err_type)
+            raise RuntimeError(f"Gnani STT Failure: {err_type}") from exc
         except Exception as exc:
             self._connected = False
-            logger.error("Failed to connect to Gnani STT: %s", exc)
-            raise
+            err_type = f"Connection Failed ({type(exc).__name__})"
+            logger.error("Failed to connect to Gnani STT: %s", err_type)
+            raise RuntimeError(f"Gnani STT Failure: {err_type}") from exc
 
     async def send_frame(self, pcm_frame: bytes) -> None:
         """
@@ -176,6 +200,10 @@ class GnaniSTTClient:
 
             # Simulate realistic VAD + model latency (~200ms)
             await asyncio.sleep(0.2)
+            logger.info(
+                "[SYNTHETIC] Gnani STT generated simulated transcript: '%s'",
+                "Geyser kharab hai paani garam nahi ho raha",
+            )
             yield STTTranscript(
                 text="Geyser kharab hai paani garam nahi ho raha",
                 is_final=True,

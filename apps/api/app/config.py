@@ -55,6 +55,10 @@ class Settings(BaseSettings):
     gnani_stt_vad_threshold: float = Field(default=0.7, description="STT VAD threshold")
     gnani_stt_min_speech_ms: int = Field(default=200, description="STT min speech in ms")
     gnani_stt_min_silence_ms: int = Field(default=500, description="STT min silence in ms")
+    vad_energy_threshold: float = Field(
+        default=600.0,
+        description="RMS energy threshold for local telephony VAD speech detection",
+    )
     gnani_stt_format: str = Field(default="codemix", description="STT format (codemix/verbatim)")
     gnani_stt_keyterms: str = Field(
         default="geyser,tap,leak,motor,pipe,bathroom,kitchen",

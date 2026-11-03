@@ -11,6 +11,8 @@ Handles:
 
 import asyncio
 import base64
+import math
+import struct
 import time
 from collections.abc import Iterator
 
@@ -32,6 +34,58 @@ def calculate_pcm_duration_ms(byte_count: int, sample_rate: int = 8000) -> float
     """
     bytes_per_second = sample_rate * 2
     return (byte_count / bytes_per_second) * 1000.0
+
+
+def calculate_pcm_rms(pcm_bytes: bytes) -> float:
+    """
+    Calculate Root Mean Square (RMS) energy of 16-bit linear PCM mono audio.
+    Used for local voice activity detection (VAD).
+    """
+    num_samples = len(pcm_bytes) // 2
+    if num_samples == 0:
+        return 0.0
+
+    samples = struct.unpack(f"<{num_samples}h", pcm_bytes[: num_samples * 2])
+    sum_squares = sum(s * s for s in samples)
+    return math.sqrt(sum_squares / num_samples)
+
+
+class EnergyVAD:
+    """
+    Voice Activity Detector based on PCM RMS energy.
+    Requires `required_consecutive_chunks` consecutive chunks above `rms_threshold`
+    to declare speech detection.
+    """
+
+    def __init__(self, rms_threshold: float = 600.0, required_consecutive_chunks: int = 2) -> None:
+        self.rms_threshold = rms_threshold
+        self.required_consecutive_chunks = required_consecutive_chunks
+        self._consecutive_speech_chunks = 0
+
+    @property
+    def consecutive_speech_chunks(self) -> int:
+        return self._consecutive_speech_chunks
+
+    def reset(self) -> None:
+        """Reset the consecutive speech chunks counter."""
+        self._consecutive_speech_chunks = 0
+
+    def is_speech_chunk(self, pcm_chunk: bytes) -> bool:
+        """Check if a single chunk's RMS energy meets or exceeds the threshold."""
+        return calculate_pcm_rms(pcm_chunk) >= self.rms_threshold
+
+    def process_chunk(self, pcm_chunk: bytes) -> bool:
+        """
+        Process incoming chunk and return True if required consecutive speech chunks
+        are achieved.
+        """
+        if self.is_speech_chunk(pcm_chunk):
+            self._consecutive_speech_chunks += 1
+            if self._consecutive_speech_chunks >= self.required_consecutive_chunks:
+                return True
+        else:
+            self._consecutive_speech_chunks = 0
+        return False
 
 
 class Rechunker:

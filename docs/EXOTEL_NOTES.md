@@ -162,3 +162,4 @@ To initiate outbound calls (for technician dispatch in Phase 6 or testing):
 5. Enter **Stream URL**: `wss://<your-public-domain>/ws/exotel`.
 6. Select audio format `PCM 8000 Hz, 16-bit linear`.
 7. Link your virtual ExoPhone number to this Flow.
+
