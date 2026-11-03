@@ -121,8 +121,94 @@ See `/docs/ARCHITECTURE.md` for full details.
 - [Architecture](docs/ARCHITECTURE.md)
 - [Design System](docs/DESIGN_SYSTEM.md)
 - [Gnani API Notes](docs/GNANI_API_NOTES.md)
+- [Exotel Notes](docs/EXOTEL_NOTES.md)
 - [Phase Plan](docs/PHASES.md)
 - [Agent Rules](docs/AGENT_RULES.md)
+
+---
+
+## Phase 1: Voice Pipeline & Telephony Guide
+
+### Architecture & Bridging Rules
+1. **Exotel -> Gnani STT**: Exotel delivers ~1600-byte raw PCM chunks every ~100 ms. The internal `Rechunker` strictly buffers and yields exact 1024-byte frames at real-time 64 ms cadence (at 8000 Hz linear16 mono) to Gnani Prisma v3.0 (`wss://api.vachana.ai/stt/v3/stream`).
+2. **Gnani TTS -> Exotel**: Audio from Gnani Timbre (`wss://api.vachana.ai/api/v1/tts`) is accumulated via `ExotelAudioAccumulator` into frames that meet Exotel's strict constraints: **minimum 3200 bytes** and **exact multiple of 320 bytes**.
+3. **Barge-in Support**: When a caller speaks while the assistant is speaking, the server interrupts TTS synthesis and dispatches an Exotel `clear` frame to immediately flush buffered audio on the telephony line.
+4. **Mandatory Disclosure**: Every call opens with: *"Namaste, Pakka demo shop ki digital sahayak bol rahi hoon. Bataiye, kya kaam hai?"*.
+
+---
+
+### Exotel Dashboard Setup (Click-by-Click)
+
+1. Log in to your [Exotel Dashboard](https://my.exotel.com).
+2. Navigate to **App Bazaar** > **Create Flow** (or **Installed Apps**).
+3. Drag the **Voicebot** (or **Stream**) applet into your call flow.
+4. In the applet configuration panel:
+   - **Stream URL**: Set to `wss://<YOUR_PUBLIC_TUNNEL_DOMAIN>/ws/exotel` (e.g. `wss://xxxx.ngrok-free.app/ws/exotel`).
+   - **Stream Type / Direction**: `Bidirectional`.
+   - **Media Format**: `audio/x-l16` (Linear PCM), `8000 Hz`, `1 channel (mono)`.
+5. Connect the start node to the Voicebot applet and connect the hangup / completed node.
+6. Click **Save** and assign this flow to your virtual **ExoPhone** number under **Numbers / Call Routing**.
+
+---
+
+### Tunnel Setup (Windows / Local Dev)
+
+To allow Exotel to connect to your local development machine:
+
+```powershell
+# Using Cloudflare Tunnel:
+cloudflared tunnel --url http://localhost:8000
+
+# OR using ngrok:
+ngrok http 8000
+```
+
+Copy the assigned HTTPS/WSS domain and update `.env`:
+```ini
+PUBLIC_WSS_URL=wss://your-subdomain.ngrok-free.app/ws/exotel
+```
+
+---
+
+### 6-Step Manual Test Guide
+
+1. **Start the API Server**:
+   ```powershell
+   cd apps/api
+   uvicorn app.main:app --reload --port 8000
+   ```
+2. **Run the Gnani Voice Smoke Test**:
+   ```powershell
+   python scripts/gnani_smoke.py
+   # Or offline dry-run:
+   python scripts/gnani_smoke.py --dry-run
+   ```
+   *Verifies Timbre TTS synthesis and Prisma STT transcription with latency tracking.*
+
+3. **Run the Exotel Telephony Simulator**:
+   ```powershell
+   python scripts/exotel_simulator.py --url ws://localhost:8000/ws/exotel
+   ```
+   *Connects to `/ws/exotel`, listens to greeting audio, streams `samples/sample_plumber_request.wav`, captures echo reply, and saves to `samples/reply.wav`.*
+
+4. **Verify Barge-in Interruption**:
+   ```powershell
+   python scripts/exotel_simulator.py --barge-in
+   ```
+   *Interprets assistant speech immediately with caller speech; verifies server returns `clear` event.*
+
+5. **Trigger an Outbound Call** (Optional / Live Telephony):
+   ```powershell
+   python scripts/exotel_connect_outbound.py --to +919876543210
+   ```
+   *Triggers Exotel's `Calls/connect` API using your credentials and routes audio to `PUBLIC_WSS_URL`.*
+
+6. **Inbound Call Test**:
+   - Dial your virtual ExoPhone number from your mobile.
+   - Verify greeting disclosure: *"Namaste, Pakka demo shop ki digital sahayak bol rahi hoon. Bataiye, kya kaam hai?"*.
+   - Speak your issue (e.g. *"Mera geyser kharab hai paani leak ho raha hai"*).
+   - Hear Pakka repeat: *"Aapne kaha: Mera geyser kharab hai paani leak ho raha hai"*.
+   - Inspect call summary and latency metrics printed in the API console.
 
 ---
 

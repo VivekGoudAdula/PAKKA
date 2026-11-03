@@ -93,4 +93,3 @@ async def ws_events(ws: WebSocket) -> None:
 
     except WebSocketDisconnect:
         hub.disconnect(ws)
-

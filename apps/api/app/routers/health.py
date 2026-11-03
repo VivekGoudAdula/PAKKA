@@ -26,4 +26,3 @@ class HealthResponse(BaseModel):
 async def health() -> HealthResponse:
     """Return a simple health status."""
     return HealthResponse(status="ok", version="0.1.0")
-

@@ -12,6 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.config import settings
 from app.events.hub import router as events_router
 from app.routers.health import router as health_router
+from app.voice.exotel_ws import router as exotel_router
 
 logger = structlog.get_logger(__name__)
 
@@ -51,9 +52,9 @@ def create_app() -> FastAPI:
     # ── Routers ───────────────────────────────────────────────────────────────
     app.include_router(health_router)
     app.include_router(events_router)
+    app.include_router(exotel_router)
 
     return app
 
 
 app = create_app()
-

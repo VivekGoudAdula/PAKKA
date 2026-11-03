@@ -10,7 +10,7 @@
 - [x] **Phase 0 — Foundation**  
   Monorepo setup, docs, design tokens, fonts, component library smoke-tests, `/design` QA page, FastAPI health endpoint, tooling.
 
-- [ ] **Phase 1 — Voice Pipeline + Exotel Echo Test**  
+- [x] **Phase 1 — Voice Pipeline + Exotel Echo Test**  
   Read Exotel Voicebot docs, implement bidirectional WS audio bridge, proxy Gnani STT, Gnani TTS echo test (speak → transcribe → speak back), VAD tuning.
 
 - [ ] **Phase 2 — Brand + Landing Page**  
