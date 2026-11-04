@@ -113,6 +113,9 @@ class TestBookingFSM:
         utterance = "Geyser paani garam nahi kar raha, Mayur Vihar Pocket 1, shaam 5 baje aa jao"
         latencies: list[float] = []
 
+        # Warm-up call to avoid first-run regex compilation noise
+        fsm.process_utterance(utterance)
+
         for _ in range(50):
             start = time.perf_counter()
             fsm.process_utterance(utterance)
@@ -168,7 +171,7 @@ class TestBookingFSM:
         assert res.is_urgent is True
         assert (
             res.bot_reply
-            == "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+            == "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
         )
 
     def test_custom_areas_extraction(self) -> None:

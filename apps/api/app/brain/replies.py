@@ -35,8 +35,11 @@ HANDOFF_MESSAGE = "Maaf kijiyega, main samajh nahi paayi. Main Ramesh bhai ko aa
 
 EMERGENCY_SAFETY_INSTRUCTION = (
     "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. "
-    "Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+    "Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. "
+    "Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
 )
+
+EMERGENCY_112_INSTRUCTION = "Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
 
 SILENCE_PROMPT_1 = "Hello? Kya aap mujhe sun pa rahe hain?"
 

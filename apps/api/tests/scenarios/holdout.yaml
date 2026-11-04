@@ -1,22 +1,107 @@
 # ==============================================================================
-# PAKKA HOLDOUT EVALUATION SCENARIOS
+# PAKKA HOLDOUT EVALUATION SCENARIOS (10 Lines)
 # ==============================================================================
-# This file contains unseen holdout evaluation scenarios.
-# 
-# FORMAT SPECIFICATION:
-# - id: scenario_holdout_01
-#   name: "Description of scenario"
-#   dialogue:
-#     - user: "Caller utterance"
-#   expected:
-#     final_state: "BOOKED" | "HANDOFF" | "ABANDONED"
-#     is_terminal: true
-#     slots:
-#       problem_key: "geyser_not_heating"
-#       landmark_address: "Address clause"
-#       time_slot: "Extracted slot"
-#
-# RULE: NEVER edit the extractor or FSM rules to make a holdout test pass.
-# Report all holdout results separately and await explicit approval.
+# RULE: DO NOT modify the extractor/FSM to make them pass;
+# report failures and wait for approval.
 # ==============================================================================
-[]
+
+- id: holdout_a_geyser_leak
+  name: "a) geezer se pani tapak raha hai neeche se"
+  description: "Problem extraction for geyser leakage"
+  dialogue:
+    - user: "bhaiya mera geezer se pani tapak raha hai neeche se"
+  expected:
+    final_state: "ASK_ADDRESS"
+    slots:
+      problem_key: "geyser_leak"
+
+- id: holdout_b_slot_and_address
+  name: "b) kal shaam ko aa jao, Saket ke peeche"
+  description: "Slot kal shaam and landmark address Saket ke peeche"
+  dialogue:
+    - user: "kal shaam ko aa jao, Saket ke peeche"
+  expected:
+    final_state: "ASK_PROBLEM"
+    slots:
+      time_slot: "Kal Shaam (5 PM – 7 PM)"
+      landmark_address: "Saket ke peeche"
+
+- id: holdout_c_bargaining_floor
+  name: "c) kitna lagega? bahut zyada hai, teen sau mein kar do"
+  description: "Bargaining intent holds price floor"
+  dialogue:
+    - user: "Geyser garam nahi kar raha, Saket Block A, kal subah"
+    - user: "kitna lagega? bahut zyada hai, teen sau mein kar do"
+  expected:
+    final_state: "READBACK"
+    expected_bot_reply: "Yeh hamare dukaan ke standard rates hain. Agar aap chahein toh main shop owner se keh kar callback karwa sakti hoon."
+
+- id: holdout_d_robot_inquiry
+  name: "d) kya tum insaan ho?"
+  description: "Honest AI disclosure and human callback offer"
+  dialogue:
+    - user: "kya tum insaan ho?"
+  expected:
+    expected_bot_reply: "Ji haan, main Pakka ki digital sahayak bol rahi hoon. Kya aap human owner se baat karna chahenge?"
+
+- id: holdout_e_malik_talk
+  name: "e) mujhe malik se baat karni hai"
+  description: "Immediate handoff on owner request with phone number"
+  dialogue:
+    - user: "mujhe malik se baat karni hai"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+
+- id: holdout_f_rehne_do
+  name: "f) nahi rehne do, kisi aur se karwa lenge"
+  description: "Explicit caller refusal leads to abandonment"
+  dialogue:
+    - user: "nahi rehne do, kisi aur se karwa lenge"
+  expected:
+    final_state: "ABANDONED"
+    is_terminal: true
+
+- id: holdout_g_hazard_current
+  name: "g) geyser se current aa raha hai"
+  description: "Safety hazard halts routine booking with safety instruction"
+  dialogue:
+    - user: "geyser se current aa raha hai"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+
+- id: holdout_h_all_three_slots
+  name: "h) aaj shaam ko aao, Mayur Vihar Pocket 1, geyser garam nahi kar raha"
+  description: "All 3 slots captured in turn 1"
+  dialogue:
+    - user: "aaj shaam ko aao, Mayur Vihar Pocket 1, geyser garam nahi kar raha"
+  expected:
+    final_state: "READBACK"
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Mayur Vihar Pocket 1"
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+
+- id: holdout_i_slot_correction
+  name: "i) subah nahi, shaam ko"
+  description: "Correction of slot to evening"
+  dialogue:
+    - user: "Geyser leak ho raha hai, Saket Block A"
+    - user: "subah nahi, shaam ko"
+  expected:
+    final_state: "READBACK"
+    slots:
+      time_slot: "Aaj Shaam (5 PM – 7 PM)"
+
+- id: holdout_j_confirmation
+  name: "j) theek hai, bhej do"
+  description: "Affirmative confirmation triggers booking completion"
+  dialogue:
+    - user: "Geyser garam nahi kar raha, Saket Block A, kal subah"
+    - user: "theek hai, bhej do"
+  expected:
+    final_state: "BOOKED"
+    is_terminal: true

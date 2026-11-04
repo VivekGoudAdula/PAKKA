@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-03T15:48:28.649590+00:00",
+  "timestamp": "2026-11-04T15:12:54.307545+00:00",
   "total_scenarios": 28,
   "passed_scenarios": 28,
   "pass_rate_percent": 100.0,
@@ -8,12 +8,63 @@
   "slot_accuracy_percent": 100.0,
   "extractor_type": "RuleBasedExtractor",
   "holdout": {
-    "total_scenarios": 0,
-    "passed_scenarios": 0,
-    "pass_rate_percent": 0.0,
-    "slot_accuracy_percent": 0.0,
-    "status": "empty_awaiting_unseen_data",
-    "results": []
+    "total_scenarios": 10,
+    "passed_scenarios": 3,
+    "pass_rate_percent": 30.0,
+    "slot_accuracy_percent": 85.71,
+    "status": "evaluated",
+    "results": [
+      {
+        "id": "holdout_a_geyser_leak",
+        "passed": true,
+        "final_state": "ASK_ADDRESS"
+      },
+      {
+        "id": "holdout_b_slot_and_address",
+        "passed": false,
+        "final_state": "ASK_PROBLEM"
+      },
+      {
+        "id": "holdout_c_bargaining_floor",
+        "passed": false,
+        "final_state": "CONFIRM_READBACK"
+      },
+      {
+        "id": "holdout_d_robot_inquiry",
+        "passed": false,
+        "final_state": "ASK_PROBLEM"
+      },
+      {
+        "id": "holdout_e_malik_talk",
+        "passed": true,
+        "final_state": "HANDOFF"
+      },
+      {
+        "id": "holdout_f_rehne_do",
+        "passed": false,
+        "final_state": "ASK_PROBLEM"
+      },
+      {
+        "id": "holdout_g_hazard_current",
+        "passed": true,
+        "final_state": "HANDOFF"
+      },
+      {
+        "id": "holdout_h_all_three_slots",
+        "passed": false,
+        "final_state": "QUOTE"
+      },
+      {
+        "id": "holdout_i_slot_correction",
+        "passed": false,
+        "final_state": "QUOTE"
+      },
+      {
+        "id": "holdout_j_confirmation",
+        "passed": false,
+        "final_state": "CONFIRM_READBACK"
+      }
+    ]
   },
   "results": [
     {
@@ -23,7 +74,7 @@
       "turns_count": 3,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.37,
+      "duration_ms": 24.76,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -56,7 +107,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.39,
+      "duration_ms": 2.18,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_leak",
@@ -89,7 +140,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.38,
+      "duration_ms": 1.14,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -122,7 +173,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.38,
+      "duration_ms": 1.15,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -155,7 +206,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.37,
+      "duration_ms": 2.57,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -188,7 +239,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.32,
+      "duration_ms": 0.88,
       "slot_checks": {
         "problem_key": {
           "expected": "unknown",
@@ -221,7 +272,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.3,
+      "duration_ms": 0.57,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -254,7 +305,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.24,
+      "duration_ms": 0.97,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -282,7 +333,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.44,
+      "duration_ms": 1.28,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -310,7 +361,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.44,
+      "duration_ms": 0.7,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -338,7 +389,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.87,
+      "duration_ms": 0.65,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -371,7 +422,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.11,
+      "duration_ms": 0.19,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -388,7 +439,7 @@
       "turns_count": 2,
       "final_state": "ABANDONED",
       "expected_state": "ABANDONED",
-      "duration_ms": 0.02,
+      "duration_ms": 0.05,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -405,7 +456,7 @@
       "turns_count": 1,
       "final_state": "ABANDONED",
       "expected_state": "ABANDONED",
-      "duration_ms": 0.1,
+      "duration_ms": 0.2,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -422,7 +473,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.38,
+      "duration_ms": 0.92,
       "slot_checks": {
         "problem_key": {
           "expected": "pipe_burst",
@@ -455,7 +506,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.47,
+      "duration_ms": 0.65,
       "slot_checks": {
         "problem_key": {
           "expected": "drain_blocked",
@@ -488,7 +539,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.51,
+      "duration_ms": 1.28,
       "slot_checks": {
         "problem_key": {
           "expected": "motor_pump",
@@ -521,7 +572,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.48,
+      "duration_ms": 11.93,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_leak",
@@ -554,7 +605,7 @@
       "turns_count": 3,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.24,
+      "duration_ms": 0.74,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -571,7 +622,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.41,
+      "duration_ms": 1.42,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -604,7 +655,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.48,
+      "duration_ms": 9.49,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -637,7 +688,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.45,
+      "duration_ms": 3.04,
       "slot_checks": {
         "problem_key": {
           "expected": "pipe_burst",
@@ -670,7 +721,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.38,
+      "duration_ms": 1.09,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -687,7 +738,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.24,
+      "duration_ms": 0.73,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -704,7 +755,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.24,
+      "duration_ms": 0.96,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -721,7 +772,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.2,
+      "duration_ms": 0.66,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -738,7 +789,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.24,
+      "duration_ms": 0.69,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -755,7 +806,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.24,
+      "duration_ms": 0.88,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,

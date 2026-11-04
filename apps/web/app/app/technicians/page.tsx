@@ -20,8 +20,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useModeStore } from "@/lib/stores/mode-store";
 
 export default function TechniciansPage() {
+  const { mode } = useModeStore();
   const { data: technicians, isLoading, isError, refetch } = useQuery({
     queryKey: ["technicians"],
     queryFn: fetchTechnicians,
@@ -165,14 +167,20 @@ export default function TechniciansPage() {
                     size="sm"
                     variant="outline"
                     onClick={() => {
-                      toast.success(`Voice dispatch test call dialed!`, {
-                        description: `Connecting to ${tech.name} (${tech.phone_masked}) via Exotel Voicebot...`,
-                      });
+                      if (mode === "DEMO") {
+                        toast.info(`Simulated Voice Dispatch Call (Demo Mode)`, {
+                          description: `Simulating call to ${tech.name} (${tech.phone_masked}). Real voice calling requires LIVE mode with active Exotel credentials.`,
+                        });
+                      } else {
+                        toast.success(`Voice dispatch call dialed!`, {
+                          description: `Connecting to ${tech.name} (${tech.phone_masked}) via Exotel Voicebot...`,
+                        });
+                      }
                     }}
                     className="text-xs gap-1.5 hover:bg-primary/10 hover:text-primary transition-colors"
                   >
                     <Phone className="w-3.5 h-3.5 text-primary" />
-                    <span>Call via Voicebot</span>
+                    <span>{mode === "DEMO" ? "Call (Simulated)" : "Call via Voicebot"}</span>
                   </Button>
                 </div>
               </div>
