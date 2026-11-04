@@ -88,6 +88,33 @@ async def exotel_ws_endpoint(ws: WebSocket) -> None:
 
                 is_dispatch = query_dispatch or custom_dispatch or (pending is not None)
 
+                query_collect = ws.query_params.get("collect", "").lower() in ("true", "1")
+                custom_collect = str(custom_params.get("collect", "")).lower() in ("true", "1")
+                promise_id_param = ws.query_params.get("promise_id") or custom_params.get("promise_id")
+                is_collect = query_collect or custom_collect or (promise_id_param is not None)
+
+                collection_fsm = None
+                if is_collect:
+                    from sqlmodel import Session
+                    from app.brain.collection import CollectionFSM
+                    from app.db import engine
+                    from app.models.domain import Promise
+                    cust_name = "Customer"
+                    bal = 500
+                    tone = 1
+                    if promise_id_param:
+                        with Session(engine) as s:
+                            p = s.get(Promise, promise_id_param)
+                            if p:
+                                cust_name = p.customer_name
+                                bal = p.amount
+                                tone = p.tone_level
+                    collection_fsm = CollectionFSM(
+                        customer_name=cust_name,
+                        balance=bal,
+                        tone_level=tone,
+                    )
+
                 dispatch_fsm = pending.fsm if pending else None
                 dispatch_context = pending if pending else None
 
@@ -120,6 +147,8 @@ async def exotel_ws_endpoint(ws: WebSocket) -> None:
                     tts_client=tts_client,
                     dispatch_fsm=dispatch_fsm,
                     dispatch_context=dispatch_context,
+                    collection_fsm=collection_fsm,
+                    promise_id=promise_id_param,
                 )
                 active_sessions[stream_sid] = session
                 await session.start()

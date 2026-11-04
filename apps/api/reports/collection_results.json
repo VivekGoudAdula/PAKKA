@@ -1,0 +1,551 @@
+{
+  "timestamp": "2026-11-04T15:46:12.616869+00:00",
+  "total_scenarios": 25,
+  "passed_scenarios": 25,
+  "pass_rate_percent": 100.0,
+  "holdout": {
+    "total_scenarios": 8,
+    "passed_scenarios": 6,
+    "pass_rate_percent": 75.0,
+    "results": [
+      {
+        "id": "col_holdout_01",
+        "passed": true,
+        "disposition": "PTP",
+        "expected_disposition": "PTP",
+        "captured_date": "kal"
+      },
+      {
+        "id": "col_holdout_02",
+        "passed": true,
+        "disposition": "WRONG_NUMBER",
+        "expected_disposition": "WRONG_NUMBER",
+        "captured_date": null
+      },
+      {
+        "id": "col_holdout_03",
+        "passed": false,
+        "disposition": null,
+        "expected_disposition": "DISPUTE",
+        "captured_date": null
+      },
+      {
+        "id": "col_holdout_04",
+        "passed": true,
+        "disposition": "PTP",
+        "expected_disposition": "PTP",
+        "captured_date": "kal shaam"
+      },
+      {
+        "id": "col_holdout_05",
+        "passed": true,
+        "disposition": "PAID",
+        "expected_disposition": "PAID",
+        "captured_date": null
+      },
+      {
+        "id": "col_holdout_06",
+        "passed": true,
+        "disposition": "CALLBACK",
+        "expected_disposition": "CALLBACK",
+        "captured_date": null
+      },
+      {
+        "id": "col_holdout_07",
+        "passed": true,
+        "disposition": "REFUSED",
+        "expected_disposition": "REFUSED",
+        "captured_date": null
+      },
+      {
+        "id": "col_holdout_08",
+        "passed": false,
+        "disposition": null,
+        "expected_disposition": "NEEDS_OWNER",
+        "captured_date": null
+      }
+    ]
+  },
+  "results": [
+    {
+      "id": "col_01_ptp_kal_tone1",
+      "name": "Gentle reminder agreeing to pay tomorrow",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "kal shaam",
+      "expected_date": "kal shaam",
+      "turns": [
+        {
+          "user": "Haan Ramesh bol raha hoon",
+          "bot": "Aapka paanch sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Theek hai main kal shaam tak pay kar dunga",
+          "bot": "Theek hai Ramesh Kumar ji, main kal shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_02_ptp_aaj_shaam",
+      "name": "Customer agrees to pay today evening",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "aaj shaam",
+      "expected_date": "aaj shaam",
+      "turns": [
+        {
+          "user": "Haan ji bataiye",
+          "bot": "Aapka aath sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Aaj shaam ko bhej dunga online",
+          "bot": "Theek hai Suresh ji, main aaj shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_03_ptp_parson",
+      "name": "Customer promises payment day after tomorrow",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "parson",
+      "expected_date": "parson",
+      "turns": [
+        {
+          "user": "Haan boliye",
+          "bot": "Aapka chhah sau pachaas rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Parson tak transfer kar dungi",
+          "bot": "Theek hai Anita ji, main parson ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_04_ptp_somwar",
+      "name": "Customer promises payment on Monday",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "somwar",
+      "expected_date": "somwar",
+      "turns": [
+        {
+          "user": "Haan Deepak hi bol raha hoon",
+          "bot": "Aapka ek hazaar do sau rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Somwar ko pakka kar dunga",
+          "bot": "Theek hai Deepak ji, main somwar ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_05_ptp_weekend",
+      "name": "Promise on weekend",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "weekend",
+      "expected_date": "weekend",
+      "turns": [
+        {
+          "user": "Haanji",
+          "bot": "Aapka chaar sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Weekend par ho payega",
+          "bot": "Theek hai Pooja ji, main weekend ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_06_wrong_number_explicit",
+      "name": "Wrong number explicitly stated",
+      "passed": true,
+      "disposition": "WRONG_NUMBER",
+      "expected_disposition": "WRONG_NUMBER",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Bhaiya galat number dial ho gaya, yahan koi Vikas nahi hai",
+          "bot": "Maaf kijiyega, lagta hai galat number par call lag gaya. Main aapka number list se turant hata rahi hoon, aage se koi call nahi aayegi. Dhanyawaad.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_07_wrong_number_english",
+      "name": "Wrong number in English",
+      "passed": true,
+      "disposition": "WRONG_NUMBER",
+      "expected_disposition": "WRONG_NUMBER",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Wrong number please don't call again",
+          "bot": "Maaf kijiyega, lagta hai galat number par call lag gaya. Main aapka number list se turant hata rahi hoon, aage se koi call nahi aayegi. Dhanyawaad.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_08_dispute_quality",
+      "name": "Dispute: Geyser still leaking after repair",
+      "passed": true,
+      "disposition": "DISPUTE",
+      "expected_disposition": "DISPUTE",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Haan boliye",
+          "bot": "Aapka chhah sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Kaisa repair kiya tha? Paani abhi bhi tapak raha hai, main pehle kaam dekhunga",
+          "bot": "Achha, kaam mein koi dikkat ya shikayat hai kya? Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_09_dispute_kharab_kaam",
+      "name": "Dispute: Work was done poorly",
+      "passed": true,
+      "disposition": "DISPUTE",
+      "expected_disposition": "DISPUTE",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Kaam theek nahi kiya unhone, phir se kharab ho gaya",
+          "bot": "Achha, kaam mein koi dikkat ya shikayat hai kya? Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_10_already_paid_online",
+      "name": "Claim: already transferred online",
+      "passed": true,
+      "disposition": "PAID",
+      "expected_disposition": "PAID",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Arre maine to kal hi online bhej diya tha Google Pay se",
+          "bot": "Aapne payment kar di hai? Bahut accha! Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_11_already_paid_cash",
+      "name": "Claim: cash already given to technician",
+      "passed": true,
+      "disposition": "PAID",
+      "expected_disposition": "PAID",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Technician ko cash de diya tha usi din",
+          "bot": "Aapne payment kar di hai? Bahut accha! Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_12_busy_callback",
+      "name": "Customer currently busy driving",
+      "passed": true,
+      "disposition": "CALLBACK",
+      "expected_disposition": "CALLBACK",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Abhi main drive kar raha hoon, shaam ko phone karo",
+          "bot": "Theek hai ji, lagta hai aap abhi busy hain. Main baad mein thodi der baad call karwa lungi. Dhanyawaad.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_13_busy_meeting",
+      "name": "Customer in a meeting",
+      "passed": true,
+      "disposition": "CALLBACK",
+      "expected_disposition": "CALLBACK",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "I am in a meeting, baad mein baat karenge",
+          "bot": "Theek hai ji, lagta hai aap abhi busy hain. Main baad mein thodi der baad call karwa lungi. Dhanyawaad.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_14_owner_escalation",
+      "name": "Escalation requested to speak directly with shop owner",
+      "passed": true,
+      "disposition": "NEEDS_OWNER",
+      "expected_disposition": "NEEDS_OWNER",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Haan suno",
+          "bot": "Aapka ek hazaar ek sau rupaye ka hisaab baaki chal raha hai. Malik ko daily hisaab dena hota hai. Kya aap aaj pay kar payenge ya koi specific taareekh bataiye?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Mujhe Sharma ji se baat karni hai, unka number do",
+          "bot": "Theek hai ji, main shop owner Ramesh ji ko aapka number bhej rahi hoon, woh aapse seedhe phone par baat kar lenge.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_15_refusal_blunt",
+      "name": "Explicit refusal to pay",
+      "passed": true,
+      "disposition": "REFUSED",
+      "expected_disposition": "REFUSED",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Haan bolo",
+          "bot": "Aapka nau sau rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Main koi payment nahi dunga, jo karna hai kar lo",
+          "bot": "Theek hai ji, main owner ko inform kar deti hoon ki aap payment ke liye raazi nahi hain. Dhanyawaad.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_16_ai_disclosure",
+      "name": "Customer asks if assistant is a robot",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "kal",
+      "expected_date": "kal",
+      "turns": [
+        {
+          "user": "Kya aap robot ho ya real person?",
+          "bot": "Ji haan, main Pakka ki automated digital sahayak bol rahi hoon. Kya aap human owner se baat karna chahenge?",
+          "state": "GREETING"
+        },
+        {
+          "user": "Achha theek hai, kal bhej dunga",
+          "bot": "Theek hai Gaurav ji, main kal ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_17_date_reask_flow",
+      "name": "Vague agreement triggers date clarification",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "kal subah",
+      "expected_date": "kal subah",
+      "turns": [
+        {
+          "user": "Haan Sunita bol rahi hoon",
+          "bot": "Aapka paanch sau pachaas rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Haan kar dungi",
+          "bot": "Main date theek se samajh nahi paayi. Kya aap kal, parson, ya koi specific din bata sakte hain?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Kal subah bhejti hoon",
+          "bot": "Theek hai Sunita ji, main kal subah ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_18_tone2_firm_followup",
+      "name": "Tone 2 reminder on broken promise",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "kal shaam",
+      "expected_date": "kal shaam",
+      "turns": [
+        {
+          "user": "Haan Mohan",
+          "bot": "Aapka aath sau pachaas rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Bhaiya kal sham pakka transfer kar dunga",
+          "bot": "Theek hai Mohan ji, main kal shaam ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_19_tone3_escalation",
+      "name": "Tone 3 firm follow up agrees to pay today",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "aaj shaam",
+      "expected_date": "aaj shaam",
+      "turns": [
+        {
+          "user": "Haanji",
+          "bot": "Aapka do hazaar rupaye ka hisaab baaki chal raha hai. Malik ko daily hisaab dena hota hai. Kya aap aaj pay kar payenge ya koi specific taareekh bataiye?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Theek hai main aaj hi clear karta hoon",
+          "bot": "Theek hai Hemant ji, main aaj shaam ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_20_specific_date_num",
+      "name": "Customer promises on 15 tareekh",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "15 tareekh",
+      "expected_date": "15 tareekh",
+      "turns": [
+        {
+          "user": "Haan bolo",
+          "bot": "Aapka saat sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Salary 15 tareekh ko aayegi tab karunga",
+          "bot": "Theek hai Karan ji, main 15 tareekh ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_21_specific_day_shukrawar",
+      "name": "Promise on Shukrawar (Friday)",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "shukrawar",
+      "expected_date": "shukrawar",
+      "turns": [
+        {
+          "user": "Ji namaste",
+          "bot": "Aapka paanch sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Shukrawar tak bhej dungi",
+          "bot": "Theek hai Bhavna ji, main shukrawar ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_22_two_days_later",
+      "name": "Promise two days later",
+      "passed": true,
+      "disposition": "PTP",
+      "expected_disposition": "PTP",
+      "captured_date": "do din baad",
+      "expected_date": "do din baad",
+      "turns": [
+        {
+          "user": "Haan Harish",
+          "bot": "Aapka chhah sau rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "state": "CAPTURE_DATE"
+        },
+        {
+          "user": "Do din baad kar dunga pakka",
+          "bot": "Theek hai Harish ji, main do din baad ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_23_immediate_dispute_turn1",
+      "name": "Immediate complaint on turn 1",
+      "passed": true,
+      "disposition": "DISPUTE",
+      "expected_disposition": "DISPUTE",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Bhai aapka kaam bilkul bekaar tha, geyser abhi bhi band pada hai",
+          "bot": "Achha, kaam mein koi dikkat ya shikayat hai kya? Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_24_immediate_wrong_number_turn1",
+      "name": "Immediate wrong number on turn 1",
+      "passed": true,
+      "disposition": "WRONG_NUMBER",
+      "expected_disposition": "WRONG_NUMBER",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Galat number hai bhai, kisi aur ko lag gaya",
+          "bot": "Maaf kijiyega, lagta hai galat number par call lag gaya. Main aapka number list se turant hata rahi hoon, aage se koi call nahi aayegi. Dhanyawaad.",
+          "state": "TERMINAL"
+        }
+      ]
+    },
+    {
+      "id": "col_25_already_paid_turn1",
+      "name": "Immediate already paid statement on turn 1",
+      "passed": true,
+      "disposition": "PAID",
+      "expected_disposition": "PAID",
+      "captured_date": null,
+      "expected_date": null,
+      "turns": [
+        {
+          "user": "Maine to de diya tha technician ko cash",
+          "bot": "Aapne payment kar di hai? Bahut accha! Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega.",
+          "state": "TERMINAL"
+        }
+      ]
+    }
+  ]
+}

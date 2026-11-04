@@ -1,0 +1,102 @@
+# ==============================================================================
+# PAKKA HOLDOUT COLLECTION EVALUATION SCENARIOS (8 SCENARIOS)
+# ==============================================================================
+# Unseen evaluation scenarios for Collection Brain.
+# RULE: DO NOT modify the collection FSM rules to make them pass.
+# ==============================================================================
+
+- id: col_holdout_01
+  name: "a) kal dopahar tak kar dunga"
+  tone_level: 1
+  balance: 600
+  customer_name: "Naveen"
+  dialogue:
+    - user: "Haan bolo"
+    - user: "Kal dopahar tak kar dunga transfer"
+  expected:
+    disposition: "PTP"
+    captured_date: "kal"
+    is_terminal: true
+
+- id: col_holdout_02
+  name: "b) mera number nahi hai ye"
+  tone_level: 1
+  balance: 500
+  customer_name: "Kamal"
+  dialogue:
+    - user: "Ye Kamal ka number nahi hai, galat phone kiya aapne"
+  expected:
+    disposition: "WRONG_NUMBER"
+    suppress_number: true
+    is_terminal: true
+
+- id: col_holdout_03
+  name: "c) pipe dobara toot gaya"
+  tone_level: 2
+  balance: 800
+  customer_name: "Satish"
+  dialogue:
+    - user: "Bathroom ka pipe dobara toot gaya, pehle plumber bhejo"
+  expected:
+    disposition: "DISPUTE"
+    needs_owner: true
+    is_terminal: true
+
+- id: col_holdout_04
+  name: "d) kal shaam ko pakka bhejti hoon"
+  tone_level: 1
+  balance: 450
+  customer_name: "Meena"
+  dialogue:
+    - user: "Namaste"
+    - user: "Kal shaam ko pakka bhejti hoon"
+  expected:
+    disposition: "PTP"
+    captured_date: "kal shaam"
+    is_terminal: true
+
+- id: col_holdout_05
+  name: "e) maine UPI se bhej diya tha parson"
+  tone_level: 1
+  balance: 950
+  customer_name: "Anand"
+  dialogue:
+    - user: "Maine to UPI se online bhej diya tha"
+  expected:
+    disposition: "PAID"
+    is_terminal: true
+
+- id: col_holdout_06
+  name: "f) driving kar raha hoon shaam ko karna"
+  tone_level: 1
+  balance: 300
+  customer_name: "Rishi"
+  dialogue:
+    - user: "Abhi drive kar raha hoon baad mein baat karna"
+  expected:
+    disposition: "CALLBACK"
+    is_terminal: true
+
+- id: col_holdout_07
+  name: "g) paise nahi dunga jo ukhadna hai ukhad lo"
+  tone_level: 3
+  balance: 1500
+  customer_name: "Jagdish"
+  dialogue:
+    - user: "Main koi paisa nahi dunga"
+  expected:
+    disposition: "REFUSED"
+    needs_owner: true
+    is_terminal: true
+
+- id: col_holdout_08
+  name: "h) shop owner Ramesh ji se baat karwa do"
+  tone_level: 2
+  balance: 700
+  customer_name: "Chandan"
+  dialogue:
+    - user: "Mujhe Ramesh ji se baat karni hai direct"
+  expected:
+    disposition: "NEEDS_OWNER"
+    needs_owner: true
+    is_terminal: true

@@ -21,12 +21,15 @@ from typing import Any
 
 from sqlmodel import Session
 
+from app.brain.collection import CollectionDisposition, CollectionFSM
 from app.brain.dispatch import DispatchFSM
 from app.brain.fsm import BookingFSM, BookingState
+from app.brain.replies_collection import get_collection_greeting
+from app.services.collection_scheduler import record_reminder_event
 from app.config import settings
 from app.db import engine
 from app.events.hub import hub
-from app.models.domain import CallRecord, Job
+from app.models.domain import CallRecord, Job, Promise, ReminderEvent, SuppressedNumber
 from app.voice.audio import EnergyVAD, ExotelAudioAccumulator, Rechunker, pcm_to_base64
 from app.voice.gnani_stt import GnaniSTTClient
 from app.voice.gnani_tts import GnaniTTSClient
@@ -77,6 +80,8 @@ class CallSession:
         tts_client: GnaniTTSClient | None = None,
         dispatch_fsm: DispatchFSM | None = None,
         dispatch_context: Any | None = None,
+        collection_fsm: CollectionFSM | None = None,
+        promise_id: str | None = None,
     ) -> None:
         self.call_sid = call_sid
         self.stream_sid = stream_sid
@@ -84,6 +89,8 @@ class CallSession:
         self.send_to_exotel = send_to_exotel
         self.dispatch_fsm = dispatch_fsm
         self.dispatch_context = dispatch_context
+        self.collection_fsm = collection_fsm
+        self.promise_id = promise_id
 
         self.stt = stt_client or GnaniSTTClient()
         self.tts = tts_client or GnaniTTSClient()
@@ -139,11 +146,15 @@ class CallSession:
         # Start background consumer for incoming transcripts
         self._stt_consumer_task = asyncio.create_task(self._consume_stt_stream())
 
-        greeting_text = (
-            self.dispatch_fsm.get_initial_greeting()
-            if self.dispatch_fsm
-            else MANDATORY_GREETING
-        )
+        if self.collection_fsm:
+            greeting_text = get_collection_greeting(
+                self.collection_fsm.customer_name,
+                tone_level=self.collection_fsm.tone_level,
+            )
+        elif self.dispatch_fsm:
+            greeting_text = self.dispatch_fsm.get_initial_greeting()
+        else:
+            greeting_text = MANDATORY_GREETING
 
         # Speak mandatory disclosure greeting concurrently so WebSocket loop handles caller events
         self.transcript_messages.append(
@@ -404,8 +415,55 @@ class CallSession:
                         except Exception as log_err:
                             logger.warning("Failed to write to live_transcripts.jsonl: %s", log_err)
 
-                    # Phase 4 Dispatch vs Phase 3 Booking Brain
-                    if self.dispatch_fsm:
+                    # Collection Brain vs Dispatch Brain vs Routine Booking Brain
+                    if self.collection_fsm:
+                        col_turn = self.collection_fsm.process_utterance(transcript.text)
+                        self.transcript_messages.append(
+                            {
+                                "id": f"turn_{self._current_turn_id}_bot",
+                                "role": "bot",
+                                "text": col_turn.bot_reply,
+                                "timestamp": time.strftime("%H:%M:%S"),
+                            }
+                        )
+                        await hub.broadcast(
+                            "collection.transcript",
+                            {
+                                "promise_id": self.promise_id or "",
+                                "role": "caller",
+                                "text": transcript.text,
+                                "timestamp": time.time(),
+                            },
+                        )
+                        await hub.broadcast(
+                            "collection.transcript",
+                            {
+                                "promise_id": self.promise_id or "",
+                                "role": "bot",
+                                "text": col_turn.bot_reply,
+                                "timestamp": time.time(),
+                            },
+                        )
+                        await self.speak(col_turn.bot_reply)
+
+                        if col_turn.is_terminal:
+                            if col_turn.suppress_number and self.caller_number:
+                                with Session(engine) as s:
+                                    s.add(SuppressedNumber(id=f"sup_{int(time.time())}", phone_raw=self.caller_number, reason="wrong_number"))
+                                    s.commit()
+                            if self.promise_id:
+                                with Session(engine) as s:
+                                    p = s.get(Promise, self.promise_id)
+                                    if p:
+                                        record_reminder_event(
+                                            session=s,
+                                            promise_id=self.promise_id,
+                                            customer_id=p.customer_id,
+                                            disposition=col_turn.disposition.value if col_turn.disposition else "PTP",
+                                            snippet=f"Voice call completed: {col_turn.captured_date or 'No date'}",
+                                            tone_level=p.tone_level,
+                                        )
+                    elif self.dispatch_fsm:
                         dispatch_turn = self.dispatch_fsm.process_utterance(transcript.text)
                         self.transcript_messages.append(
                             {

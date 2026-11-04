@@ -15,9 +15,11 @@ interface ClockState {
   advanceDays: (days: number) => void;
   /** Reset back to base simulation date */
   resetClock: () => void;
+  /** Check if current simulated time is within 9 AM - 8 PM IST */
+  isWithinOutboundHours: () => boolean;
 }
 
-const INITIAL_DATE = new Date("2026-11-03T10:30:00");
+const INITIAL_DATE = new Date("2026-11-04T10:00:00");
 
 export const useClockStore = create<ClockState>((set, get) => ({
   baseDate: INITIAL_DATE,
@@ -29,6 +31,11 @@ export const useClockStore = create<ClockState>((set, get) => ({
     current.setHours(current.getHours() + hoursOffset);
     current.setDate(current.getDate() + daysOffset);
     return current;
+  },
+  isWithinOutboundHours: () => {
+    const time = get().getCurrentTime();
+    const hours = time.getHours();
+    return hours >= 9 && hours < 20;
   },
   advanceHours: (hours: number) =>
     set((state) => ({ hoursOffset: state.hoursOffset + hours })),

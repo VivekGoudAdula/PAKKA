@@ -159,6 +159,43 @@ export type PakkaEvent =
         tts_latency_ms: number;
         total_ms: number;
       };
+    }
+  | {
+      type: "clock.tick";
+      payload: {
+        simulated_time: string;
+        formatted: string;
+        date_key: string;
+        offset_hours: number;
+        is_outbound_hours: boolean;
+      };
+    }
+  | {
+      type: "collection.call_initiated";
+      payload: {
+        promise_id: string;
+        customer_name: string;
+        amount: number;
+        tone_level: number;
+      };
+    }
+  | {
+      type: "collection.transcript";
+      payload: {
+        promise_id: string;
+        role: "caller" | "bot";
+        text: string;
+        timestamp: number;
+      };
+    }
+  | {
+      type: "ledger.entry_created";
+      payload: {
+        customer_name: string;
+        paid_amount: number;
+        balance: number;
+        is_fully_paid: boolean;
+      };
     };
 
 export type EventListener = (event: PakkaEvent) => void;
@@ -563,6 +600,53 @@ const DEMO_SCRIPT: ScriptedStep[] = [
         technician_name: "Ramesh Kumar",
         confirmation_phrase: "Haan ji, pakka. Main subah 10 baje Mayur Vihar pahunch jaunga.",
         confirmed_at: "10:00 AM",
+      },
+    },
+  },
+  {
+    delayMs: 3000,
+    event: {
+      type: "collection.call_initiated",
+      payload: {
+        promise_id: "prom_demo_01",
+        customer_name: "Harish Rawat",
+        amount: 450,
+        tone_level: 1,
+      },
+    },
+  },
+  {
+    delayMs: 2000,
+    event: {
+      type: "collection.transcript",
+      payload: {
+        promise_id: "prom_demo_01",
+        role: "bot",
+        text: "Namaste Harish ji, Sharma Plumbing ki digital sahayak bol rahi hoon. Aapka geyser repair ka hisaab baaki tha chaar sau pachaas rupaye.",
+        timestamp: Date.now(),
+      },
+    },
+  },
+  {
+    delayMs: 2500,
+    event: {
+      type: "collection.transcript",
+      payload: {
+        promise_id: "prom_demo_01",
+        role: "caller",
+        text: "Haan main kal subah online transfer kar dunga.",
+        timestamp: Date.now(),
+      },
+    },
+  },
+  {
+    delayMs: 1500,
+    event: {
+      type: "collection.transcript",
+      payload: {
+        promise_id: "prom_demo_01",
+        role: "bot",
+        text: "Theek hai Harish ji, main kal subah ka waada note kar leti hoon. Dhanyawaad!",
         timestamp: Date.now(),
       },
     },

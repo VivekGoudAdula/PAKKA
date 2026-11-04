@@ -95,6 +95,7 @@ export interface PaymentPromise {
   base_due_days_offset: number; // For clock store relative calculation
   status: PromiseStatus;
   notes?: string;
+  tone_level?: number;
   reminder_trail: ReminderEvent[];
 }
 

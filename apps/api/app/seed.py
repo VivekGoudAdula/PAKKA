@@ -8,7 +8,12 @@ from sqlmodel import Session, select
 from app.db import engine, init_db
 from app.models.domain import (
     BusinessSettings,
+    Customer,
+    Job,
     PriceItem,
+    Promise,
+    ReminderEvent,
+    SuppressedNumber,
     Technician,
 )
 
@@ -114,6 +119,114 @@ DEFAULT_TECHNICIANS = [
     ),
 ]
 
+DEFAULT_PROMISES = [
+    Promise(
+        id="prom_01",
+        customer_id="cust_01",
+        customer_name="Harish Rawat",
+        customer_phone_masked="+91 98XXXXXX05",
+        customer_phone_raw="+919800000005",
+        job_id="job_005",
+        amount=450,
+        due_date="2026-11-05",
+        status="pending",
+        tone_level=1,
+    ),
+    Promise(
+        id="prom_02",
+        customer_id="cust_02",
+        customer_name="Vikram Sethi",
+        customer_phone_masked="+91 98XXXXXX11",
+        customer_phone_raw="+919800000011",
+        job_id="job_009",
+        amount=750,
+        due_date="2026-11-04",
+        status="due_today",
+        tone_level=1,
+    ),
+    Promise(
+        id="prom_03",
+        customer_id="cust_03",
+        customer_name="Karan Johar",
+        customer_phone_masked="+91 98XXXXXX20",
+        customer_phone_raw="+919800000020",
+        job_id="job_014",
+        amount=600,
+        due_date="2026-11-02",
+        status="broken",
+        tone_level=2,
+        attempts_count=2,
+        last_attempt_at="2026-11-03T10:00:00",
+    ),
+    Promise(
+        id="prom_04",
+        customer_id="cust_04",
+        customer_name="Manish Tiwari",
+        customer_phone_masked="+91 98XXXXXX08",
+        customer_phone_raw="+919800000008",
+        job_id="job_007",
+        amount=850,
+        due_date="2026-11-02",
+        status="kept",
+        tone_level=1,
+    ),
+    Promise(
+        id="prom_05",
+        customer_id="cust_05",
+        customer_name="Geeta Rao",
+        customer_phone_masked="+91 98XXXXXX10",
+        customer_phone_raw="+919800000010",
+        job_id="job_008",
+        amount=500,
+        due_date="2026-11-03",
+        status="disputed",
+        tone_level=1,
+    ),
+]
+
+DEFAULT_REMINDER_EVENTS = [
+    ReminderEvent(
+        id="rem_01",
+        promise_id="prom_01",
+        customer_id="cust_01",
+        timestamp="03 Nov 05:15 PM",
+        kind="call",
+        disposition="PTP",
+        snippet="Customer promised to pay by tomorrow morning.",
+        tone_level=1,
+    ),
+    ReminderEvent(
+        id="rem_02",
+        promise_id="prom_02",
+        customer_id="cust_02",
+        timestamp="04 Nov 09:30 AM",
+        kind="call",
+        disposition="PTP",
+        snippet="Customer promised to pay by 2:00 PM today.",
+        tone_level=1,
+    ),
+    ReminderEvent(
+        id="rem_03",
+        promise_id="prom_03",
+        customer_id="cust_03",
+        timestamp="02 Nov 11:30 AM",
+        kind="call",
+        disposition="NO_ANSWER",
+        snippet="Call rang 5 times, customer did not answer.",
+        tone_level=2,
+    ),
+    ReminderEvent(
+        id="rem_04",
+        promise_id="prom_03",
+        customer_id="cust_03",
+        timestamp="03 Nov 10:00 AM",
+        kind="call",
+        disposition="REFUSED",
+        snippet="Customer cut the call after hearing digital sahayak.",
+        tone_level=2,
+    ),
+]
+
 
 def seed_database() -> None:
     """Populate initial seed records if tables are empty."""
@@ -135,6 +248,18 @@ def seed_database() -> None:
         if not existing_tech:
             for tech in DEFAULT_TECHNICIANS:
                 session.add(tech)
+
+        # Check if promises exist
+        existing_promise = session.exec(select(Promise)).first()
+        if not existing_promise:
+            for prom in DEFAULT_PROMISES:
+                session.add(prom)
+
+        # Check if reminder events exist
+        existing_rem = session.exec(select(ReminderEvent)).first()
+        if not existing_rem:
+            for rem in DEFAULT_REMINDER_EVENTS:
+                session.add(rem)
 
         session.commit()
 
