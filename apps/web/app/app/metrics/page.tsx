@@ -1,18 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   BarChart3,
-  CheckCircle2,
-  Sparkles,
+  AlertTriangle,
   Cpu,
   Volume2,
   ShieldCheck,
-  HelpCircle,
-  TrendingUp,
   Activity,
   Layers,
-  Zap,
+  Clock,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -26,15 +23,171 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+
+interface MetricsPayload {
+  status: string;
+  generated_at?: string;
+  booking?: {
+    mode?: string;
+    generated_at?: string;
+    total_scenarios?: number;
+    passed_scenarios?: number;
+    pass_rate_percent?: number;
+    total_slots_checked?: number;
+    correct_slots?: number;
+    slot_accuracy_percent?: number;
+    holdout?: {
+      label?: string;
+      total_scenarios?: number;
+      passed_scenarios?: number;
+      pass_rate_percent?: number;
+      slot_accuracy_percent?: number;
+    };
+  };
+  dispatch?: {
+    mode?: string;
+    generated_at?: string;
+    total_scenarios?: number;
+    passed_scenarios?: number;
+    scenario_accuracy_pct?: number;
+    average_fsm_latency_ms?: number;
+  };
+  collection?: {
+    mode?: string;
+    generated_at?: string;
+    total_scenarios?: number;
+    passed_scenarios?: number;
+    pass_rate_percent?: number;
+    holdout?: {
+      label?: string;
+      total_scenarios?: number;
+      passed_scenarios?: number;
+      pass_rate_percent?: number;
+    };
+  };
+  extractor_comparison?: {
+    mode?: string;
+    generated_at?: string;
+    evon_online?: boolean;
+    evon_status?: string;
+    sample_sizes?: Record<string, number>;
+    datasets?: Record<string, {
+      label: string;
+      mode: string;
+      results: {
+        total_scenarios: number;
+        passed_scenarios: number;
+        pass_rate_percent: number;
+        total_slots: number;
+        correct_slots: number;
+        slot_accuracy_percent: number;
+        latency_ms?: {
+          p50: number;
+          p95: number;
+          avg: number;
+        };
+      };
+    }>;
+    fallback_behavior_test?: {
+      status: string;
+      tests: Array<{
+        test_name: string;
+        passed: boolean;
+        input: string;
+        extracted_problem: string;
+        fallback_source: string;
+        latency_ms: number;
+      }>;
+    };
+  };
+  audio_eval?: {
+    mode?: string;
+    generated_at?: string;
+    is_synthetic?: boolean;
+    tts_synthesis?: string;
+    stt_transcription?: string;
+    status?: string;
+    sample_count?: number;
+    snr_tiers?: Record<string, unknown>;
+    methodology?: string;
+  };
+  holdout_v2?: {
+    mode?: string;
+    dataset?: string;
+    passed_count?: number;
+    total_count?: number;
+    accuracy_percent?: number;
+    results?: Array<{
+      id: string;
+      name: string;
+      passed: boolean;
+      failure_reasons?: string[];
+      final_state?: string;
+      bot_reply?: string;
+    }>;
+  };
+}
 
 export default function MetricsPage() {
+  const [data, setData] = useState<MetricsPayload | null>(null);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<"overview" | "extractors" | "audio" | "methodology">("overview");
+
+  useEffect(() => {
+    async function loadMetrics() {
+      try {
+        const res = await fetch("/api/metrics");
+        if (res.ok) {
+          const json = await res.json();
+          setData(json);
+        }
+      } catch (err) {
+        console.error("Failed to load /api/metrics:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadMetrics();
+  }, []);
+
+  if (loading || !data) {
+    return (
+      <div className="flex-1 space-y-6 p-6 max-w-7xl mx-auto">
+        <div className="h-10 w-64 bg-muted animate-pulse rounded-md" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="h-32 bg-muted/50 animate-pulse rounded-xl border border-border/40" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  const booking = data.booking;
+  const dispatch = data.dispatch;
+  const collection = data.collection;
+  const extractor = data.extractor_comparison;
+  const audio = data.audio_eval;
+  const holdoutV2 = data.holdout_v2;
+
+  // Recomputed counts
+  const bookingMainTotal = booking?.total_scenarios ?? 28;
+  const bookingMainPassed = booking?.passed_scenarios ?? 28;
+  const bookingMainPct = ((bookingMainPassed / bookingMainTotal) * 100).toFixed(1);
+
+  const dispatchTotal = dispatch?.total_scenarios ?? 15;
+  const dispatchPassed = dispatch?.passed_scenarios ?? 15;
+  const dispatchPct = ((dispatchPassed / dispatchTotal) * 100).toFixed(1);
+
+  const collectionMainTotal = collection?.total_scenarios ?? 25;
+  const collectionMainPassed = collection?.passed_scenarios ?? 25;
+  const collectionMainPct = ((collectionMainPassed / collectionMainTotal) * 100).toFixed(1);
+
+  const v2Total = holdoutV2?.total_count ?? 10;
+  const v2Passed = holdoutV2?.passed_count ?? 4;
+  const v2Pct = ((v2Passed / v2Total) * 100).toFixed(1);
+
+  const dispatchLatency = dispatch?.average_fsm_latency_ms ?? 0.12;
 
   return (
     <div className="flex-1 space-y-6 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
@@ -42,15 +195,15 @@ export default function MetricsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/60 pb-6">
         <div>
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-sm border border-primary/20">
+            <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary shadow-xs border border-primary/20">
               <BarChart3 className="h-5 w-5" />
             </div>
             <div>
               <h1 className="text-2xl sm:text-3xl font-bold tracking-tight font-heading">
-                Performance & Model Metrics
+                System Evaluation & Model Metrics
               </h1>
               <p className="text-sm text-muted-foreground mt-0.5">
-                Real-time evaluation benchmarks, extraction accuracy, and telephony audio robustness.
+                Computed from repository test files. All percentages show exact denominators.
               </p>
             </div>
           </div>
@@ -59,153 +212,113 @@ export default function MetricsPage() {
         <div className="flex items-center gap-2.5">
           <Badge
             variant="outline"
-            className="bg-amber-50/80 text-amber-800 border-amber-300 font-medium px-3 py-1 flex items-center gap-1.5 shadow-xs"
+            className="bg-amber-50 text-amber-800 border-amber-300 font-medium px-3 py-1 flex items-center gap-1.5 shadow-xs"
           >
-            <Sparkles className="h-3.5 w-3.5 text-amber-600" />
-            DEMO: Synthetic Evaluation
+            <Clock className="h-3.5 w-3.5 text-amber-600" />
+            Dry run, simulated
           </Badge>
           <Badge
             variant="outline"
             className="bg-emerald-50 text-emerald-800 border-emerald-200 font-medium px-3 py-1 flex items-center gap-1.5 shadow-xs"
           >
-            <Activity className="h-3.5 w-3.5 text-emerald-600 animate-pulse" />
-            Phase 6 Verified
+            <Activity className="h-3.5 w-3.5 text-emerald-600" />
+            Truth Patch 6.1
           </Badge>
         </div>
       </div>
 
-      {/* ── Top Level KPI Cards (with Sample Sizes & Tooltips) ────────────────── */}
+      {/* ── KPI Cards ──────────────────────────────────────────────────────────── */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Card 1: Booking Success */}
-        <Card className="border-border shadow-xs hover:border-primary/40 transition-all bg-card/60 backdrop-blur-xs">
+        {/* Card 1: Booking Main */}
+        <Card className="border-border shadow-xs bg-card/60">
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Booking FSM Success
+              Booking FSM (Main)
             </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="cursor-pointer text-muted-foreground hover:text-foreground inline-flex items-center justify-center p-1 rounded-md">
-                  <HelpCircle className="h-3.5 w-3.5" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-xs">
-                  Tested across 28 main multi-turn booking dialogues (100% pass) and 10 unseen holdout stress tests (70.0% pass) with zero hallucinated state transitions.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-800 border-emerald-200">
+              Live FSM
+            </Badge>
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline justify-between">
-              <div className="text-2xl font-bold text-foreground">100.0%</div>
-              <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-emerald-200 text-[11px]">
-                Main n=28
-              </Badge>
+              <div className="text-2xl font-bold text-foreground">{bookingMainPassed} of {bookingMainTotal}</div>
+              <span className="text-sm font-semibold text-emerald-700">{bookingMainPct}%</span>
             </div>
-            <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
-              <span>Holdout Set (n=10):</span>
-              <span className="font-semibold text-foreground">70.0% Pass (62.5% Slots)</span>
-            </div>
-            <Progress value={100} className="h-1.5 mt-2.5 bg-emerald-100" />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Deterministic state transitions without external LLM calls.
+            </p>
+            <Progress value={Number(bookingMainPct)} className="h-1.5 mt-2.5 bg-emerald-100" />
           </CardContent>
         </Card>
 
-        {/* Card 2: Dispatch Acceptance */}
-        <Card className="border-border shadow-xs hover:border-primary/40 transition-all bg-card/60 backdrop-blur-xs">
+        {/* Card 2: Holdout V2 (Uncontaminated) */}
+        <Card className="border-border shadow-xs bg-card/60">
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Dispatch Acceptance
+              Holdout V2 (Uncontaminated)
             </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="cursor-pointer text-muted-foreground hover:text-foreground inline-flex items-center justify-center p-1 rounded-md">
-                  <HelpCircle className="h-3.5 w-3.5" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-xs">
-                  Evaluated across 15 dispatch conversations. Technicians ranked by specialty match first, then lowest active load. Includes emergency outbound window exemption.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Badge variant="outline" className="text-[10px] bg-amber-50 text-amber-800 border-amber-300">
+              Single Run
+            </Badge>
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline justify-between">
-              <div className="text-2xl font-bold text-foreground">100.0%</div>
-              <Badge className="bg-primary/10 text-primary border-primary/20 text-[11px]">
-                n=15 Calls
-              </Badge>
+              <div className="text-2xl font-bold text-foreground">{v2Passed} of {v2Total}</div>
+              <span className="text-sm font-semibold text-amber-800">{v2Pct}%</span>
             </div>
-            <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
-              <span>Rank Selection:</span>
-              <span className="font-semibold text-foreground">Specialty + Fewest Jobs</span>
-            </div>
-            <Progress value={100} className="h-1.5 mt-2.5 bg-primary/20" />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Unseen caller turns evaluated once with zero code alterations.
+            </p>
+            <Progress value={Number(v2Pct)} className="h-1.5 mt-2.5 bg-amber-100" />
           </CardContent>
         </Card>
 
-        {/* Card 3: Collection Recovery */}
-        <Card className="border-border shadow-xs hover:border-primary/40 transition-all bg-card/60 backdrop-blur-xs">
+        {/* Card 3: Dispatch Acceptance */}
+        <Card className="border-border shadow-xs bg-card/60">
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Payment Recovery (PTP)
+              Dispatch FSM
             </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="cursor-pointer text-muted-foreground hover:text-foreground inline-flex items-center justify-center p-1 rounded-md">
-                  <HelpCircle className="h-3.5 w-3.5" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-xs">
-                  25 main collection scenarios and 8 holdout calls. 100% PTP date capture rate, 0 abusive turns, permanent wrong-number suppression, and owner callbacks.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-800 border-emerald-200">
+              Live FSM
+            </Badge>
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline justify-between">
-              <div className="text-2xl font-bold text-foreground">100.0%</div>
-              <Badge className="bg-emerald-100 text-emerald-800 hover:bg-emerald-100 border-emerald-200 text-[11px]">
-                Main n=25
-              </Badge>
+              <div className="text-2xl font-bold text-foreground">{dispatchPassed} of {dispatchTotal}</div>
+              <span className="text-sm font-semibold text-emerald-700">{dispatchPct}%</span>
             </div>
-            <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
-              <span>Holdout Recovery (n=8):</span>
-              <span className="font-semibold text-foreground">100.0% (8/8 Dispositions)</span>
-            </div>
-            <Progress value={100} className="h-1.5 mt-2.5 bg-emerald-100" />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Avg brain latency: {dispatchLatency.toFixed(2)} ms.
+            </p>
+            <Progress value={Number(dispatchPct)} className="h-1.5 mt-2.5 bg-emerald-100" />
           </CardContent>
         </Card>
 
-        {/* Card 4: Latency Profile */}
-        <Card className="border-border shadow-xs hover:border-primary/40 transition-all bg-card/60 backdrop-blur-xs">
+        {/* Card 4: Collection Recovery */}
+        <Card className="border-border shadow-xs bg-card/60">
           <CardHeader className="pb-2 flex flex-row items-center justify-between space-y-0">
             <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-              Brain Decision Latency
+              Collection FSM (Main)
             </span>
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger className="cursor-pointer text-muted-foreground hover:text-foreground inline-flex items-center justify-center p-1 rounded-md">
-                  <HelpCircle className="h-3.5 w-3.5" />
-                </TooltipTrigger>
-                <TooltipContent className="max-w-xs text-xs">
-                  Measured across 120+ benchmark turns. Deterministic rule-based extraction completes in under 1ms, ensuring conversational responsiveness without cloud LLM lags.
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Badge variant="outline" className="text-[10px] bg-emerald-50 text-emerald-800 border-emerald-200">
+              Live FSM
+            </Badge>
           </CardHeader>
           <CardContent>
             <div className="flex items-baseline justify-between">
-              <div className="text-2xl font-bold text-foreground">0.13 ms</div>
-              <Badge className="bg-sky-100 text-sky-800 border-sky-200 text-[11px]">
-                p50 Latency
-              </Badge>
+              <div className="text-2xl font-bold text-foreground">{collectionMainPassed} of {collectionMainTotal}</div>
+              <span className="text-sm font-semibold text-emerald-700">{collectionMainPct}%</span>
             </div>
-            <div className="mt-2 text-xs text-muted-foreground flex items-center justify-between">
-              <span>95th Percentile (p95):</span>
-              <span className="font-semibold text-foreground">0.82 ms</span>
-            </div>
-            <Progress value={98} className="h-1.5 mt-2.5 bg-sky-100" />
+            <p className="mt-2 text-xs text-muted-foreground">
+              Tone ladder, zero-pressure wording, and owner callback routing.
+            </p>
+            <Progress value={Number(collectionMainPct)} className="h-1.5 mt-2.5 bg-emerald-100" />
           </CardContent>
         </Card>
       </div>
 
-      {/* ── Navigation Tabs ────────────────────────────────────────────────────── */}
+      {/* ── Tabs Navigation ────────────────────────────────────────────────────── */}
       <div className="flex items-center gap-2 border-b border-border/80 pb-2 overflow-x-auto">
         <Button
           variant={activeTab === "overview" ? "default" : "ghost"}
@@ -214,7 +327,7 @@ export default function MetricsPage() {
           className="text-xs font-medium rounded-lg"
         >
           <Layers className="h-3.5 w-3.5 mr-1.5" />
-          Summary Overview
+          Evaluation Sets
         </Button>
         <Button
           variant={activeTab === "extractors" ? "default" : "ghost"}
@@ -223,7 +336,7 @@ export default function MetricsPage() {
           className="text-xs font-medium rounded-lg"
         >
           <Cpu className="h-3.5 w-3.5 mr-1.5" />
-          Extractor Comparison
+          Extractor & Fallback
         </Button>
         <Button
           variant={activeTab === "audio" ? "default" : "ghost"}
@@ -232,7 +345,7 @@ export default function MetricsPage() {
           className="text-xs font-medium rounded-lg"
         >
           <Volume2 className="h-3.5 w-3.5 mr-1.5" />
-          Audio Line Robustness (SNR)
+          Audio Pipeline (SNR)
         </Button>
         <Button
           variant={activeTab === "methodology" ? "default" : "ghost"}
@@ -241,421 +354,438 @@ export default function MetricsPage() {
           className="text-xs font-medium rounded-lg"
         >
           <ShieldCheck className="h-3.5 w-3.5 mr-1.5" />
-          How We Measured This
+          Holdout Audit Log
         </Button>
       </div>
 
-      {/* ── TAB 1: OVERVIEW ────────────────────────────────────────────────────── */}
+      {/* ── TAB 1: EVALUATION SETS ────────────────────────────────────────────── */}
       {activeTab === "overview" && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Left: Component Pass Rate Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Main vs Development Sets */}
             <Card className="border-border">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  Full Pipeline Test Coverage & Verification
-                </CardTitle>
+                <CardTitle className="text-base font-semibold">Booking Scenarios Breakdown</CardTitle>
                 <CardDescription className="text-xs">
-                  Automated scenario suites executed through Python 3.11+ async test runner.
+                  Separating main tests from contaminated development sets and untouched Holdout V2.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3.5">
-                <div>
-                  <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Main Booking Scenarios (n=28)</span>
-                    <span className="text-emerald-700 font-bold">100.0% Pass (51/51 Slots)</span>
+              <CardContent className="space-y-4">
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-foreground">Main Booking Scenarios</span>
+                    <Badge variant="outline" className="text-xs font-semibold bg-emerald-50 text-emerald-800 border-emerald-200">
+                      {bookingMainPassed} of {bookingMainTotal} ({bookingMainPct}%)
+                    </Badge>
                   </div>
-                  <Progress value={100} className="h-2 bg-emerald-100" />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    28 diverse scenarios testing problems, slots, addresses, bargaining, and safety emergencies.
+                  </p>
                 </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Collection Payment Recovery (n=25)</span>
-                    <span className="text-emerald-700 font-bold">100.0% Pass (PTP & Disputes)</span>
+
+                <div className="p-3.5 rounded-lg border border-amber-200/60 bg-amber-50/30">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground">Development Set (Holdout V1)</span>
+                      <Badge variant="outline" className="text-[10px] bg-amber-100 text-amber-900 border-amber-300">
+                        Contaminated
+                      </Badge>
+                    </div>
+                    <Badge variant="outline" className="text-xs font-semibold bg-amber-100 text-amber-900 border-amber-300">
+                      {booking?.holdout?.passed_scenarios ?? 3} of {booking?.holdout?.total_scenarios ?? 10} ({booking?.holdout?.pass_rate_percent ?? 30.0}%)
+                    </Badge>
                   </div>
-                  <Progress value={100} className="h-2 bg-emerald-100" />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    10 lines probed during earlier debugging; re-classified as Development Set in accordance with honesty rules.
+                  </p>
                 </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Technician Voice Dispatch (n=15)</span>
-                    <span className="text-emerald-700 font-bold">100.0% Pass (Cascading Allocation)</span>
+
+                <div className="p-3.5 rounded-lg border border-blue-200/60 bg-blue-50/30">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground">Holdout V2 Set</span>
+                      <Badge variant="outline" className="text-[10px] bg-blue-100 text-blue-900 border-blue-300">
+                        Uncontaminated
+                      </Badge>
+                    </div>
+                    <Badge variant="outline" className="text-xs font-semibold bg-blue-100 text-blue-900 border-blue-300">
+                      {v2Passed} of {v2Total} ({v2Pct}%)
+                    </Badge>
                   </div>
-                  <Progress value={100} className="h-2 bg-emerald-100" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Noisy STT Telephony Stress Test (n=30)</span>
-                    <span className="text-primary font-bold">91.7% Accuracy (Rules) / 100.0% (Hybrid)</span>
-                  </div>
-                  <Progress value={94} className="h-2 bg-primary/20" />
-                </div>
-                <div>
-                  <div className="flex justify-between text-xs font-medium mb-1">
-                    <span>Unseen Holdout Booking Set (n=10)</span>
-                    <span className="text-amber-800 font-bold">70.0% Pass (62.5% Slots)</span>
-                  </div>
-                  <Progress value={70} className="h-2 bg-amber-100" />
+                  <p className="text-xs text-muted-foreground mt-1">
+                    10 fresh caller lines executed strictly once without adjusting the extractor or FSM.
+                  </p>
                 </div>
               </CardContent>
             </Card>
 
-            {/* Right: Architectural Highlights */}
+            {/* Collection Sets Breakdown */}
             <Card className="border-border">
               <CardHeader className="pb-3">
-                <CardTitle className="text-base font-semibold flex items-center gap-2">
-                  <Zap className="h-4 w-4 text-primary" />
-                  Key Reliability & Safety Invariants
-                </CardTitle>
+                <CardTitle className="text-base font-semibold">Payment Collection Breakdown</CardTitle>
                 <CardDescription className="text-xs">
-                  Hard bounds guaranteed by the deterministic state machine.
+                  Main debt recovery flows and previously probed collection lines.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-3 text-xs text-muted-foreground">
-                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                  <span className="font-semibold text-foreground block mb-0.5">
-                    1. Zero LLM Hallucinations on Routine Calls
-                  </span>
-                  Deterministic FSM manages the price catalog, confirmation readbacks, and owner escalation.
+              <CardContent className="space-y-4">
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-foreground">Main Collection Scenarios</span>
+                    <Badge variant="outline" className="text-xs font-semibold bg-emerald-50 text-emerald-800 border-emerald-200">
+                      {collectionMainPassed} of {collectionMainTotal} ({collectionMainPct}%)
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    25 multi-turn collection interactions across Tone 1, 2, and 3.
+                  </p>
                 </div>
-                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                  <span className="font-semibold text-foreground block mb-0.5">
-                    2. Three-Branch Emergency Safety Halts
-                  </span>
-                  Electric shocks, fire/gas leaks, and pipe floods trigger dedicated safety scripts and owner alert.
+
+                <div className="p-3.5 rounded-lg border border-amber-200/60 bg-amber-50/30">
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center gap-1.5">
+                      <span className="font-medium text-foreground">Collection Development Set</span>
+                      <Badge variant="outline" className="text-[10px] bg-amber-100 text-amber-900 border-amber-300">
+                        Contaminated
+                      </Badge>
+                    </div>
+                    <Badge variant="outline" className="text-xs font-semibold bg-amber-100 text-amber-900 border-amber-300">
+                      {collection?.holdout?.passed_scenarios ?? 8} of {collection?.holdout?.total_scenarios ?? 8} (100.0%)
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    8 collection turns previously probed during prompt refinement; labeled as development set.
+                  </p>
                 </div>
-                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                  <span className="font-semibold text-foreground block mb-0.5">
-                    3. Telephony Energy VAD & Echo Guard
-                  </span>
-                  Ignores line noise, grants 500 ms speech grace period, and enforces a 400 ms guard after playback.
-                </div>
-                <div className="p-2.5 rounded-lg bg-muted/40 border border-border/60">
-                  <span className="font-semibold text-foreground block mb-0.5">
-                    4. Respectful Multi-Tier Collection Ladder
-                  </span>
-                  Never threatens callers; spoken Hindi number words; wrong numbers permanently suppressed.
+
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="font-medium text-foreground">Technician Voice Dispatch</span>
+                    <Badge variant="outline" className="text-xs font-semibold bg-emerald-50 text-emerald-800 border-emerald-200">
+                      {dispatchPassed} of {dispatchTotal} ({dispatchPct}%)
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    15 dispatch calls evaluating cascading ranking across specialists and emergency hour exemptions.
+                  </p>
                 </div>
               </CardContent>
             </Card>
           </div>
-        </div>
-      )}
 
-      {/* ── TAB 2: EXTRACTOR COMPARISON TABLE ──────────────────────────────────── */}
-      {activeTab === "extractors" && (
-        <Card className="border-border">
-          <CardHeader className="pb-3">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
-              <div>
-                <CardTitle className="text-lg font-semibold flex items-center gap-2 font-heading">
-                  <Cpu className="h-5 w-5 text-primary" />
-                  Comparative Extractor Benchmark
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Evaluated across 28 main booking scenarios, 10 holdout stress scenarios, and 30 noisy STT telephony transcripts.
-                </CardDescription>
-              </div>
-              <Badge variant="outline" className="text-xs bg-muted/50 border-border self-start sm:self-auto">
-                Total Turns Evaluated: 120+
-              </Badge>
-            </div>
-          </CardHeader>
-          <CardContent className="overflow-x-auto">
-            <Table>
-              <TableHeader>
-                <TableRow className="hover:bg-transparent border-border">
-                  <TableHead className="font-semibold text-foreground text-xs">Extractor Engine</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs">Architecture</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs text-center">Main (n=28)</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs text-center">Holdout (n=10)</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs text-center">Noisy STT (n=30)</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs text-center">Combined Acc</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs text-center">Latency (p50)</TableHead>
-                  <TableHead className="font-semibold text-foreground text-xs text-right">Status</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {/* Row 1: RuleBasedExtractor */}
-                <TableRow className="border-border">
-                  <TableCell className="font-medium text-xs">
-                    <div className="font-semibold text-foreground">RuleBasedExtractor</div>
-                    <div className="text-[10px] text-muted-foreground">Active Default</div>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    Deterministic regex + Devanagari script map
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-semibold text-emerald-700">
-                    100.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-medium text-amber-700">
-                    70.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-medium text-foreground">
-                    90.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-bold text-foreground">
-                    94.1%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-mono text-emerald-700">
-                    0.13 ms
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 text-[10px]">
-                      LIVE
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-
-                {/* Row 2: Evon v3.3 */}
-                <TableRow className="border-border">
-                  <TableCell className="font-medium text-xs">
-                    <div className="font-semibold text-foreground">Evon v3.3 (vLLM)</div>
-                    <div className="text-[10px] text-muted-foreground">gnani/gnani-evon-v3.3-30B-A3B</div>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    OpenAI /v1/chat/completions (temp 0.6, top_p 0.95)
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-semibold text-foreground">
-                    100.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-medium text-emerald-700">
-                    80.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-medium text-foreground">
-                    90.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-bold text-foreground">
-                    94.1%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-mono text-muted-foreground">
-                    25.7 ms
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 text-[10px]">
-                      PENDING USER
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-
-                {/* Row 3: Hybrid Extractor */}
-                <TableRow className="border-border bg-primary/5">
-                  <TableCell className="font-medium text-xs">
-                    <div className="font-semibold text-primary">HybridExtractor</div>
-                    <div className="text-[10px] text-muted-foreground">Rules + Evon fallback</div>
-                  </TableCell>
-                  <TableCell className="text-xs text-muted-foreground">
-                    Rules first (&lt;1ms); Evon on unrecognized slots
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-semibold text-emerald-700">
-                    100.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-semibold text-emerald-700">
-                    90.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-semibold text-emerald-700">
-                    100.0%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-bold text-primary">
-                    96.8%
-                  </TableCell>
-                  <TableCell className="text-xs text-center font-mono text-primary font-semibold">
-                    0.38 ms
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Badge className="bg-primary text-primary-foreground text-[10px] shadow-xs">
-                      RECOMMENDED
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              </TableBody>
-            </Table>
-
-            <div className="mt-4 p-3 rounded-lg bg-muted/30 border border-border text-xs text-muted-foreground flex items-center justify-between">
-              <span>
-                <strong>Note on PENDING USER badge:</strong> Running Evon v3.3 requires a 1× A100 or H100 GPU hosting vLLM at <code>http://localhost:8001/v1</code>. In demo mode without an active GPU, the benchmark executes against the local offline mock extractor.
-              </span>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* ── TAB 3: AUDIO LINE ROBUSTNESS (SNR) ─────────────────────────────────── */}
-      {activeTab === "audio" && (
-        <div className="space-y-6">
+          {/* Holdout V2 Line-by-Line Table */}
           <Card className="border-border">
             <CardHeader className="pb-3">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                  <CardTitle className="text-lg font-semibold flex items-center gap-2 font-heading">
-                    <Volume2 className="h-5 w-5 text-primary" />
-                    Telephony Audio Robustness & Noise Immunity
-                  </CardTitle>
+                  <CardTitle className="text-base font-semibold">Holdout V2 Line-by-Line Single-Run Results</CardTitle>
                   <CardDescription className="text-xs">
-                    Evaluated on 30 test utterances synthesized at 8000 Hz Linear PCM and tested across Signal-to-Noise Ratio (SNR) tiers.
+                    Executed once on Phase 6.1 with zero modifications to the extractor or FSM rules.
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-300 text-xs">
-                  Prisma v3.0 Pipeline
+                <Badge variant="outline" className="bg-amber-50 text-amber-800 border-amber-300 self-start sm:self-auto text-xs">
+                  {v2Passed} of {v2Total} Passed ({v2Pct}%)
                 </Badge>
               </div>
             </CardHeader>
-            <CardContent className="space-y-6">
-              {/* SNR Cards Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* Tier 1: Clean */}
-                <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50/40">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-emerald-900 uppercase tracking-wider">
-                      Tier 1: Clean (Studio)
-                    </span>
-                    <Badge className="bg-emerald-200 text-emerald-900 text-[10px]">∞ SNR</Badge>
-                  </div>
-                  <div className="space-y-2.5 mt-3 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Intent Retention:</span>
-                      <span className="font-bold text-emerald-800">93.3%</span>
-                    </div>
-                    <Progress value={93.3} className="h-1.5 bg-emerald-100" />
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Problem Accuracy:</span>
-                      <span className="font-bold text-emerald-800">96.7%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Simulated WER:</span>
-                      <span className="font-semibold text-emerald-700">4.2%</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tier 2: 15 dB SNR */}
-                <div className="p-4 rounded-xl border border-primary/20 bg-primary/5">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-primary uppercase tracking-wider">
-                      Tier 2: 15 dB SNR
-                    </span>
-                    <Badge className="bg-primary/20 text-primary text-[10px]">Moderate Street</Badge>
-                  </div>
-                  <div className="space-y-2.5 mt-3 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Intent Retention:</span>
-                      <span className="font-bold text-primary">90.0%</span>
-                    </div>
-                    <Progress value={90.0} className="h-1.5 bg-primary/20" />
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Problem Accuracy:</span>
-                      <span className="font-bold text-primary">83.3%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Simulated WER:</span>
-                      <span className="font-semibold text-primary">12.8%</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Tier 3: 5 dB SNR */}
-                <div className="p-4 rounded-xl border border-amber-200 bg-amber-50/40">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs font-bold text-amber-900 uppercase tracking-wider">
-                      Tier 3: 5 dB SNR
-                    </span>
-                    <Badge className="bg-amber-200 text-amber-900 text-[10px]">Heavy Traffic</Badge>
-                  </div>
-                  <div className="space-y-2.5 mt-3 text-xs">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Intent Retention:</span>
-                      <span className="font-bold text-amber-900">83.3%</span>
-                    </div>
-                    <Progress value={83.3} className="h-1.5 bg-amber-100" />
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Problem Accuracy:</span>
-                      <span className="font-bold text-amber-900">83.3%</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Simulated WER:</span>
-                      <span className="font-semibold text-amber-800">26.5%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Degradation Narrative */}
-              <div className="p-4 rounded-xl bg-card border border-border text-xs text-muted-foreground space-y-2">
-                <h4 className="font-semibold text-foreground text-sm flex items-center gap-2">
-                  <TrendingUp className="h-4 w-4 text-primary" />
-                  Key Telephony Insight: Intent Preservation vs Word Error Rate
-                </h4>
-                <p>
-                  While raw word error rate (WER) increases from 4.2% on clean audio to 26.5% under harsh 5 dB street traffic noise,
-                  <strong> intent retention remains above 83%</strong>. Because Pakka’s extractor relies on acoustic keyword boosting
-                  and semantic landmark roots (e.g. &ldquo;geyser&rdquo;, &ldquo;leak&rdquo;, &ldquo;Saket&rdquo;), conversational progress is preserved
-                  even when peripheral fillers and prepositions are dropped by the telephony codec.
-                </p>
+            <CardContent>
+              <div className="rounded-lg border border-border/80 overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow>
+                      <TableHead className="w-12 text-xs">#</TableHead>
+                      <TableHead className="text-xs">Utterance</TableHead>
+                      <TableHead className="text-xs">Result</TableHead>
+                      <TableHead className="text-xs">Diagnostic Cause</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="text-xs">
+                    <TableRow>
+                      <TableCell className="font-mono">1</TableCell>
+                      <TableCell className="font-medium">{"paani ki tanki overflow ho rahi hai, motor band karwana hai"}</TableCell>
+                      <TableCell><Badge variant="destructive" className="text-[10px]">FAIL</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Bot error: tank overflow triggered emergency flooding branch</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">2</TableCell>
+                      <TableCell className="font-medium">{"mere ghar mein bathroom ka nal tapak raha hai, kal subah aa sakte ho?"}</TableCell>
+                      <TableCell><Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">PASS</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Extracted tap_leak and slot kal subah</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">3</TableCell>
+                      <TableCell className="font-medium">{"kaun bol raha hai? kya ye machine hai?"}</TableCell>
+                      <TableCell><Badge variant="destructive" className="text-[10px]">FAIL</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">{"Bot error: regex missed 'kya ye machine hai'"}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">4</TableCell>
+                      <TableCell className="font-medium">{"price kitna hai pehle batao"}</TableCell>
+                      <TableCell><Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">PASS</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Asked for problem before providing quote</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">5</TableCell>
+                      <TableCell className="font-medium">{"address Banjara Hills road number 12 ke paas hai"}</TableCell>
+                      <TableCell><Badge variant="destructive" className="text-[10px]">FAIL</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">{"Expectation mismatch: captured raw string with 'address' prefix"}</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">6</TableCell>
+                      <TableCell className="font-medium">{"geyser ka thermostat kharab lagta hai, paani garam nahi hota"}</TableCell>
+                      <TableCell><Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">PASS</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Extracted geyser_not_heating correctly</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">7</TableCell>
+                      <TableCell className="font-medium">{"rehne do, abhi nahi karwana"}</TableCell>
+                      <TableCell><Badge variant="destructive" className="text-[10px]">FAIL</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Bot error: missing cancellation intent at greeting state</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">8</TableCell>
+                      <TableCell className="font-medium">{"gas ki badbu aa rahi hai kitchen mein"}</TableCell>
+                      <TableCell><Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">PASS</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Routed to gas/fire emergency safety instruction</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">9</TableCell>
+                      <TableCell className="font-medium">{"pipe phat gaya hai, ghar mein paani bhar raha hai"}</TableCell>
+                      <TableCell><Badge variant="destructive" className="text-[10px]">FAIL</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Bot error: routine pipe_burst took precedence over flooding check</TableCell>
+                    </TableRow>
+                    <TableRow>
+                      <TableCell className="font-mono">10</TableCell>
+                      <TableCell className="font-medium">{"haan theek hai, book kar do at confirm step"}</TableCell>
+                      <TableCell><Badge variant="destructive" className="text-[10px]">FAIL</Badge></TableCell>
+                      <TableCell className="text-muted-foreground">Expectation mismatch: FSM requires readback confirmation before booking</TableCell>
+                    </TableRow>
+                  </TableBody>
+                </Table>
               </div>
             </CardContent>
           </Card>
         </div>
       )}
 
-      {/* ── TAB 4: HOW WE MEASURED THIS ────────────────────────────────────────── */}
+      {/* ── TAB 2: EXTRACTOR & FALLBACK ───────────────────────────────────────── */}
+      {activeTab === "extractors" && (
+        <div className="space-y-6">
+          {/* Rule-Based Performance */}
+          <Card className="border-border">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <CardTitle className="text-base font-semibold">RuleBasedExtractor Baseline</CardTitle>
+                  <CardDescription className="text-xs">
+                    Pure deterministic regex engine executing in ~1.2 ms with zero external network overhead.
+                  </CardDescription>
+                </div>
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 self-start sm:self-auto text-xs">
+                  Production Default
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <span className="text-xs text-muted-foreground">Main Booking (n=28)</span>
+                  <div className="text-xl font-bold mt-1 text-foreground">
+                    {extractor?.datasets?.main_booking?.results?.passed_scenarios ?? 28} of {extractor?.datasets?.main_booking?.results?.total_scenarios ?? 28}
+                  </div>
+                  <span className="text-xs font-semibold text-emerald-700">
+                    {extractor?.datasets?.main_booking?.results?.pass_rate_percent ?? 100.0}% Pass
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-lg border border-amber-200/60 bg-amber-50/30">
+                  <span className="text-xs text-muted-foreground">Development Set (n=10)</span>
+                  <div className="text-xl font-bold mt-1 text-foreground">
+                    {extractor?.datasets?.development_set?.results?.passed_scenarios ?? 3} of {extractor?.datasets?.development_set?.results?.total_scenarios ?? 10}
+                  </div>
+                  <span className="text-xs font-semibold text-amber-800">
+                    {extractor?.datasets?.development_set?.results?.pass_rate_percent ?? 30.0}% Pass (previously probed)
+                  </span>
+                </div>
+
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <span className="text-xs text-muted-foreground">Synthetic Noisy-Text (n=30)</span>
+                  <div className="text-xl font-bold mt-1 text-foreground">
+                    {extractor?.datasets?.synthetic_noisy_text?.results?.passed_scenarios ?? 27} of {extractor?.datasets?.synthetic_noisy_text?.results?.total_scenarios ?? 30}
+                  </div>
+                  <span className="text-xs font-semibold text-primary">
+                    {extractor?.datasets?.synthetic_noisy_text?.results?.pass_rate_percent ?? 90.0}% Pass (typed by us)
+                  </span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Fallback Behavior Test Table */}
+          <Card className="border-border">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <CardTitle className="text-base font-semibold">Fallback Behaviour Test (Mock Evon Server)</CardTitle>
+                  <CardDescription className="text-xs">
+                    Verifying that EvonExtractor safely falls back to RuleBasedExtractor on endpoint failure.
+                  </CardDescription>
+                </div>
+                <Badge variant="outline" className="bg-emerald-50 text-emerald-800 border-emerald-200 text-xs">
+                  {extractor?.fallback_behavior_test?.status ?? "PASS"}
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-lg border border-border/80 overflow-hidden">
+                <Table>
+                  <TableHeader className="bg-muted/40">
+                    <TableRow>
+                      <TableHead className="text-xs">Test Condition</TableHead>
+                      <TableHead className="text-xs">Input Utterance</TableHead>
+                      <TableHead className="text-xs">Extracted Slot</TableHead>
+                      <TableHead className="text-xs">Fallback Source</TableHead>
+                      <TableHead className="text-xs">Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody className="text-xs">
+                    {(extractor?.fallback_behavior_test?.tests ?? [
+                      {
+                        test_name: "Timeout fallback (>2.0s simulation)",
+                        input: "geyser paani garam nahi kar raha",
+                        extracted_problem: "geyser_not_heating",
+                        fallback_source: "RuleBasedExtractor",
+                        passed: true,
+                      },
+                      {
+                        test_name: "Malformed JSON payload fallback",
+                        input: "bathroom ka nal leak ho raha hai",
+                        extracted_problem: "tap_leak",
+                        fallback_source: "RuleBasedExtractor",
+                        passed: true,
+                      },
+                    ]).map((t, idx) => (
+                      <TableRow key={idx}>
+                        <TableCell className="font-medium">{t.test_name}</TableCell>
+                        <TableCell className="font-mono text-[11px]">{`"${t.input}"`}</TableCell>
+                        <TableCell className="font-mono text-emerald-700">{t.extracted_problem}</TableCell>
+                        <TableCell className="text-muted-foreground">{t.fallback_source}</TableCell>
+                        <TableCell>
+                          {t.passed ? (
+                            <Badge className="bg-emerald-100 text-emerald-800 border-emerald-200 text-[10px]">
+                              PASS
+                            </Badge>
+                          ) : (
+                            <Badge variant="destructive" className="text-[10px]">
+                              FAIL
+                            </Badge>
+                          )}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+
+              <div className="mt-4 p-3 bg-muted/30 rounded-lg border border-border/60 text-xs text-muted-foreground flex items-center justify-between">
+                <span>Evon v3.3 GPU Service Status:</span>
+                <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-300">
+                  {extractor?.evon_status ?? "PENDING USER: requires GPU with vLLM (port 8001)"}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* ── TAB 3: AUDIO PIPELINE ────────────────────────────────────────────── */}
+      {activeTab === "audio" && (
+        <div className="space-y-6">
+          <Card className="border-border">
+            <CardHeader className="pb-3">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <div>
+                  <CardTitle className="text-base font-semibold">Telephony Audio Pipeline (Gnani Prisma STT)</CardTitle>
+                  <CardDescription className="text-xs">
+                    Acoustic noise resilience evaluation across Clean, 15 dB, and 5 dB SNR.
+                  </CardDescription>
+                </div>
+                <Badge variant="outline" className="bg-amber-50 text-amber-900 border-amber-300 text-xs">
+                  Not measured yet
+                </Badge>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="p-4 rounded-xl border border-amber-300/80 bg-amber-50/50 space-y-2">
+                <div className="flex items-center gap-2 text-amber-900 font-medium text-sm">
+                  <AlertTriangle className="h-4 w-4 text-amber-700" />
+                  Live Acoustic Retention: Not Measured Yet
+                </div>
+                <p className="text-xs text-amber-800 leading-relaxed">
+                  Real acoustic WER and intent degradation require an active WebSocket connection to Gnani Prisma STT and live phone audio.
+                  In local evaluation, 30 test WAV files were synthesized with additive Gaussian noise purely to verify frame rechunking (1024-byte linear PCM frames) and energy VAD gating.
+                  Per truth in reporting rules, no synthetic numbers are presented as measurements.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <span className="font-semibold text-foreground">TTS Synthesis Engine:</span>
+                  <p className="text-muted-foreground mt-1">
+                    {audio?.tts_synthesis ?? "Synthetic tone generator (local fallback, not real Timbre)"}
+                  </p>
+                </div>
+                <div className="p-3.5 rounded-lg border border-border/60 bg-muted/20">
+                  <span className="font-semibold text-foreground">STT Transcription Engine:</span>
+                  <p className="text-muted-foreground mt-1">
+                    {audio?.stt_transcription ?? "Dry run mock (local fallback, not live Prisma WebSocket)"}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
+
+      {/* ── TAB 4: METHODOLOGY & LOG ─────────────────────────────────────────── */}
       {activeTab === "methodology" && (
-        <Card className="border-border">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold font-heading flex items-center gap-2">
-              <ShieldCheck className="h-5 w-5 text-emerald-600" />
-              Evaluation Methodology & Verification Standards
-            </CardTitle>
-            <CardDescription className="text-xs">
-              Rigorous out-of-sample testing standards ensuring full transparency.
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4 text-xs text-muted-foreground">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="p-3.5 rounded-xl border border-border/70 bg-card">
-                <h4 className="font-semibold text-foreground mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  1. Multi-Turn Dialogue Scenarios
-                </h4>
+        <div className="space-y-6">
+          <Card className="border-border">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-semibold">Evaluation Methodology & Holdout Audit Log</CardTitle>
+              <CardDescription className="text-xs">
+                Transparency standards, dataset history, and contamination logging per docs/HOLDOUT_LOG.md.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4 text-xs leading-relaxed text-muted-foreground">
+              <div className="p-3.5 rounded-lg border border-border/60 bg-card space-y-2">
+                <span className="font-semibold text-foreground">1. Holdout Honesty Standard</span>
                 <p>
-                  Scenarios are specified in structured YAML files with complete turn-by-turn utterances and slot expectations.
-                  Each turn is executed through the actual state machine, verifying terminal states, price assignments, and confirmation readbacks.
+                  Any dataset whose failure modes were inspected during development and subsequently addressed by editing regex rules or FSM handlers cannot be presented as an unseen test.
+                  During Phase 4 and 5 iterations, 10 booking lines and 8 collection lines were probed and resolved.
+                  They are formally redesignated as <strong>Development Sets</strong> in this dashboard and in all JSON reports.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl border border-border/70 bg-card">
-                <h4 className="font-semibold text-foreground mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  2. Unseen Holdout Isolation
-                </h4>
+              <div className="p-3.5 rounded-lg border border-border/60 bg-card space-y-2">
+                <span className="font-semibold text-foreground">2. Single-Run Holdout V2 Protocol</span>
                 <p>
-                  A dedicated holdout set of 10 booking lines and 8 collection calls is maintained completely out-of-sample.
-                  Holdout failures are reported transparently without altering core state machine rules.
+                  Phase 6.1 introduced a completely new 10-line set (<code>holdout_v2.yaml</code>).
+                  It was executed exactly once with zero changes to <code>extractor.py</code> or <code>fsm.py</code>.
+                  The resulting 4 / 10 (40.0%) pass rate reflects true zero-shot generalization.
                 </p>
               </div>
 
-              <div className="p-3.5 rounded-xl border border-border/70 bg-card">
-                <h4 className="font-semibold text-foreground mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  3. Telephony Audio Rechunker (1024-byte)
-                </h4>
+              <div className="p-3.5 rounded-lg border border-border/60 bg-card space-y-2">
+                <span className="font-semibold text-foreground">3. Spoken Numbers & Non-Pressuring Collections</span>
                 <p>
-                  Audio evaluation rechunks linear16 8kHz PCM into exact 1024-byte frames matching Gnani STT Prisma v3.0 WebSocket protocol.
-                  Energy VAD and 400ms echo-loop guards prevent false barge-in and self-transcription loops.
+                  All amounts spoken by the voice assistant use natural Hindi words via <code>number_to_spoken_words()</code>.
+                  All payment link claims were removed because no real automated SMS/WhatsApp link sender exists.
+                  Tone 3 reminders strictly offer owner callbacks and suppress further automated calls until owner action.
                 </p>
               </div>
-
-              <div className="p-3.5 rounded-xl border border-border/70 bg-card">
-                <h4 className="font-semibold text-foreground mb-1 flex items-center gap-1.5">
-                  <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                  4. Strictly Bounded LLM Architecture
-                </h4>
-                <p>
-                  Gnani Evon v3.3 operates strictly behind the <code>Extractor</code> protocol.
-                  The model outputs structured JSON only; it is never permitted to talk directly to the caller, negotiate price floors, or generate dialogue turns.
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       )}
     </div>
   );

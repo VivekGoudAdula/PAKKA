@@ -144,11 +144,14 @@ def test_execute_all_collection_scenarios(collection_scenarios: list[dict[str, A
     # Save to report JSON
     total_main = len(collection_scenarios)
     report_data = {
+        "mode": "live",
+        "generated_at": datetime.now(UTC).isoformat(),
         "timestamp": datetime.now(UTC).isoformat(),
         "total_scenarios": total_main,
         "passed_scenarios": passed_count,
         "pass_rate_percent": round((passed_count / total_main * 100), 2),
         "holdout": {
+            "label": "Development set (previously probed)",
             "total_scenarios": len(holdout_scenarios),
             "passed_scenarios": holdout_passed,
             "pass_rate_percent": round((holdout_passed / len(holdout_scenarios) * 100), 2)

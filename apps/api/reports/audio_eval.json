@@ -1,32 +1,11 @@
 {
-  "timestamp": "2026-11-05T09:48:59.428297+00:00",
-  "mode": "simulated_rechunker_dry_run",
+  "mode": "dry_run",
+  "generated_at": "2026-11-05T10:36:09.505796+00:00",
+  "is_synthetic": true,
+  "tts_synthesis": "Synthetic tone generator (local fallback, not real Timbre)",
+  "stt_transcription": "Dry run mock (local fallback, not live Prisma WebSocket)",
+  "status": "Not measured yet (requires live Gnani credentials and active telephony audio stream)",
   "sample_count": 30,
-  "snr_tiers": {
-    "clean": {
-      "label": "Clean (Studio/Quiet, ∞ SNR)",
-      "sample_size": 30,
-      "intent_retention_percent": 93.3,
-      "problem_accuracy_percent": 96.7,
-      "simulated_wer_percent": 4.2,
-      "avg_latency_ms": 0.0
-    },
-    "15db": {
-      "label": "15 dB SNR (Moderate Room / Street Noise)",
-      "sample_size": 30,
-      "intent_retention_percent": 90.0,
-      "problem_accuracy_percent": 83.3,
-      "simulated_wer_percent": 12.8,
-      "avg_latency_ms": 0.0
-    },
-    "5db": {
-      "label": "5 dB SNR (Heavy Traffic / Line Noise)",
-      "sample_size": 30,
-      "intent_retention_percent": 83.3,
-      "problem_accuracy_percent": 83.3,
-      "simulated_wer_percent": 26.5,
-      "avg_latency_ms": 0.0
-    }
-  },
-  "methodology": "30 diverse Hinglish service utterances rechunked into standard 1024-byte frames, synthesized at 8000 Hz linear PCM with additive Gaussian noise for 15 dB and 5 dB SNR, and evaluated for slot and intent retention through Pakka extraction pipeline."
+  "snr_tiers": {},
+  "methodology": "30 diverse Hinglish service utterances rechunked into standard 1024-byte frames, synthesized at 8000 Hz linear PCM with additive Gaussian noise for 15 dB and 5 dB SNR. Because live Gnani credentials were not connected, live WER and acoustic retention are not claimed."
 }

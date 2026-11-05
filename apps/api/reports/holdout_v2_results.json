@@ -1,0 +1,152 @@
+{
+  "mode": "live",
+  "dataset": "holdout_v2",
+  "description": "Uncontaminated 10-line holdout set evaluated once without code changes",
+  "passed_count": 4,
+  "total_count": 10,
+  "accuracy_percent": 40.0,
+  "results": [
+    {
+      "id": "holdout_v2_01_motor_pump",
+      "name": "1) paani ki tanki overflow ho rahi hai, motor band karwana hai",
+      "passed": false,
+      "failure_reasons": [
+        "Slot 'problem_key' expected 'motor_pump', got 'None'"
+      ],
+      "final_state": "HANDOFF",
+      "slots": {},
+      "bot_reply": "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon."
+    },
+    {
+      "id": "holdout_v2_02_tap_leak_slot",
+      "name": "2) mere ghar mein bathroom ka nal tapak raha hai, kal subah aa sakte ho?",
+      "passed": true,
+      "failure_reasons": [],
+      "final_state": "ASK_ADDRESS",
+      "slots": {
+        "problem": "Tap Leakage",
+        "problem_key": "tap_leak",
+        "time_slot": "Kal Subah (9 AM \u2013 11 AM)",
+        "price_min": 150,
+        "price_max": 250,
+        "price_estimate": "\u20b9150 \u2013 \u20b9250"
+      },
+      "bot_reply": "Theek hai. Aapka landmark-style address bata dijiye, taaki technician aasani se pahunch sake."
+    },
+    {
+      "id": "holdout_v2_03_ai_disclosure",
+      "name": "3) kaun bol raha hai? kya ye machine hai?",
+      "passed": false,
+      "failure_reasons": [
+        "is_ai_inquiry expected True, got ai_disclosure_given=False"
+      ],
+      "final_state": "ASK_PROBLEM",
+      "slots": {},
+      "bot_reply": "Aapko kya problem aa rahi hai? Plumber ya geyser repair ke liye bataiye."
+    },
+    {
+      "id": "holdout_v2_04_price_inquiry_before_problem",
+      "name": "4) price kitna hai pehle batao",
+      "passed": true,
+      "failure_reasons": [],
+      "final_state": "ASK_PROBLEM",
+      "slots": {},
+      "bot_reply": "Aapko kya problem aa rahi hai? Plumber ya geyser repair ke liye bataiye."
+    },
+    {
+      "id": "holdout_v2_05_address_no_problem_change",
+      "name": "5) address Banjara Hills road number 12 ke paas hai",
+      "passed": false,
+      "failure_reasons": [
+        "Slot 'landmark_address' expected 'Banjara Hills road number 12 ke paas', got 'address Banjara Hills road number 12 ke paas hai'"
+      ],
+      "final_state": "ASK_SLOT",
+      "slots": {
+        "problem": "Geyser Heating Issue",
+        "problem_key": "geyser_not_heating",
+        "landmark_address": "address Banjara Hills road number 12 ke paas hai",
+        "price_min": 450,
+        "price_max": 750,
+        "price_estimate": "\u20b9450 \u2013 \u20b9750"
+      },
+      "bot_reply": "Technician ke aane ke liye kaun sa time theek rahega? Jaise aaj shaam ya kal subah?"
+    },
+    {
+      "id": "holdout_v2_06_geyser_thermostat",
+      "name": "6) geyser ka thermostat kharab lagta hai, paani garam nahi hota",
+      "passed": true,
+      "failure_reasons": [],
+      "final_state": "ASK_ADDRESS",
+      "slots": {
+        "problem": "Geyser Heating Issue",
+        "problem_key": "geyser_not_heating",
+        "price_min": 450,
+        "price_max": 750,
+        "price_estimate": "\u20b9450 \u2013 \u20b9750"
+      },
+      "bot_reply": "Theek hai. Aapka landmark-style address bata dijiye, taaki technician aasani se pahunch sake."
+    },
+    {
+      "id": "holdout_v2_07_polite_close_abandoned",
+      "name": "7) rehne do, abhi nahi karwana",
+      "passed": false,
+      "failure_reasons": [
+        "State expected 'ABANDONED', got 'ASK_PROBLEM'",
+        "is_terminal expected True, got False"
+      ],
+      "final_state": "ASK_PROBLEM",
+      "slots": {
+        "time_slot": "Immediate / Emergency"
+      },
+      "bot_reply": "Aapko kya problem aa rahi hai? Plumber ya geyser repair ke liye bataiye."
+    },
+    {
+      "id": "holdout_v2_08_gas_emergency",
+      "name": "8) gas ki badbu aa rahi hai kitchen mein",
+      "passed": true,
+      "failure_reasons": [],
+      "final_state": "HANDOFF",
+      "slots": {},
+      "bot_reply": "Kripya koi switch ya aag mat jalaiye. Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. Main malik ko bhi bata rahi hoon."
+    },
+    {
+      "id": "holdout_v2_09_flooding_emergency",
+      "name": "9) pipe phat gaya hai, ghar mein paani bhar raha hai",
+      "passed": false,
+      "failure_reasons": [
+        "State expected 'HANDOFF', got 'ASK_ADDRESS'",
+        "is_terminal expected True, got False",
+        "is_urgent expected True, got False"
+      ],
+      "final_state": "ASK_ADDRESS",
+      "slots": {
+        "problem": "Pipe Burst Emergency",
+        "problem_key": "pipe_burst",
+        "price_min": 300,
+        "price_max": 500,
+        "price_estimate": "\u20b9300 \u2013 \u20b9500"
+      },
+      "bot_reply": "Theek hai. Aapka landmark-style address bata dijiye, taaki technician aasani se pahunch sake."
+    },
+    {
+      "id": "holdout_v2_10_confirm_booked",
+      "name": "10) haan theek hai, book kar do at confirm step",
+      "passed": false,
+      "failure_reasons": [
+        "State expected 'CONFIRMED', got 'CONFIRM_READBACK'",
+        "is_terminal expected True, got False"
+      ],
+      "final_state": "CONFIRM_READBACK",
+      "slots": {
+        "problem": "Geyser Water Leakage",
+        "problem_key": "geyser_leak",
+        "landmark_address": "Rohini Sector 15",
+        "time_slot": "Kal Subah (9 AM \u2013 11 AM)",
+        "price_min": 350,
+        "price_max": 600,
+        "price_estimate": "\u20b9350 \u2013 \u20b9600"
+      },
+      "bot_reply": "Maine note kar liya: Geyser Water Leakage, Rohini Sector 15, Kal Subah (9 AM \u2013 11 AM) ka time. Kya main pakka confirm kar doon?"
+    }
+  ]
+}

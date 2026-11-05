@@ -265,3 +265,4 @@ def get_extractor(extractor_type: str | None = None) -> Extractor:
     if choice == "hybrid":
         return HybridExtractor()
     return RuleBasedExtractor()
+

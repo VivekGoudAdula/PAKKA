@@ -202,3 +202,24 @@ class TestBookingFSM:
         res = extractor.extract("Mera address hai Vasant Kunj Pocket C")
         assert res.landmark_address is not None
         assert "Vasant Kunj" in res.landmark_address
+
+    def test_emergency_literal_strings(self) -> None:
+        """Verify the exact required emergency safety strings."""
+        from app.brain.replies import (
+            EMERGENCY_ELECTRIC_INSTRUCTION,
+            EMERGENCY_FIRE_GAS_INSTRUCTION,
+            EMERGENCY_FLOODING_INSTRUCTION,
+        )
+        assert EMERGENCY_ELECTRIC_INSTRUCTION == (
+            "Kripya geyser aur main switch band kar dijiye aur geyser ko haath mat lagaiye. "
+            "Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+        )
+        assert EMERGENCY_FIRE_GAS_INSTRUCTION == (
+            "Kripya koi switch ya aag mat jalaiye. "
+            "Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. "
+            "Main malik ko bhi bata rahi hoon."
+        )
+        assert EMERGENCY_FLOODING_INSTRUCTION == (
+            "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. "
+            "Main abhi malik ko bata rahi hoon."
+        )

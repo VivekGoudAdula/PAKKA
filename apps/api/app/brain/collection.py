@@ -16,6 +16,7 @@ from app.brain.replies_collection import (
     ALREADY_PAID_REPLY,
     CALLBACK_REPLY,
     DISPUTE_REPLY,
+    LINK_REQUEST_REPLY,
     OWNER_HANDOFF_REPLY,
     REASK_DATE_REPLY,
     REFUSED_REPLY,
@@ -64,6 +65,7 @@ class CollectionTurnResult:
     captured_date: str | None = None
     suppress_number: bool = False
     needs_owner: bool = False
+    pause_reminders: bool = False
 
 
 class CollectionFSM:
@@ -119,6 +121,19 @@ class CollectionFSM:
                 bot_reply=ROBOT_DISCLOSURE_REPLY,
                 current_state=self.state,
                 is_terminal=False,
+            )
+
+        # 2b. Global Payment Link Request (Truthful: flag for owner follow-up, do not claim link sent)
+        if re.search(r"(link|payment link|upi link|qr code|bhej do link|link bhej|bhejo link)", text):
+            self.state = CollectionState.TERMINAL
+            self.disposition = CollectionDisposition.NEEDS_OWNER
+            return CollectionTurnResult(
+                bot_reply=LINK_REQUEST_REPLY,
+                current_state=self.state,
+                is_terminal=True,
+                disposition=CollectionDisposition.NEEDS_OWNER,
+                needs_owner=True,
+                pause_reminders=(self.tone_level == 3),
             )
 
         # 3. Global Wrong Number

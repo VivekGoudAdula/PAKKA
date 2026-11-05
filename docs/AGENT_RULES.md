@@ -110,7 +110,7 @@ End every phase with a **PHASE REPORT** in exactly this format:
 - No real personal data anywhere in repo or demo.
 - No secrets in the repo.
 - No bought engagement or bots.
-- All metrics from our own test runs only.
+- All metrics from our own test runs only: no number may appear in a report or in the UI unless a script computed it from files in the repo during this run. Every reports/*.json must contain mode ("live" | "dry_run" | "mock"), generated_at, and per-case results.
 - No new libraries without explicit owner approval.
 
 ---

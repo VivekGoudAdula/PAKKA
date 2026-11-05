@@ -77,8 +77,8 @@ async function main() {
         deviceScaleFactor: 1,
       });
       const page = await context.newPage();
-      await page.goto("http://127.0.0.1:3008/app/metrics", { waitUntil: "networkidle" });
-      await page.waitForTimeout(1000);
+      await page.goto("http://127.0.0.1:3008/app/metrics", { waitUntil: "domcontentloaded", timeout: 15000 });
+      await page.waitForTimeout(2000);
 
       const shotPath = path.join(screenshotsDir, `metrics-${vp.name}.png`);
       await page.screenshot({ path: shotPath, fullPage: true });
@@ -102,3 +102,4 @@ main().catch((err) => {
   console.error("Screenshot error:", err);
   process.exit(1);
 });
+

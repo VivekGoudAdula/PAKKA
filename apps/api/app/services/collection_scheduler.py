@@ -81,6 +81,11 @@ async def evaluate_promises(session: Session) -> dict[str, Any]:
 
         # Calling Eligibility Check for due_today or broken
         if p.status in ("due_today", "broken"):
+            # Check tone 3 pause: suppress further automated calls until owner acts
+            if p.tone_level >= 3 or p.status == "paused":
+                logger.info("Skipping automated call for tone 3 / paused promise %s", p.id)
+                continue
+
             # Check suppression
             if p.customer_phone_raw and p.customer_phone_raw in suppressed_phones:
                 logger.info("Skipping call for suppressed phone %s", p.customer_phone_masked)

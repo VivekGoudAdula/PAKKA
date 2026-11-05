@@ -141,6 +141,8 @@ def test_execute_all_dispatch_scenarios(dispatch_scenarios: list[dict[str, Any]]
     avg_latency_ms = total_latency_ms / total_turns if total_turns > 0 else 0.0
 
     report = {
+        "mode": "live",
+        "generated_at": datetime.now(UTC).isoformat(),
         "timestamp": datetime.now(UTC).isoformat(),
         "total_scenarios": total_count,
         "passed_scenarios": passed_scenarios,

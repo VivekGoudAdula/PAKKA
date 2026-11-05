@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-05T07:00:48.143924+00:00",
+  "timestamp": "2026-11-05T10:31:03.136798+00:00",
   "total_scenarios": 25,
   "passed_scenarios": 25,
   "pass_rate_percent": 100.0,
@@ -78,12 +78,12 @@
       "turns": [
         {
           "user": "Haan Ramesh bol raha hoon",
-          "bot": "Aapka paanch sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke paanch sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Theek hai main kal shaam tak pay kar dunga",
-          "bot": "Theek hai Ramesh Kumar ji, main kal shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap kal shaam tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -99,12 +99,12 @@
       "turns": [
         {
           "user": "Haan ji bataiye",
-          "bot": "Aapka aath sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke aath sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Aaj shaam ko bhej dunga online",
-          "bot": "Theek hai Suresh ji, main aaj shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap aaj shaam tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -120,12 +120,12 @@
       "turns": [
         {
           "user": "Haan boliye",
-          "bot": "Aapka chhah sau pachaas rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke chhah sau pachaas rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Parson tak transfer kar dungi",
-          "bot": "Theek hai Anita ji, main parson ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap parson tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -141,12 +141,12 @@
       "turns": [
         {
           "user": "Haan Deepak hi bol raha hoon",
-          "bot": "Aapka ek hazaar do sau rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "bot": "Aapke ek hazaar do sau rupaye abhi baaki dikh rahe hain. Kya aap bata sakte hain ki payment kab tak ho sakti hai?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Somwar ko pakka kar dunga",
-          "bot": "Theek hai Deepak ji, main somwar ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap somwar tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -162,12 +162,12 @@
       "turns": [
         {
           "user": "Haanji",
-          "bot": "Aapka chaar sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke chaar sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Weekend par ho payega",
-          "bot": "Theek hai Pooja ji, main weekend ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap weekend tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -215,12 +215,12 @@
       "turns": [
         {
           "user": "Haan boliye",
-          "bot": "Aapka chhah sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke chhah sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Kaisa repair kiya tha? Paani abhi bhi tapak raha hai, main pehle kaam dekhunga",
-          "bot": "Achha, kaam mein koi dikkat ya shikayat hai kya? Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein.",
+          "bot": "Maaf kijiye, aapko pareshani hui. Main malik ko bata deti hoon, woh aapse baat karenge. Tab tak main payment ke liye call nahi karungi.",
           "state": "TERMINAL"
         }
       ]
@@ -236,7 +236,7 @@
       "turns": [
         {
           "user": "Kaam theek nahi kiya unhone, phir se kharab ho gaya",
-          "bot": "Achha, kaam mein koi dikkat ya shikayat hai kya? Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein.",
+          "bot": "Maaf kijiye, aapko pareshani hui. Main malik ko bata deti hoon, woh aapse baat karenge. Tab tak main payment ke liye call nahi karungi.",
           "state": "TERMINAL"
         }
       ]
@@ -252,7 +252,7 @@
       "turns": [
         {
           "user": "Arre maine to kal hi online bhej diya tha Google Pay se",
-          "bot": "Aapne payment kar di hai? Bahut accha! Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega.",
+          "bot": "Accha, theek hai ji. Main malik ko bata deti hoon, woh check kar lenge. Shukriya.",
           "state": "TERMINAL"
         }
       ]
@@ -268,7 +268,7 @@
       "turns": [
         {
           "user": "Technician ko cash de diya tha usi din",
-          "bot": "Aapne payment kar di hai? Bahut accha! Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega.",
+          "bot": "Accha, theek hai ji. Main malik ko bata deti hoon, woh check kar lenge. Shukriya.",
           "state": "TERMINAL"
         }
       ]
@@ -284,7 +284,7 @@
       "turns": [
         {
           "user": "Abhi main drive kar raha hoon, shaam ko phone karo",
-          "bot": "Theek hai ji, lagta hai aap abhi busy hain. Main baad mein thodi der baad call karwa lungi. Dhanyawaad.",
+          "bot": "Theek hai ji, lagta hai aap abhi busy hain. Main baad mein call karwa lungi. Dhanyawaad.",
           "state": "TERMINAL"
         }
       ]
@@ -300,7 +300,7 @@
       "turns": [
         {
           "user": "I am in a meeting, baad mein baat karenge",
-          "bot": "Theek hai ji, lagta hai aap abhi busy hain. Main baad mein thodi der baad call karwa lungi. Dhanyawaad.",
+          "bot": "Theek hai ji, lagta hai aap abhi busy hain. Main baad mein call karwa lungi. Dhanyawaad.",
           "state": "TERMINAL"
         }
       ]
@@ -316,7 +316,7 @@
       "turns": [
         {
           "user": "Haan suno",
-          "bot": "Aapka ek hazaar ek sau rupaye ka hisaab baaki hai. Agar koi pareshani hai, toh main shop owner se callback karwa sakti hoon, ya reminders thodi der ke liye pause kar dete hain.",
+          "bot": "Aapke ek hazaar ek sau rupaye baaki hain. Agar aap chahein to malik aapko khud phone kar lenge. Main ab aapko reminder call nahi karungi.",
           "state": "CAPTURE_DATE"
         },
         {
@@ -337,7 +337,7 @@
       "turns": [
         {
           "user": "Haan bolo",
-          "bot": "Aapka nau sau rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "bot": "Aapke nau sau rupaye abhi baaki dikh rahe hain. Kya aap bata sakte hain ki payment kab tak ho sakti hai?",
           "state": "CAPTURE_DATE"
         },
         {
@@ -358,12 +358,12 @@
       "turns": [
         {
           "user": "Kya aap robot ho ya real person?",
-          "bot": "Ji haan, main Pakka ki automated digital sahayak bol rahi hoon. Kya aap human owner se baat karna chahenge?",
+          "bot": "Ji haan, main Pakka ki digital sahayak bol rahi hoon. Agar aap kisi insaan se baat karna chahte hain to main turant malik ko connect karwa sakti hoon.",
           "state": "GREETING"
         },
         {
           "user": "Achha theek hai, kal bhej dunga",
-          "bot": "Theek hai Gaurav ji, main kal ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap kal tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -379,7 +379,7 @@
       "turns": [
         {
           "user": "Haan Sunita bol rahi hoon",
-          "bot": "Aapka paanch sau pachaas rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke paanch sau pachaas rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
@@ -389,7 +389,7 @@
         },
         {
           "user": "Kal subah bhejti hoon",
-          "bot": "Theek hai Sunita ji, main kal subah ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap kal subah tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -405,12 +405,12 @@
       "turns": [
         {
           "user": "Haan Mohan",
-          "bot": "Aapka aath sau pachaas rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "bot": "Aapke aath sau pachaas rupaye abhi baaki dikh rahe hain. Kya aap bata sakte hain ki payment kab tak ho sakti hai?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Bhaiya kal sham pakka transfer kar dunga",
-          "bot": "Theek hai Mohan ji, main kal shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap kal shaam tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -426,12 +426,12 @@
       "turns": [
         {
           "user": "Haanji",
-          "bot": "Aapka do hazaar rupaye ka hisaab baaki hai. Agar koi pareshani hai, toh main shop owner se callback karwa sakti hoon, ya reminders thodi der ke liye pause kar dete hain.",
+          "bot": "Aapke do hazaar rupaye baaki hain. Agar aap chahein to malik aapko khud phone kar lenge. Main ab aapko reminder call nahi karungi.",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Theek hai main aaj hi clear karta hoon",
-          "bot": "Theek hai Hemant ji, main aaj shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap aaj shaam tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -447,12 +447,12 @@
       "turns": [
         {
           "user": "Haan bolo",
-          "bot": "Aapka saat sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke saat sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Salary 15 tareekh ko aayegi tab karunga",
-          "bot": "Theek hai Karan ji, main 15 tareekh ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap 15 tareekh tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -468,12 +468,12 @@
       "turns": [
         {
           "user": "Ji namaste",
-          "bot": "Aapka paanch sau rupaye ka hisaab baaki tha. Toh yeh payment aap kab tak kar payenge?",
+          "bot": "Aapke paanch sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Shukrawar tak bhej dungi",
-          "bot": "Theek hai Bhavna ji, main shukrawar ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap shukrawar tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -489,12 +489,12 @@
       "turns": [
         {
           "user": "Haan Harish",
-          "bot": "Aapka chhah sau rupaye ka hisaab abhi baaki hai. Aap yeh payment kab tak clear kar denge?",
+          "bot": "Aapke chhah sau rupaye abhi baaki dikh rahe hain. Kya aap bata sakte hain ki payment kab tak ho sakti hai?",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Do din baad kar dunga pakka",
-          "bot": "Theek hai Harish ji, main do din baad ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
+          "bot": "Theek hai ji, shukriya. Maine note kar liya hai ki aap do din baad tak kar denge.",
           "state": "TERMINAL"
         }
       ]
@@ -510,7 +510,7 @@
       "turns": [
         {
           "user": "Bhai aapka kaam bilkul bekaar tha, geyser abhi bhi band pada hai",
-          "bot": "Achha, kaam mein koi dikkat ya shikayat hai kya? Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein.",
+          "bot": "Maaf kijiye, aapko pareshani hui. Main malik ko bata deti hoon, woh aapse baat karenge. Tab tak main payment ke liye call nahi karungi.",
           "state": "TERMINAL"
         }
       ]
@@ -542,7 +542,7 @@
       "turns": [
         {
           "user": "Maine to de diya tha technician ko cash",
-          "bot": "Aapne payment kar di hai? Bahut accha! Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega.",
+          "bot": "Accha, theek hai ji. Main malik ko bata deti hoon, woh check kar lenge. Shukriya.",
           "state": "TERMINAL"
         }
       ]

@@ -202,6 +202,7 @@ def test_execute_all_booking_scenarios(scenarios: list[dict[str, Any]]) -> None:
         )
 
     holdout_report = {
+        "label": "Development set (previously probed)",
         "total_scenarios": len(holdout_scenarios),
         "passed_scenarios": holdout_passed,
         "pass_rate_percent": round((holdout_passed / len(holdout_scenarios) * 100), 2)
@@ -216,6 +217,8 @@ def test_execute_all_booking_scenarios(scenarios: list[dict[str, Any]]) -> None:
 
     # Save structured results to JSON
     report_data = {
+        "mode": "live",
+        "generated_at": datetime.now(UTC).isoformat(),
         "timestamp": datetime.now(UTC).isoformat(),
         "total_scenarios": total_scenarios,
         "passed_scenarios": passed_scenarios_count,

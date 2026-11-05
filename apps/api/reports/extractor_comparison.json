@@ -1,144 +1,567 @@
 {
-  "timestamp": "2026-11-05T09:40:38.429503+00:00",
+  "mode": "dry_run",
+  "generated_at": "2026-11-05T10:37:18.689657+00:00",
   "evon_online": false,
   "evon_status": "PENDING USER: requires GPU with vLLM (port 8001)",
   "sample_sizes": {
     "main_booking_scenarios": 28,
-    "holdout_scenarios": 10,
-    "noisy_stt_scenarios": 30
+    "development_set_scenarios": 10,
+    "synthetic_noisy_text_scenarios": 30
   },
-  "extractors": {
-    "rules": {
-      "name": "RuleBasedExtractor",
-      "status": "LIVE: deterministic regex",
-      "overall_slot_accuracy_percent": 94.1,
-      "main_scenarios": {
-        "total_items": 28,
-        "passed_items": 28,
-        "pass_rate_percent": 100.0,
-        "total_slots": 57,
-        "correct_slots": 57,
-        "slot_accuracy_percent": 100.0,
+  "datasets": {
+    "main_booking": {
+      "label": "Main Booking Scenarios",
+      "mode": "live",
+      "results": {
+        "total_scenarios": 28,
+        "passed_scenarios": 0,
+        "pass_rate_percent": 0.0,
+        "total_slots": 51,
+        "correct_slots": 0,
+        "slot_accuracy_percent": 0.0,
         "latency_ms": {
-          "mean": 0.49,
-          "p50": 0.13,
-          "p95": 0.47
-        }
-      },
-      "holdout_scenarios": {
-        "total_items": 10,
-        "passed_items": 7,
-        "pass_rate_percent": 70.0,
-        "total_slots": 8,
-        "correct_slots": 5,
-        "slot_accuracy_percent": 62.5,
-        "latency_ms": {
-          "mean": 0.18,
-          "p50": 0.19,
-          "p95": 0.23
-        }
-      },
-      "noisy_stt_scenarios": {
-        "total_items": 30,
-        "passed_items": 27,
-        "pass_rate_percent": 90.0,
-        "total_slots": 36,
-        "correct_slots": 33,
-        "slot_accuracy_percent": 91.7,
-        "latency_ms": {
-          "mean": 0.16,
-          "p50": 0.16,
-          "p95": 0.2
-        }
+          "p50": 0.05,
+          "p95": 0.29,
+          "avg": 0.2
+        },
+        "cases": [
+          {
+            "id": "scenario_01_all_in_one",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 4.56
+          },
+          {
+            "id": "scenario_02_step_by_step",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.12
+          },
+          {
+            "id": "scenario_03_slot_correction",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_04_address_correction",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_05_problem_correction",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "scenario_06_unknown_problem",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "scenario_07_bargaining_objection",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "scenario_08_devanagari_codemix",
+            "passed": false,
+            "slots_checked": 2,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "scenario_09_mistranscribed_geyser",
+            "passed": false,
+            "slots_checked": 2,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_10_mistranscribed_tap",
+            "passed": false,
+            "slots_checked": 2,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_11_robot_inquiry",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "scenario_12_human_request",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "scenario_13_silence_abandoned",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "scenario_14_explicit_refusal",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "scenario_15_pipe_burst_emergency",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "scenario_16_drain_blocked_landmark",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.21
+          },
+          {
+            "id": "scenario_17_motor_pump",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.09
+          },
+          {
+            "id": "scenario_18_fast_confirmation",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.09
+          },
+          {
+            "id": "scenario_19_repeated_unrecognized",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.04
+          },
+          {
+            "id": "scenario_20_hindi_spoken_numbers",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_21_devanagari_pure",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_22_late_bargaining_in_readback",
+            "passed": false,
+            "slots_checked": 3,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "scenario_23_emergency_electric_current",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.08
+          },
+          {
+            "id": "scenario_24_emergency_sparking_smoke",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "scenario_25_emergency_pipe_burst_flooding",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.08
+          },
+          {
+            "id": "scenario_26_emergency_fire",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "scenario_27_emergency_gas_leak",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "scenario_28_emergency_devanagari_shock",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.08
+          }
+        ]
       }
     },
-    "evon": {
-      "name": "Evon v3.3 (vLLM)",
-      "status": "PENDING USER: requires GPU with vLLM (port 8001)",
-      "overall_slot_accuracy_percent": 60.4,
-      "main_scenarios": {
-        "total_items": 28,
-        "passed_items": 10,
-        "pass_rate_percent": 35.7,
-        "total_slots": 57,
-        "correct_slots": 22,
-        "slot_accuracy_percent": 38.6,
+    "development_set": {
+      "label": "Development set (previously probed)",
+      "mode": "dry_run",
+      "results": {
+        "total_scenarios": 10,
+        "passed_scenarios": 3,
+        "pass_rate_percent": 30.0,
+        "total_slots": 7,
+        "correct_slots": 4,
+        "slot_accuracy_percent": 57.1,
         "latency_ms": {
-          "mean": 25.5,
-          "p50": 25.69,
-          "p95": 28.36
-        }
-      },
-      "holdout_scenarios": {
-        "total_items": 10,
-        "passed_items": 8,
-        "pass_rate_percent": 80.0,
-        "total_slots": 8,
-        "correct_slots": 6,
-        "slot_accuracy_percent": 75.0,
-        "latency_ms": {
-          "mean": 25.71,
-          "p50": 25.7,
-          "p95": 26.39
-        }
-      },
-      "noisy_stt_scenarios": {
-        "total_items": 30,
-        "passed_items": 27,
-        "pass_rate_percent": 90.0,
-        "total_slots": 36,
-        "correct_slots": 33,
-        "slot_accuracy_percent": 91.7,
-        "latency_ms": {
-          "mean": 26.38,
-          "p50": 25.84,
-          "p95": 30.14
-        }
+          "p50": 0.06,
+          "p95": 0.09,
+          "avg": 0.06
+        },
+        "cases": [
+          {
+            "id": "holdout_a_geyser_leak",
+            "passed": true,
+            "slots_checked": 1,
+            "slots_correct": 1,
+            "latency_ms": 0.09
+          },
+          {
+            "id": "holdout_b_slot_and_address",
+            "passed": true,
+            "slots_checked": 2,
+            "slots_correct": 2,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "holdout_c_bargaining_floor",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "holdout_d_robot_inquiry",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "holdout_e_malik_talk",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "holdout_f_slot_correction",
+            "passed": false,
+            "slots_checked": 1,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "holdout_g_motor_pump",
+            "passed": true,
+            "slots_checked": 1,
+            "slots_correct": 1,
+            "latency_ms": 0.07
+          },
+          {
+            "id": "holdout_h_drain_blocked",
+            "passed": false,
+            "slots_checked": 1,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          },
+          {
+            "id": "holdout_i_wait_minute",
+            "passed": false,
+            "slots_checked": 1,
+            "slots_correct": 0,
+            "latency_ms": 0.05
+          },
+          {
+            "id": "holdout_j_emergency_current",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.06
+          }
+        ]
       }
     },
-    "hybrid": {
-      "name": "HybridExtractor",
-      "status": "LIVE: rules-first with Evon fallback",
-      "overall_slot_accuracy_percent": 87.1,
-      "main_scenarios": {
-        "total_items": 28,
-        "passed_items": 16,
-        "pass_rate_percent": 57.1,
-        "total_slots": 57,
-        "correct_slots": 45,
-        "slot_accuracy_percent": 78.9,
+    "synthetic_noisy_text": {
+      "label": "Synthetic noisy-text tests (typed by us, not real STT output)",
+      "mode": "dry_run",
+      "results": {
+        "total_scenarios": 30,
+        "passed_scenarios": 0,
+        "pass_rate_percent": 0.0,
+        "total_slots": 0,
+        "correct_slots": 0,
+        "slot_accuracy_percent": 0.0,
         "latency_ms": {
-          "mean": 19.71,
-          "p50": 25.9,
-          "p95": 26.68
-        }
-      },
-      "holdout_scenarios": {
-        "total_items": 10,
-        "passed_items": 9,
-        "pass_rate_percent": 90.0,
-        "total_slots": 8,
-        "correct_slots": 7,
-        "slot_accuracy_percent": 87.5,
-        "latency_ms": {
-          "mean": 14.75,
-          "p50": 25.85,
-          "p95": 29.25
-        }
-      },
-      "noisy_stt_scenarios": {
-        "total_items": 30,
-        "passed_items": 30,
-        "pass_rate_percent": 100.0,
-        "total_slots": 36,
-        "correct_slots": 36,
-        "slot_accuracy_percent": 100.0,
-        "latency_ms": {
-          "mean": 11.53,
-          "p50": 0.38,
-          "p95": 26.78
-        }
+          "p50": 0.0,
+          "p95": 0.0,
+          "avg": 0.0
+        },
+        "cases": [
+          {
+            "id": "noisy_01",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_02",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_03",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_04",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_05",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_06",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_07",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_08",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_09",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_10",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_11",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_12",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_13",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_14",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_15",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_16",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_17",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_18",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_19",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_20",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_21",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_22",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_23",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_24",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_25",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_26",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_27",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_28",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_29",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          },
+          {
+            "id": "noisy_30",
+            "passed": false,
+            "slots_checked": 0,
+            "slots_correct": 0,
+            "latency_ms": 0.0
+          }
+        ]
       }
     }
+  },
+  "fallback_behavior_test": {
+    "status": "PASS",
+    "tests": [
+      {
+        "test_name": "Timeout fallback (>2.0s simulation)",
+        "passed": true,
+        "input": "geyser paani garam nahi kar raha",
+        "extracted_problem": "geyser_not_heating",
+        "fallback_source": "RuleBasedExtractor",
+        "latency_ms": 1.13
+      },
+      {
+        "test_name": "Malformed JSON payload fallback",
+        "passed": true,
+        "input": "bathroom ka nal leak ho raha hai",
+        "extracted_problem": "tap_leak",
+        "fallback_source": "RuleBasedExtractor",
+        "latency_ms": 0.88
+      }
+    ]
   }
 }

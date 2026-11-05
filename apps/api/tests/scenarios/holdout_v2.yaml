@@ -1,0 +1,103 @@
+# ==============================================================================
+# PAKKA HOLDOUT V2 EVALUATION SCENARIOS (10 Lines)
+# ==============================================================================
+# RULE: Run ONCE. Do NOT modify the extractor or FSM.
+# ==============================================================================
+
+- id: holdout_v2_01_motor_pump
+  name: "1) paani ki tanki overflow ho rahi hai, motor band karwana hai"
+  description: "Problem extraction for motor_pump"
+  dialogue:
+    - user: "paani ki tanki overflow ho rahi hai, motor band karwana hai"
+  expected:
+    slots:
+      problem_key: "motor_pump"
+
+- id: holdout_v2_02_tap_leak_slot
+  name: "2) mere ghar mein bathroom ka nal tapak raha hai, kal subah aa sakte ho?"
+  description: "Problem extraction for tap_leak and slot kal subah"
+  dialogue:
+    - user: "mere ghar mein bathroom ka nal tapak raha hai, kal subah aa sakte ho?"
+  expected:
+    slots:
+      problem_key: "tap_leak"
+      time_slot: "Kal Subah (9 AM – 11 AM)"
+
+- id: holdout_v2_03_ai_disclosure
+  name: "3) kaun bol raha hai? kya ye machine hai?"
+  description: "Honest AI disclosure"
+  dialogue:
+    - user: "kaun bol raha hai? kya ye machine hai?"
+  expected:
+    is_ai_inquiry: true
+
+- id: holdout_v2_04_price_inquiry_before_problem
+  name: "4) price kitna hai pehle batao"
+  description: "Quote only after problem is known; asks for problem"
+  dialogue:
+    - user: "price kitna hai pehle batao"
+  expected:
+    final_state: "ASK_PROBLEM"
+
+- id: holdout_v2_05_address_no_problem_change
+  name: "5) address Banjara Hills road number 12 ke paas hai"
+  description: "Address filled, no problem change"
+  dialogue:
+    - user: "geyser thanda paani de raha hai"
+    - user: "address Banjara Hills road number 12 ke paas hai"
+  expected:
+    slots:
+      problem_key: "geyser_not_heating"
+      landmark_address: "Banjara Hills road number 12 ke paas"
+
+- id: holdout_v2_06_geyser_thermostat
+  name: "6) geyser ka thermostat kharab lagta hai, paani garam nahi hota"
+  description: "Problem extraction for geyser_not_heating"
+  dialogue:
+    - user: "geyser ka thermostat kharab lagta hai, paani garam nahi hota"
+  expected:
+    slots:
+      problem_key: "geyser_not_heating"
+
+- id: holdout_v2_07_polite_close_abandoned
+  name: "7) rehne do, abhi nahi karwana"
+  description: "Polite close, ABANDONED, no pressure"
+  dialogue:
+    - user: "rehne do, abhi nahi karwana"
+  expected:
+    final_state: "ABANDONED"
+    is_terminal: true
+
+- id: holdout_v2_08_gas_emergency
+  name: "8) gas ki badbu aa rahi hai kitchen mein"
+  description: "Fire/gas emergency safety branch"
+  dialogue:
+    - user: "gas ki badbu aa rahi hai kitchen mein"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    emergency_type: "fire_gas"
+
+- id: holdout_v2_09_flooding_emergency
+  name: "9) pipe phat gaya hai, ghar mein paani bhar raha hai"
+  description: "Flooding safety branch"
+  dialogue:
+    - user: "pipe phat gaya hai, ghar mein paani bhar raha hai"
+  expected:
+    final_state: "HANDOFF"
+    is_terminal: true
+    is_urgent: true
+    emergency_type: "flooding"
+
+- id: holdout_v2_10_confirm_booked
+  name: "10) haan theek hai, book kar do at confirm step"
+  description: "Confirm step -> BOOKED"
+  dialogue:
+    - user: "Geyser leak ho raha hai"
+    - user: "Rohini Sector 15"
+    - user: "kal subah"
+    - user: "haan theek hai, book kar do"
+  expected:
+    final_state: "CONFIRMED"
+    is_terminal: true

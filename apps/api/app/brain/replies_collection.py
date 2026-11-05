@@ -1,7 +1,7 @@
 """
 Hinglish conversational reply templates for Pakka Collection Brain.
 Natural, respectful, zero-pressure phone utterances for payment reminders.
-Amounts are spoken in words (e.g. 'aath sau rupaye') using number_to_spoken_words.
+Amounts are spoken in words (e.g. 'paanch sau rupaye') using number_to_spoken_words.
 """
 
 from __future__ import annotations
@@ -12,22 +12,28 @@ from app.voice.audio import number_to_spoken_words
 def get_collection_greeting(
     customer_name: str,
     business_name: str = "Sharma Plumbing",
+    job_type: str = "repair",
+    amount: int = 500,
     tone_level: int = 1,
 ) -> str:
-    """Initial greeting identifying assistant and business."""
+    """Initial greeting identifying assistant, business, and balance."""
+    amount_words = number_to_spoken_words(amount)
     if tone_level == 3:
         return (
-            f"Namaste {customer_name} ji, {business_name} ki digital sahayak bol rahi hoon. "
-            f"Aapki service payment ke baare mein baat karni thi."
+            f"Namaste {customer_name} ji, main {business_name} ki digital sahayak bol rahi hoon. "
+            f"Aapke {job_type} ke {amount_words} rupaye baaki hain. "
+            f"Agar aap chahein to malik aapko khud phone kar lenge. Main ab aapko reminder call nahi karungi."
         )
     if tone_level == 2:
         return (
-            f"Namaste {customer_name} ji, {business_name} ki digital sahayak bol rahi hoon. "
-            f"Aapne pehle payment ka waada kiya tha, usi baare mein follow-up call hai."
+            f"Namaste {customer_name} ji, main {business_name} ki digital sahayak bol rahi hoon. "
+            f"Aapke {job_type} ke {amount_words} rupaye abhi baaki dikh rahe hain. "
+            f"Kya aap bata sakte hain ki payment kab tak ho sakti hai?"
         )
     return (
-        f"Namaste {customer_name} ji, {business_name} ki digital sahayak bol rahi hoon. "
-        f"Aapka jo repair ka kaam hua tha, usi ke baare mein baat karni thi."
+        f"Namaste {customer_name} ji, main {business_name} ki digital sahayak bol rahi hoon. "
+        f"Aapke {job_type} ke {amount_words} rupaye baaki hain. "
+        f"Yeh payment aap kab tak kar payenge?"
     )
 
 
@@ -39,17 +45,17 @@ def get_balance_statement(
     amount_words = number_to_spoken_words(amount)
     if tone_level == 3:
         return (
-            f"Aapka {amount_words} rupaye ka hisaab baaki hai. "
-            f"Agar koi pareshani hai, toh main shop owner se callback karwa sakti hoon, ya reminders thodi der ke liye pause kar dete hain."
+            f"Aapke {amount_words} rupaye baaki hain. "
+            f"Agar aap chahein to malik aapko khud phone kar lenge. Main ab aapko reminder call nahi karungi."
         )
     if tone_level == 2:
         return (
-            f"Aapka {amount_words} rupaye ka hisaab abhi baaki hai. "
-            f"Aap yeh payment kab tak clear kar denge?"
+            f"Aapke {amount_words} rupaye abhi baaki dikh rahe hain. "
+            f"Kya aap bata sakte hain ki payment kab tak ho sakti hai?"
         )
     return (
-        f"Aapka {amount_words} rupaye ka hisaab baaki tha. "
-        f"Toh yeh payment aap kab tak kar payenge?"
+        f"Aapke {amount_words} rupaye baaki hain. "
+        f"Yeh payment aap kab tak kar payenge?"
     )
 
 
@@ -59,31 +65,31 @@ def get_promise_confirmation(
     tone_level: int = 1,
 ) -> str:
     """Confirmation of agreed Promise to Pay (PTP)."""
-    return (
-        f"Theek hai {customer_name} ji, main {promise_date_spoken} ka waada note kar leti hoon. "
-        f"Aapka bohot bohot dhanyawaad!"
-    )
+    return f"Theek hai ji, shukriya. Maine note kar liya hai ki aap {promise_date_spoken} tak kar denge."
 
 
-# Standard Disposition Responses
+# Exact Standard Disposition Responses (Zero-pressure, truthful)
 WRONG_NUMBER_REPLY = (
     "Maaf kijiyega, lagta hai galat number par call lag gaya. "
     "Main aapka number list se turant hata rahi hoon, aage se koi call nahi aayegi. Dhanyawaad."
 )
 
 DISPUTE_REPLY = (
-    "Achha, kaam mein koi dikkat ya shikayat hai kya? "
-    "Main abhi payment hold par daal rahi hoon aur owner Ramesh ji ko bolti hoon ki aapse direct baat karein."
+    "Maaf kijiye, aapko pareshani hui. "
+    "Main malik ko bata deti hoon, woh aapse baat karenge. Tab tak main payment ke liye call nahi karungi."
+)
+
+LINK_REQUEST_REPLY = (
+    "Ji, main malik ko bata deti hoon, woh aapko payment ka tareeka bhej denge."
 )
 
 CALLBACK_REPLY = (
     "Theek hai ji, lagta hai aap abhi busy hain. "
-    "Main baad mein thodi der baad call karwa lungi. Dhanyawaad."
+    "Main baad mein call karwa lungi. Dhanyawaad."
 )
 
 ALREADY_PAID_REPLY = (
-    "Aapne payment kar di hai? Bahut accha! "
-    "Main ledger check karke status update kar deti hoon. Pareshaan hone ke liye maaf kijiyega."
+    "Accha, theek hai ji. Main malik ko bata deti hoon, woh check kar lenge. Shukriya."
 )
 
 REFUSED_REPLY = (
@@ -97,8 +103,8 @@ OWNER_HANDOFF_REPLY = (
 )
 
 ROBOT_DISCLOSURE_REPLY = (
-    "Ji haan, main Pakka ki automated digital sahayak bol rahi hoon. "
-    "Kya aap human owner se baat karna chahenge?"
+    "Ji haan, main Pakka ki digital sahayak bol rahi hoon. "
+    "Agar aap kisi insaan se baat karna chahte hain to main turant malik ko connect karwa sakti hoon."
 )
 
 REASK_DATE_REPLY = (
@@ -106,4 +112,3 @@ REASK_DATE_REPLY = (
 )
 
 SILENCE_REPLY = "Hello? Kya aap mujhe sun pa rahe hain?"
-

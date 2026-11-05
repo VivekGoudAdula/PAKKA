@@ -192,14 +192,18 @@ async def run_audio_evaluation(live: bool = False) -> dict[str, Any]:
         print(f"  Word Error Rate:    {simulated_wer:.1f}%")
 
     report_data = {
-        "timestamp": datetime.now(UTC).isoformat(),
-        "mode": "live_prisma" if live else "simulated_rechunker_dry_run",
+        "mode": "live" if live else "dry_run",
+        "generated_at": datetime.now(UTC).isoformat(),
+        "is_synthetic": not live,
+        "tts_synthesis": "Gnani Timbre TTS" if live else "Synthetic tone generator (local fallback, not real Timbre)",
+        "stt_transcription": "Gnani Prisma v3.0 STT" if live else "Dry run mock (local fallback, not live Prisma WebSocket)",
+        "status": "Live measurements" if live else "Not measured yet (requires live Gnani credentials and active telephony audio stream)",
         "sample_count": len(samples),
-        "snr_tiers": snr_metrics,
+        "snr_tiers": snr_metrics if live else {},
         "methodology": (
             "30 diverse Hinglish service utterances rechunked into standard 1024-byte frames, "
-            "synthesized at 8000 Hz linear PCM with additive Gaussian noise for 15 dB and 5 dB SNR, "
-            "and evaluated for slot and intent retention through Pakka extraction pipeline."
+            "synthesized at 8000 Hz linear PCM with additive Gaussian noise for 15 dB and 5 dB SNR. "
+            "Because live Gnani credentials were not connected, live WER and acoustic retention are not claimed."
         ),
     }
 

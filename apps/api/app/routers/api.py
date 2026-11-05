@@ -459,15 +459,17 @@ def get_metrics() -> dict[str, Any]:
     collection_data = read_report("collection_results.json")
     extractor_data = read_report("extractor_comparison.json")
     audio_data = read_report("audio_eval.json")
+    holdout_v2_data = read_report("holdout_v2_results.json")
 
     return {
         "status": "ok",
-        "timestamp": datetime.now(UTC).isoformat() if "datetime" in globals() else "",
+        "generated_at": datetime.now(UTC).isoformat(),
         "booking": booking_data,
         "dispatch": dispatch_data,
         "collection": collection_data,
         "extractor_comparison": extractor_data,
         "audio_eval": audio_data,
+        "holdout_v2": holdout_v2_data,
     }
 
 
