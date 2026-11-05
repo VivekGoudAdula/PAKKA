@@ -53,3 +53,4 @@ def test_ledger_parser_promise_date_extraction() -> None:
 
     res3 = parse_ledger_entry("Manoj drainage clean 600 mile 200 baki 10 tareekh")
     assert "10 tareekh" in res3.promise_date
+

@@ -164,3 +164,4 @@ def test_execute_all_collection_scenarios(collection_scenarios: list[dict[str, A
         json.dump(report_data, f, indent=2, ensure_ascii=False)
 
     assert passed_count == total_main, f"{total_main - passed_count} main scenarios failed"
+

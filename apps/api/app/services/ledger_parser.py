@@ -146,3 +146,4 @@ def parse_ledger_entry(text: str) -> LedgerEntryParsed:
         is_fully_paid=is_fully_paid,
         promise_date=promise_date,
     )
+

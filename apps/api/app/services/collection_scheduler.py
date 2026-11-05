@@ -31,7 +31,6 @@ async def evaluate_promises(session: Session) -> dict[str, Any]:
     Transitions pending -> due_today -> broken, and audits eligible follow-ups.
     """
     current_time = clock.now()
-    current_date_str = current_time.strftime("%Y-%m-%d")
 
     # Load business settings for calling bounds
     settings = session.exec(select(BusinessSettings)).first()
@@ -170,3 +169,4 @@ def record_reminder_event(
     session.commit()
     session.refresh(event)
     return event
+

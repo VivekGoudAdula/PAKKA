@@ -1,11 +1,11 @@
 {
-  "timestamp": "2026-11-04T15:46:12.845466+00:00",
+  "timestamp": "2026-11-05T07:00:48.187018+00:00",
   "total_scenarios": 15,
   "passed_scenarios": 15,
   "failed_scenarios": 0,
   "scenario_accuracy_pct": 100.0,
   "total_turns_evaluated": 20,
-  "average_fsm_latency_ms": 1.174,
+  "average_fsm_latency_ms": 0.305,
   "scenarios": [
     {
       "id": "scenario_01_accept_haan_pakka",
@@ -19,7 +19,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 8.562
+          "latency_ms": 1.682
         }
       ]
     },
@@ -35,7 +35,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.1
+          "latency_ms": 0.042
         }
       ]
     },
@@ -51,7 +51,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 2.327
+          "latency_ms": 0.024
         }
       ]
     },
@@ -67,7 +67,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.991
+          "latency_ms": 0.496
         }
       ]
     },
@@ -83,7 +83,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.078
+          "latency_ms": 0.039
         }
       ]
     },
@@ -99,7 +99,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.053
+          "latency_ms": 0.226
         }
       ]
     },
@@ -115,7 +115,7 @@
           "state": "DECLINED",
           "is_terminal": true,
           "is_accepted": false,
-          "latency_ms": 3.392
+          "latency_ms": 0.467
         }
       ]
     },
@@ -131,7 +131,7 @@
           "state": "DECLINED",
           "is_terminal": true,
           "is_accepted": false,
-          "latency_ms": 0.1
+          "latency_ms": 0.027
         }
       ]
     },
@@ -147,7 +147,7 @@
           "state": "DECLINED",
           "is_terminal": true,
           "is_accepted": false,
-          "latency_ms": 6.797
+          "latency_ms": 2.566
         }
       ]
     },
@@ -163,7 +163,7 @@
           "state": "DECLINED",
           "is_terminal": true,
           "is_accepted": false,
-          "latency_ms": 0.106
+          "latency_ms": 0.03
         }
       ]
     },
@@ -179,7 +179,7 @@
           "state": "LISTENING",
           "is_terminal": false,
           "is_accepted": false,
-          "latency_ms": 0.052
+          "latency_ms": 0.015
         },
         {
           "technician_input": "Haan pakka kar dunga.",
@@ -187,7 +187,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.078
+          "latency_ms": 0.022
         }
       ]
     },
@@ -203,7 +203,7 @@
           "state": "LISTENING",
           "is_terminal": false,
           "is_accepted": false,
-          "latency_ms": 0.046
+          "latency_ms": 0.013
         },
         {
           "technician_input": "ठीक है, हो जाएगा",
@@ -211,7 +211,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.056
+          "latency_ms": 0.017
         }
       ]
     },
@@ -227,7 +227,7 @@
           "state": "UNCLEAR",
           "is_terminal": false,
           "is_accepted": false,
-          "latency_ms": 0.065
+          "latency_ms": 0.022
         },
         {
           "technician_input": "Haan ji kar lenge",
@@ -235,7 +235,7 @@
           "state": "ACCEPTED",
           "is_terminal": true,
           "is_accepted": true,
-          "latency_ms": 0.041
+          "latency_ms": 0.011
         }
       ]
     },
@@ -251,7 +251,7 @@
           "state": "UNCLEAR",
           "is_terminal": false,
           "is_accepted": false,
-          "latency_ms": 0.052
+          "latency_ms": 0.031
         },
         {
           "technician_input": "kaun bol raha hai kuch nahi sun raha",
@@ -259,7 +259,7 @@
           "state": "UNREACHABLE",
           "is_terminal": true,
           "is_accepted": false,
-          "latency_ms": 0.478
+          "latency_ms": 0.293
         }
       ]
     },
@@ -275,7 +275,7 @@
           "state": "UNCLEAR",
           "is_terminal": false,
           "is_accepted": false,
-          "latency_ms": 0.047
+          "latency_ms": 0.038
         },
         {
           "technician_input": "Nahi bhai, abhi possible nahi hai",
@@ -283,7 +283,7 @@
           "state": "DECLINED",
           "is_terminal": true,
           "is_accepted": false,
-          "latency_ms": 0.05
+          "latency_ms": 0.046
         }
       ]
     }

@@ -33,11 +33,24 @@ BARGAINING_HOLD = "Yeh hamare dukaan ke standard rates hain. Agar aap chahein to
 
 HANDOFF_MESSAGE = "Maaf kijiyega, main samajh nahi paayi. Main Ramesh bhai ko aapka number de rahi hoon, ya aap unhe {phone} par call kar sakte hain."
 
-EMERGENCY_SAFETY_INSTRUCTION = (
-    "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. "
-    "Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. "
-    "Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+EMERGENCY_ELECTRIC_INSTRUCTION = (
+    "Kripya geyser aur main switch band kar dijiye aur geyser ko haath mat lagaiye. "
+    "Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
 )
+
+EMERGENCY_FIRE_GAS_INSTRUCTION = (
+    "Kripya koi switch ya aag mat jalaiye. "
+    "Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. "
+    "Main malik ko bhi bata rahi hoon."
+)
+
+EMERGENCY_FLOODING_INSTRUCTION = (
+    "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. "
+    "Main abhi malik ko bata rahi hoon."
+)
+
+# Backwards compatibility alias
+EMERGENCY_SAFETY_INSTRUCTION = EMERGENCY_ELECTRIC_INSTRUCTION
 
 EMERGENCY_112_INSTRUCTION = "Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
 

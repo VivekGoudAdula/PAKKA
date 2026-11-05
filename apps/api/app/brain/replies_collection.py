@@ -39,8 +39,8 @@ def get_balance_statement(
     amount_words = number_to_spoken_words(amount)
     if tone_level == 3:
         return (
-            f"Aapka {amount_words} rupaye ka hisaab baaki chal raha hai. "
-            f"Malik ko daily hisaab dena hota hai. Kya aap aaj pay kar payenge ya koi specific taareekh bataiye?"
+            f"Aapka {amount_words} rupaye ka hisaab baaki hai. "
+            f"Agar koi pareshani hai, toh main shop owner se callback karwa sakti hoon, ya reminders thodi der ke liye pause kar dete hain."
         )
     if tone_level == 2:
         return (
@@ -59,11 +59,6 @@ def get_promise_confirmation(
     tone_level: int = 1,
 ) -> str:
     """Confirmation of agreed Promise to Pay (PTP)."""
-    if tone_level >= 2:
-        return (
-            f"Theek hai {customer_name} ji, main {promise_date_spoken} ka pakka waada note kar rahi hoon. "
-            f"Kripya time par transfer kar dijiyega. Dhanyawaad!"
-        )
     return (
         f"Theek hai {customer_name} ji, main {promise_date_spoken} ka waada note kar leti hoon. "
         f"Aapka bohot bohot dhanyawaad!"
@@ -92,7 +87,7 @@ ALREADY_PAID_REPLY = (
 )
 
 REFUSED_REPLY = (
-    "Theek hai ji, main owner ko inform kar deti hoon ki aap payment ke liye raazi nahi hain. "
+    "Theek hai ji, koi baat nahi. Main shop owner Ramesh ji ko inform kar deti hoon ki aapse direct baat kar lein. "
     "Dhanyawaad."
 )
 
@@ -111,3 +106,4 @@ REASK_DATE_REPLY = (
 )
 
 SILENCE_REPLY = "Hello? Kya aap mujhe sun pa rahe hain?"
+

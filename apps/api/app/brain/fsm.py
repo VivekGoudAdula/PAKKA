@@ -19,7 +19,9 @@ from app.brain.replies import (
     BARGAINING_HOLD,
     BOOKING_SUCCESS,
     CALL_ABANDONED,
-    EMERGENCY_SAFETY_INSTRUCTION,
+    EMERGENCY_ELECTRIC_INSTRUCTION,
+    EMERGENCY_FIRE_GAS_INSTRUCTION,
+    EMERGENCY_FLOODING_INSTRUCTION,
     HANDOFF_MESSAGE,
     REASK_ADDRESS,
     REASK_PROBLEM,
@@ -163,9 +165,20 @@ class BookingFSM:
         # 1b. Priority: Emergency Safety Hazard -> Immediate halt & safety instructions
         if "emergency_hazard" in extraction.intents or extraction.is_emergency:
             self.state = BookingState.HANDOFF
-            logger.warning("Emergency hazard detected on caller utterance: '%s'", utterance)
+            logger.warning(
+                "Emergency hazard (%s) detected on caller utterance: '%s'",
+                extraction.emergency_type,
+                utterance,
+            )
+            if extraction.emergency_type == "fire_gas":
+                hazard_reply = EMERGENCY_FIRE_GAS_INSTRUCTION
+            elif extraction.emergency_type == "flooding":
+                hazard_reply = EMERGENCY_FLOODING_INSTRUCTION
+            else:
+                hazard_reply = EMERGENCY_ELECTRIC_INSTRUCTION
+
             return BrainTurnResult(
-                bot_reply=EMERGENCY_SAFETY_INSTRUCTION,
+                bot_reply=hazard_reply,
                 current_state=self.state,
                 slots=self.slots,
                 is_terminal=True,

@@ -11,20 +11,19 @@ from sqlmodel import Session, select
 
 from app.db import get_session
 from app.events.hub import hub
-from app.services.clock_service import clock
-from app.services.collection_scheduler import evaluate_promises, record_reminder_event
-from app.services.ledger_parser import parse_ledger_entry
 from app.models.domain import (
     BusinessSettings,
     CallRecord,
     Job,
     PriceItem,
-    Customer,
     Promise,
     ReminderEvent,
     SuppressedNumber,
     Technician,
 )
+from app.services.clock_service import clock
+from app.services.collection_scheduler import evaluate_promises, record_reminder_event
+from app.services.ledger_parser import parse_ledger_entry
 
 router = APIRouter(prefix="/api", tags=["dashboard-api"])
 
@@ -192,7 +191,7 @@ async def advance_clock(
     Automatically re-evaluates all promises, transitions statuses,
     and broadcasts clock.tick and promise updates.
     """
-    new_time = clock.advance(hours=payload.hours, days=payload.days)
+    clock.advance(hours=payload.hours, days=payload.days)
     clock_state = clock.to_dict()
 
     # Broadcast clock.tick

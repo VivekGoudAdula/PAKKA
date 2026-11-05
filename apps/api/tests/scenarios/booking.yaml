@@ -351,7 +351,7 @@
     final_state: "HANDOFF"
     is_terminal: true
     is_urgent: true
-    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+    expected_bot_reply: "Kripya geyser aur main switch band kar dijiye aur geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
 
 - id: scenario_24_emergency_sparking_smoke
   name: "Hazard: Sparking and smoke from wiring"
@@ -362,7 +362,7 @@
     final_state: "HANDOFF"
     is_terminal: true
     is_urgent: true
-    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+    expected_bot_reply: "Kripya koi switch ya aag mat jalaiye. Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. Main malik ko bhi bata rahi hoon."
 
 - id: scenario_25_emergency_pipe_burst_flooding
   name: "Hazard: Pipe burst with severe flooding"
@@ -373,7 +373,7 @@
     final_state: "HANDOFF"
     is_terminal: true
     is_urgent: true
-    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+    expected_bot_reply: "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon."
 
 - id: scenario_26_emergency_fire
   name: "Hazard: Fire outbreak in appliance"
@@ -384,7 +384,7 @@
     final_state: "HANDOFF"
     is_terminal: true
     is_urgent: true
-    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+    expected_bot_reply: "Kripya koi switch ya aag mat jalaiye. Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. Main malik ko bhi bata rahi hoon."
 
 - id: scenario_27_emergency_gas_leak
   name: "Hazard: Strong gas smell from gas geyser"
@@ -395,7 +395,7 @@
     final_state: "HANDOFF"
     is_terminal: true
     is_urgent: true
-    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+    expected_bot_reply: "Kripya koi switch ya aag mat jalaiye. Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. Main malik ko bhi bata rahi hoon."
 
 - id: scenario_28_emergency_devanagari_shock
   name: "Hazard: Devanagari electric current shock report"
@@ -406,6 +406,6 @@
     final_state: "HANDOFF"
     is_terminal: true
     is_urgent: true
-    expected_bot_reply: "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+    expected_bot_reply: "Kripya geyser aur main switch band kar dijiye aur geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
 
 

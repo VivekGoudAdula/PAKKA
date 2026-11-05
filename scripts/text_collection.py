@@ -80,3 +80,4 @@ def run_interactive_collection() -> None:
 
 if __name__ == "__main__":
     run_interactive_collection()
+

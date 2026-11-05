@@ -74,3 +74,4 @@ class SimulatedClock:
 
 # Global singleton clock
 clock = SimulatedClock()
+

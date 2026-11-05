@@ -21,15 +21,15 @@ from typing import Any
 
 from sqlmodel import Session
 
-from app.brain.collection import CollectionDisposition, CollectionFSM
+from app.brain.collection import CollectionFSM
 from app.brain.dispatch import DispatchFSM
 from app.brain.fsm import BookingFSM, BookingState
 from app.brain.replies_collection import get_collection_greeting
-from app.services.collection_scheduler import record_reminder_event
 from app.config import settings
 from app.db import engine
 from app.events.hub import hub
-from app.models.domain import CallRecord, Job, Promise, ReminderEvent, SuppressedNumber
+from app.models.domain import CallRecord, Job, Promise, SuppressedNumber
+from app.services.collection_scheduler import record_reminder_event
 from app.voice.audio import EnergyVAD, ExotelAudioAccumulator, Rechunker, pcm_to_base64
 from app.voice.gnani_stt import GnaniSTTClient
 from app.voice.gnani_tts import GnaniTTSClient

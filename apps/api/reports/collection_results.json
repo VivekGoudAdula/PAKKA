@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-04T15:46:12.616869+00:00",
+  "timestamp": "2026-11-05T07:00:48.143924+00:00",
   "total_scenarios": 25,
   "passed_scenarios": 25,
   "pass_rate_percent": 100.0,
@@ -146,7 +146,7 @@
         },
         {
           "user": "Somwar ko pakka kar dunga",
-          "bot": "Theek hai Deepak ji, main somwar ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "bot": "Theek hai Deepak ji, main somwar ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
           "state": "TERMINAL"
         }
       ]
@@ -316,7 +316,7 @@
       "turns": [
         {
           "user": "Haan suno",
-          "bot": "Aapka ek hazaar ek sau rupaye ka hisaab baaki chal raha hai. Malik ko daily hisaab dena hota hai. Kya aap aaj pay kar payenge ya koi specific taareekh bataiye?",
+          "bot": "Aapka ek hazaar ek sau rupaye ka hisaab baaki hai. Agar koi pareshani hai, toh main shop owner se callback karwa sakti hoon, ya reminders thodi der ke liye pause kar dete hain.",
           "state": "CAPTURE_DATE"
         },
         {
@@ -342,7 +342,7 @@
         },
         {
           "user": "Main koi payment nahi dunga, jo karna hai kar lo",
-          "bot": "Theek hai ji, main owner ko inform kar deti hoon ki aap payment ke liye raazi nahi hain. Dhanyawaad.",
+          "bot": "Theek hai ji, koi baat nahi. Main shop owner Ramesh ji ko inform kar deti hoon ki aapse direct baat kar lein. Dhanyawaad.",
           "state": "TERMINAL"
         }
       ]
@@ -410,7 +410,7 @@
         },
         {
           "user": "Bhaiya kal sham pakka transfer kar dunga",
-          "bot": "Theek hai Mohan ji, main kal shaam ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "bot": "Theek hai Mohan ji, main kal shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
           "state": "TERMINAL"
         }
       ]
@@ -426,12 +426,12 @@
       "turns": [
         {
           "user": "Haanji",
-          "bot": "Aapka do hazaar rupaye ka hisaab baaki chal raha hai. Malik ko daily hisaab dena hota hai. Kya aap aaj pay kar payenge ya koi specific taareekh bataiye?",
+          "bot": "Aapka do hazaar rupaye ka hisaab baaki hai. Agar koi pareshani hai, toh main shop owner se callback karwa sakti hoon, ya reminders thodi der ke liye pause kar dete hain.",
           "state": "CAPTURE_DATE"
         },
         {
           "user": "Theek hai main aaj hi clear karta hoon",
-          "bot": "Theek hai Hemant ji, main aaj shaam ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "bot": "Theek hai Hemant ji, main aaj shaam ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
           "state": "TERMINAL"
         }
       ]
@@ -494,7 +494,7 @@
         },
         {
           "user": "Do din baad kar dunga pakka",
-          "bot": "Theek hai Harish ji, main do din baad ka pakka waada note kar rahi hoon. Kripya time par transfer kar dijiyega. Dhanyawaad!",
+          "bot": "Theek hai Harish ji, main do din baad ka waada note kar leti hoon. Aapka bohot bohot dhanyawaad!",
           "state": "TERMINAL"
         }
       ]

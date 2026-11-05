@@ -96,6 +96,7 @@ async def exotel_ws_endpoint(ws: WebSocket) -> None:
                 collection_fsm = None
                 if is_collect:
                     from sqlmodel import Session
+
                     from app.brain.collection import CollectionFSM
                     from app.db import engine
                     from app.models.domain import Promise

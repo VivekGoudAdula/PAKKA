@@ -162,17 +162,39 @@ class TestBookingFSM:
         assert fsm.slots.price_estimate == "₹450 – ₹750"
 
     def test_emergency_hazard_handling(self) -> None:
-        """Emergency hazard halts routine booking with exact safety instruction."""
-        fsm = BookingFSM()
-        res = fsm.process_utterance("Geyser se current aa raha hai, paani chhoo nahi sakte")
-        assert res.current_state == BookingState.HANDOFF
-        assert res.is_terminal is True
-        assert res.needs_handoff is True
-        assert res.is_urgent is True
-        assert (
-            res.bot_reply
-            == "Kripya pehle main switch band kar dijiye aur geyser se door rahiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge. Agar aag ya gas ki badbu hai to turant 112 par phone kijiye."
+        """Emergency hazard halts routine booking with exact branch safety instruction."""
+        from app.brain.replies import (
+            EMERGENCY_ELECTRIC_INSTRUCTION,
+            EMERGENCY_FIRE_GAS_INSTRUCTION,
+            EMERGENCY_FLOODING_INSTRUCTION,
         )
+
+        # 1. Electric Shock / Current
+        fsm_elec = BookingFSM()
+        res_elec = fsm_elec.process_utterance("Geyser se current aa raha hai, paani chhoo nahi sakte")
+        assert res_elec.current_state == BookingState.HANDOFF
+        assert res_elec.is_terminal is True
+        assert res_elec.needs_handoff is True
+        assert res_elec.is_urgent is True
+        assert res_elec.bot_reply == EMERGENCY_ELECTRIC_INSTRUCTION
+
+        # 2. Fire / Smoke / Gas Smell
+        fsm_fire = BookingFSM()
+        res_fire = fsm_fire.process_utterance("Geyser mein aag lag gayi hai dhuan nikal raha hai")
+        assert res_fire.current_state == BookingState.HANDOFF
+        assert res_fire.is_terminal is True
+        assert res_fire.needs_handoff is True
+        assert res_fire.is_urgent is True
+        assert res_fire.bot_reply == EMERGENCY_FIRE_GAS_INSTRUCTION
+
+        # 3. Flooding / Pipe Burst
+        fsm_flood = BookingFSM()
+        res_flood = fsm_flood.process_utterance("Pipe phat gaya hai poora paani bhar gaya bathroom mein")
+        assert res_flood.current_state == BookingState.HANDOFF
+        assert res_flood.is_terminal is True
+        assert res_flood.needs_handoff is True
+        assert res_flood.is_urgent is True
+        assert res_flood.bot_reply == EMERGENCY_FLOODING_INSTRUCTION
 
     def test_custom_areas_extraction(self) -> None:
         """Extractor recognizes custom areas passed from settings."""

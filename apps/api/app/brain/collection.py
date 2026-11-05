@@ -11,7 +11,6 @@ import logging
 import re
 from dataclasses import dataclass
 from enum import Enum
-from typing import Any
 
 from app.brain.replies_collection import (
     ALREADY_PAID_REPLY,
@@ -24,7 +23,6 @@ from app.brain.replies_collection import (
     SILENCE_REPLY,
     WRONG_NUMBER_REPLY,
     get_balance_statement,
-    get_collection_greeting,
     get_promise_confirmation,
 )
 
@@ -115,14 +113,13 @@ class CollectionFSM:
             )
 
         # 2. Global AI / Robot Inquiry
-        if re.search(r"(are you (a |an )?(robot|ai)|kya aap robot ho|machine ho|computer ho)", text):
-            if not self.ai_disclosure_given:
-                self.ai_disclosure_given = True
-                return CollectionTurnResult(
-                    bot_reply=ROBOT_DISCLOSURE_REPLY,
-                    current_state=self.state,
-                    is_terminal=False,
-                )
+        if re.search(r"(are you (a |an )?(robot|ai)|kya aap robot ho|machine ho|computer ho)", text) and not self.ai_disclosure_given:
+            self.ai_disclosure_given = True
+            return CollectionTurnResult(
+                bot_reply=ROBOT_DISCLOSURE_REPLY,
+                current_state=self.state,
+                is_terminal=False,
+            )
 
         # 3. Global Wrong Number
         if re.search(

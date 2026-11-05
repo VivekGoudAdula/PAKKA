@@ -61,6 +61,7 @@ class ExtractionResult:
     confidence: float = 0.0
     updated_fields: list[str] = field(default_factory=list)
     is_emergency: bool = False
+    emergency_type: str | None = None
 
 
 class Extractor(Protocol):
@@ -197,15 +198,29 @@ class RuleBasedExtractor:
 
     KNOWN_AREAS: list[str] = _load_default_areas()
 
-    EMERGENCY_PATTERNS: list[str] = [
+    EMERGENCY_ELECTRIC_PATTERNS: list[str] = [
         r"(current aa raha|current lag raha|current lag|करंट)",
         r"(shock lag|electric shock|शॉक|बिजली का झटका)",
         r"(spark ho raha|sparking|sparks|चिनगारी|स्पार्क)",
-        r"(aag lag gayi|aag lag|aag\b|आग लग|आग\b)",
-        r"(dhuan nikal raha|dhuan aa raha|dhuan\b|धुआं|धुआँ)",
-        r"(gas smell|gas ki badbu|gas leak|गैस लीक|गैस की बदबू)",
-        r"(pipe phat gaya.*?flood|pipe burst.*?flood|flooding|paani bhar gaya|पानी भर गया)",
     ]
+
+    EMERGENCY_FIRE_GAS_PATTERNS: list[str] = [
+        r"(aag lag gayi|aag lag|aag\b|आग लग|आग\b|fire)",
+        r"(dhuan nikal raha|dhuan aa raha|dhuan\b|धुआं|धुआँ|smoke)",
+        r"(gas smell|gas ki badbu|gas leak|गैस लीक|गैस की बदबू)",
+        r"(cylinder|सिलेंडर)",
+    ]
+
+    EMERGENCY_FLOODING_PATTERNS: list[str] = [
+        r"(pipe phat gaya.*?flood|pipe burst.*?flood)",
+        r"(paani bhar gaya|पानी भर गया)",
+        r"(flooding|flood\b)",
+        r"(overflow|ओवरफ्लो)",
+    ]
+
+    EMERGENCY_PATTERNS: list[str] = (
+        EMERGENCY_ELECTRIC_PATTERNS + EMERGENCY_FIRE_GAS_PATTERNS + EMERGENCY_FLOODING_PATTERNS
+    )
 
     def __init__(self, custom_areas: list[str] | None = None) -> None:
         default_areas = _load_default_areas()
@@ -230,9 +245,11 @@ class RuleBasedExtractor:
 
         # 1. Check Global Intents
         # 1a. Emergency Danger Hazard (Danger to life/property)
-        if self._check_emergency(text_lower):
+        emergency_type = self._check_emergency_type(text_lower)
+        if emergency_type:
             res.intents.append("emergency_hazard")
             res.is_emergency = True
+            res.emergency_type = emergency_type
 
         # 1b. Are you a robot / AI
         if self._check_robot_intent(text_lower):
@@ -286,8 +303,18 @@ class RuleBasedExtractor:
         res.confidence = 0.9 if res.updated_fields or res.intents else 0.4
         return res
 
+    def _check_emergency_type(self, text: str) -> str | None:
+        """Categorize emergency danger into fire_gas, electric, or flooding."""
+        if any(re.search(p, text) for p in self.EMERGENCY_FIRE_GAS_PATTERNS):
+            return "fire_gas"
+        if any(re.search(p, text) for p in self.EMERGENCY_ELECTRIC_PATTERNS):
+            return "electric"
+        if any(re.search(p, text) for p in self.EMERGENCY_FLOODING_PATTERNS):
+            return "flooding"
+        return None
+
     def _check_emergency(self, text: str) -> bool:
-        return any(re.search(p, text) for p in self.EMERGENCY_PATTERNS)
+        return self._check_emergency_type(text) is not None
 
     def _check_robot_intent(self, text: str) -> bool:
         patterns = [

@@ -8,12 +8,9 @@ from sqlmodel import Session, select
 from app.db import engine, init_db
 from app.models.domain import (
     BusinessSettings,
-    Customer,
-    Job,
     PriceItem,
     Promise,
     ReminderEvent,
-    SuppressedNumber,
     Technician,
 )
 

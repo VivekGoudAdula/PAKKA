@@ -150,3 +150,4 @@ main().catch((err) => {
   console.error("Fatal screenshot runner error:", err);
   process.exit(1);
 });
+
