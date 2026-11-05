@@ -11,6 +11,7 @@ import {
   Users,
   IndianRupee,
   Settings,
+  BarChart3,
   ChevronLeft,
   ChevronRight,
   Headphones,
@@ -58,6 +59,12 @@ const navItems = [
     href: "/app/payments",
     icon: IndianRupee,
     badge: "₹2.3k",
+  },
+  {
+    name: "Metrics",
+    href: "/app/metrics",
+    icon: BarChart3,
+    badge: "v3.3",
   },
   {
     name: "Settings",

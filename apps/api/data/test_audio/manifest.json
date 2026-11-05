@@ -1,0 +1,370 @@
+[
+  {
+    "id": "noisy_01",
+    "utterance": "geezer paini garam nahi kar ra",
+    "expected": {
+      "problem_key": "geyser_not_heating"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_01_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_01_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_01_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_02",
+    "utterance": "geyser pani leak ho ra neeche",
+    "expected": {
+      "problem_key": "geyser_leak"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_02_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_02_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_02_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_03",
+    "utterance": "bathroom toti boond gir raha band ni hota",
+    "expected": {
+      "problem_key": "tap_leak"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_03_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_03_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_03_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_04",
+    "utterance": "rasoi ka sink jam hai pura pani ruk gaya",
+    "expected": {
+      "problem_key": "drain_blocked"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_04_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_04_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_04_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_05",
+    "utterance": "motor bhot awaz krra tanki khali h",
+    "expected": {
+      "problem_key": "motor_pump"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_05_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_05_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_05_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_06",
+    "utterance": "pipe burst flood aagya bathroom me",
+    "expected": {
+      "problem_key": "pipe_burst",
+      "is_emergency": true,
+      "emergency_type": "flooding"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_06_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_06_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_06_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_07",
+    "utterance": "nal me current lag gya bijli ka jhatka h",
+    "expected": {
+      "is_emergency": true,
+      "emergency_type": "electric"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_07_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_07_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_07_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_08",
+    "utterance": "geeger se dhuan aa rha h jaldi aao",
+    "expected": {
+      "is_emergency": true,
+      "emergency_type": "fire_gas"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_08_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_08_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_08_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_09",
+    "utterance": "gas geyser me gas smell badbu bohot tez hai",
+    "expected": {
+      "is_emergency": true,
+      "emergency_type": "fire_gas"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_09_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_09_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_09_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_10",
+    "utterance": "mayur vihar pocket 2 me bhej do",
+    "expected": {
+      "landmark_contains": "Mayur Vihar"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_10_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_10_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_10_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_11",
+    "utterance": "aaj sham saat baje k aas paas",
+    "expected": {
+      "time_slot": "Aaj Shaam (5 PM – 7 PM)"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_11_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_11_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_11_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_12",
+    "utterance": "bhai 300 me kr do na bhot zyada h",
+    "expected": {
+      "intent": "bargaining"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_12_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_12_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_12_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_13",
+    "utterance": "kya aap machine bol re ho asli aadmi ho?",
+    "expected": {
+      "intent": "are_you_a_robot"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_13_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_13_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_13_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_14",
+    "utterance": "sharma ji malik se direct baat kra do",
+    "expected": {
+      "intent": "human_request"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_14_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_14_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_14_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_15",
+    "utterance": "theek hai haan pakka confirm kardo",
+    "expected": {
+      "intent": "yes"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_15_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_15_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_15_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_16",
+    "utterance": "geyser ka coil dead ho gya pani thanda hai",
+    "expected": {
+      "problem_key": "geyser_not_heating"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_16_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_16_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_16_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_17",
+    "utterance": "gijar se tapak tapak gir rha h",
+    "expected": {
+      "problem_key": "geyser_leak"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_17_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_17_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_17_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_18",
+    "utterance": "kitchen ki naali choke ho gyi paani bahr aa ra",
+    "expected": {
+      "problem_key": "drain_blocked"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_18_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_18_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_18_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_19",
+    "utterance": "submersible pump chal rha h par paani nahi aa ra",
+    "expected": {
+      "problem_key": "motor_pump"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_19_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_19_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_19_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_20",
+    "utterance": "paani bhar gaya poora bathroom me pipe phat gaya",
+    "expected": {
+      "is_emergency": true,
+      "emergency_type": "flooding"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_20_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_20_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_20_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_21",
+    "utterance": "geyser chhua to current laga",
+    "expected": {
+      "is_emergency": true,
+      "emergency_type": "electric"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_21_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_21_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_21_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_22",
+    "utterance": "geyser me aag lag gyi hai",
+    "expected": {
+      "is_emergency": true,
+      "emergency_type": "fire_gas"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_22_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_22_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_22_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_23",
+    "utterance": "गीजर गर्म नहीं कर रहा ठंडा पानी आ रहा",
+    "expected": {
+      "problem_key": "geyser_not_heating"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_23_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_23_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_23_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_24",
+    "utterance": "गीज़र से पानी टपक रहा नीचे",
+    "expected": {
+      "problem_key": "geyser_leak"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_24_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_24_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_24_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_25",
+    "utterance": "साकेत के पीछे वाली गली",
+    "expected": {
+      "landmark_contains": "साकेत"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_25_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_25_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_25_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_26",
+    "utterance": "kal dopahar 2 baje bhej dena",
+    "expected": {
+      "time_slot": "Kal Dopahar (1 PM – 3 PM)"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_26_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_26_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_26_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_27",
+    "utterance": "ek sec ruko zara papa se puchta hu",
+    "expected": {
+      "intent": "wait"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_27_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_27_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_27_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_28",
+    "utterance": "rehne do mat bhejo cancel kardo",
+    "expected": {
+      "intent": "no"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_28_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_28_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_28_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_29",
+    "utterance": "karol bagh metro station ke paas",
+    "expected": {
+      "landmark_contains": "Karol Bagh"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_29_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_29_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_29_5db.wav"
+    }
+  },
+  {
+    "id": "noisy_30",
+    "utterance": "nahi nahi kal nahi aaj hi bhej do",
+    "expected": {
+      "intent": "correction"
+    },
+    "audio_files": {
+      "clean": "apps/api/data/test_audio/noisy_30_clean.wav",
+      "15db": "apps/api/data/test_audio/noisy_30_15db.wav",
+      "5db": "apps/api/data/test_audio/noisy_30_5db.wav"
+    }
+  }
+]

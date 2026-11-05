@@ -87,6 +87,18 @@ class Settings(BaseSettings):
         default="http://localhost:8001/v1",
         description="Evon vLLM base URL (OpenAI-compatible)",
     )
+    extractor: str = Field(
+        default="rules",
+        description="Active extractor type: 'rules' | 'evon' | 'hybrid'",
+    )
+    evon_model: str = Field(
+        default="gnani/gnani-evon-v3.3-30B-A3B",
+        description="Model name served by vLLM",
+    )
+    evon_timeout_seconds: float = Field(
+        default=2.0,
+        description="Timeout in seconds for Evon LLM extraction before fallback to rules",
+    )
 
     # ── Outbound call hours (24-hour IST) & Telephony Handoff ──────────────
     outbound_hours_start: int = Field(

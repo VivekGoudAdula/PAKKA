@@ -8,6 +8,7 @@ import {
   Briefcase,
   Users,
   IndianRupee,
+  BarChart3,
   Settings,
   FastForward,
   RotateCcw,
@@ -93,6 +94,13 @@ export function CommandPalette() {
           >
             <IndianRupee className="mr-2 h-4 w-4 text-primary" />
             <span>Payments & Reminder Trail</span>
+          </CommandItem>
+          <CommandItem
+            onSelect={() => runCommand(() => router.push("/app/metrics"))}
+            className="cursor-pointer"
+          >
+            <BarChart3 className="mr-2 h-4 w-4 text-primary" />
+            <span>Performance & Model Metrics</span>
           </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => router.push("/app/settings"))}

@@ -3,6 +3,7 @@ REST API endpoints for Pakka jobs, calls, technicians, and settings.
 """
 
 import json
+from datetime import UTC, datetime
 from typing import Any
 
 from fastapi import APIRouter, Depends
@@ -427,5 +428,47 @@ async def create_ledger_quick_entry(
         "job_id": job_id,
         "promise_id": created_promise.id if created_promise else None,
     }
+
+
+@router.get("/metrics")
+def get_metrics() -> dict[str, Any]:
+    """
+    Returns consolidated system metrics for dashboard:
+    - Booking FSM performance (main + holdout)
+    - Technician Dispatch acceptance
+    - Collection recovery & PTP tracking
+    - Extractor benchmark comparison (Rules vs Evon vs Hybrid)
+    - Audio SNR pipeline evaluation
+    """
+    from pathlib import Path
+
+    reports_dir = Path(__file__).resolve().parent.parent.parent / "reports"
+
+    def read_report(name: str) -> dict[str, Any]:
+        p = reports_dir / name
+        if p.exists():
+            try:
+                with open(p, encoding="utf-8") as f:
+                    return json.load(f)
+            except Exception:
+                pass
+        return {}
+
+    booking_data = read_report("booking_results.json")
+    dispatch_data = read_report("dispatch_results.json")
+    collection_data = read_report("collection_results.json")
+    extractor_data = read_report("extractor_comparison.json")
+    audio_data = read_report("audio_eval.json")
+
+    return {
+        "status": "ok",
+        "timestamp": datetime.now(UTC).isoformat() if "datetime" in globals() else "",
+        "booking": booking_data,
+        "dispatch": dispatch_data,
+        "collection": collection_data,
+        "extractor_comparison": extractor_data,
+        "audio_eval": audio_data,
+    }
+
 
 

@@ -46,8 +46,8 @@ logs/
 live_transcripts.jsonl
 apps/api/reports/live_transcripts.jsonl
 
-# ─── Coverage ───────────────────────────────────────────────────────────────
-coverage/
+# ─── Generated evaluation audio ─────────────────────────────────────────────
+apps/api/data/test_audio/*.wav
 .nyc_output/
 htmlcov/
 

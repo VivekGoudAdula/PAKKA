@@ -1,0 +1,197 @@
+# ==============================================================================
+# PAKKA NOISY STT EVALUATION SCENARIOS (30 SCENARIOS)
+# ==============================================================================
+# Simulates noisy telephony STT transcripts:
+# - Dropped auxiliary words / articles
+# - Phonetic vowel shifts and colloquial spellings ("geezer", "paini", "toti", "naali")
+# - Truncated or informal landmarks ("saket metro", "rohini sec 8", "lajpat")
+# - High background street noise / caller hesitations
+# ==============================================================================
+
+- id: noisy_01
+  name: "Phonetic geezer not heating"
+  utterance: "geezer paini garam nahi kar ra"
+  expected:
+    problem_key: "geyser_not_heating"
+
+- id: noisy_02
+  name: "Dropped preposition leak"
+  utterance: "geyser pani leak ho ra neeche"
+  expected:
+    problem_key: "geyser_leak"
+
+- id: noisy_03
+  name: "Colloquial toti boond boond"
+  utterance: "bathroom toti boond gir raha band ni hota"
+  expected:
+    problem_key: "tap_leak"
+
+- id: noisy_04
+  name: "Phonetic sink block"
+  utterance: "rasoi ka sink jam hai pura pani ruk gaya"
+  expected:
+    problem_key: "drain_blocked"
+
+- id: noisy_05
+  name: "Slang motor awaz"
+  utterance: "motor bhot awaz krra tanki khali h"
+  expected:
+    problem_key: "motor_pump"
+
+- id: noisy_06
+  name: "Pipe burst with flood word"
+  utterance: "pipe burst flood aagya bathroom me"
+  expected:
+    problem_key: "pipe_burst"
+    is_emergency: true
+    emergency_type: "flooding"
+
+- id: noisy_07
+  name: "Electric current jhatka"
+  utterance: "nal me current lag gya bijli ka jhatka h"
+  expected:
+    is_emergency: true
+    emergency_type: "electric"
+
+- id: noisy_08
+  name: "Smoke from appliance"
+  utterance: "geeger se dhuan aa rha h jaldi aao"
+  expected:
+    is_emergency: true
+    emergency_type: "fire_gas"
+
+- id: noisy_09
+  name: "Gas geyser smell"
+  utterance: "gas geyser me gas smell badbu bohot tez hai"
+  expected:
+    is_emergency: true
+    emergency_type: "fire_gas"
+
+- id: noisy_10
+  name: "Phonetic landmark Mayur Vihar Pocket"
+  utterance: "mayur vihar pocket 2 me bhej do"
+  expected:
+    landmark_contains: "Mayur Vihar"
+
+- id: noisy_11
+  name: "Informal slot aaj sham"
+  utterance: "aaj sham saat baje k aas paas"
+  expected:
+    time_slot: "Aaj Shaam (5 PM – 7 PM)"
+
+- id: noisy_12
+  name: "Dropped word bargaining"
+  utterance: "bhai 300 me kr do na bhot zyada h"
+  expected:
+    intent: "bargaining"
+
+- id: noisy_13
+  name: "Phonetic robot question"
+  utterance: "kya aap machine bol re ho asli aadmi ho?"
+  expected:
+    intent: "are_you_a_robot"
+
+- id: noisy_14
+  name: "Colloquial owner handoff request"
+  utterance: "sharma ji malik se direct baat kra do"
+  expected:
+    intent: "human_request"
+
+- id: noisy_15
+  name: "Phonetic confirmation pakka"
+  utterance: "theek hai haan pakka confirm kardo"
+  expected:
+    intent: "yes"
+
+- id: noisy_16
+  name: "Phonetic geyser coil burnt"
+  utterance: "geyser ka coil dead ho gya pani thanda hai"
+  expected:
+    problem_key: "geyser_not_heating"
+
+- id: noisy_17
+  name: "Colloquial tapak tapak"
+  utterance: "gijar se tapak tapak gir rha h"
+  expected:
+    problem_key: "geyser_leak"
+
+- id: noisy_18
+  name: "Kitchen naali choke"
+  utterance: "kitchen ki naali choke ho gyi paani bahr aa ra"
+  expected:
+    problem_key: "drain_blocked"
+
+- id: noisy_19
+  name: "Submersible pump noise"
+  utterance: "submersible pump chal rha h par paani nahi aa ra"
+  expected:
+    problem_key: "motor_pump"
+
+- id: noisy_20
+  name: "Flooded bathroom paani bhar gaya"
+  utterance: "paani bhar gaya poora bathroom me pipe phat gaya"
+  expected:
+    is_emergency: true
+    emergency_type: "flooding"
+
+- id: noisy_21
+  name: "Electric shock touch"
+  utterance: "geyser chhua to current laga"
+  expected:
+    is_emergency: true
+    emergency_type: "electric"
+
+- id: noisy_22
+  name: "Fire outbreak"
+  utterance: "geyser me aag lag gyi hai"
+  expected:
+    is_emergency: true
+    emergency_type: "fire_gas"
+
+- id: noisy_23
+  name: "Devanagari noisy coil"
+  utterance: "गीजर गर्म नहीं कर रहा ठंडा पानी आ रहा"
+  expected:
+    problem_key: "geyser_not_heating"
+
+- id: noisy_24
+  name: "Devanagari noisy leak"
+  utterance: "गीज़र से पानी टपक रहा नीचे"
+  expected:
+    problem_key: "geyser_leak"
+
+- id: noisy_25
+  name: "Devanagari landmark"
+  utterance: "साकेत के पीछे वाली गली"
+  expected:
+    landmark_contains: "साकेत"
+
+- id: noisy_26
+  name: "Phonetic timing kal dopahar"
+  utterance: "kal dopahar 2 baje bhej dena"
+  expected:
+    time_slot: "Kal Dopahar (1 PM – 3 PM)"
+
+- id: noisy_27
+  name: "Hesitation wait"
+  utterance: "ek sec ruko zara papa se puchta hu"
+  expected:
+    intent: "wait"
+
+- id: noisy_28
+  name: "Refusal cancel"
+  utterance: "rehne do mat bhejo cancel kardo"
+  expected:
+    intent: "no"
+
+- id: noisy_29
+  name: "Landmark Karol Bagh"
+  utterance: "karol bagh metro station ke paas"
+  expected:
+    landmark_contains: "Karol Bagh"
+
+- id: noisy_30
+  name: "Correction today not tomorrow"
+  utterance: "nahi nahi kal nahi aaj hi bhej do"
+  expected:
+    intent: "correction"

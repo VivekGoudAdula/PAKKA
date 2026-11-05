@@ -1,0 +1,144 @@
+{
+  "timestamp": "2026-11-05T09:40:38.429503+00:00",
+  "evon_online": false,
+  "evon_status": "PENDING USER: requires GPU with vLLM (port 8001)",
+  "sample_sizes": {
+    "main_booking_scenarios": 28,
+    "holdout_scenarios": 10,
+    "noisy_stt_scenarios": 30
+  },
+  "extractors": {
+    "rules": {
+      "name": "RuleBasedExtractor",
+      "status": "LIVE: deterministic regex",
+      "overall_slot_accuracy_percent": 94.1,
+      "main_scenarios": {
+        "total_items": 28,
+        "passed_items": 28,
+        "pass_rate_percent": 100.0,
+        "total_slots": 57,
+        "correct_slots": 57,
+        "slot_accuracy_percent": 100.0,
+        "latency_ms": {
+          "mean": 0.49,
+          "p50": 0.13,
+          "p95": 0.47
+        }
+      },
+      "holdout_scenarios": {
+        "total_items": 10,
+        "passed_items": 7,
+        "pass_rate_percent": 70.0,
+        "total_slots": 8,
+        "correct_slots": 5,
+        "slot_accuracy_percent": 62.5,
+        "latency_ms": {
+          "mean": 0.18,
+          "p50": 0.19,
+          "p95": 0.23
+        }
+      },
+      "noisy_stt_scenarios": {
+        "total_items": 30,
+        "passed_items": 27,
+        "pass_rate_percent": 90.0,
+        "total_slots": 36,
+        "correct_slots": 33,
+        "slot_accuracy_percent": 91.7,
+        "latency_ms": {
+          "mean": 0.16,
+          "p50": 0.16,
+          "p95": 0.2
+        }
+      }
+    },
+    "evon": {
+      "name": "Evon v3.3 (vLLM)",
+      "status": "PENDING USER: requires GPU with vLLM (port 8001)",
+      "overall_slot_accuracy_percent": 60.4,
+      "main_scenarios": {
+        "total_items": 28,
+        "passed_items": 10,
+        "pass_rate_percent": 35.7,
+        "total_slots": 57,
+        "correct_slots": 22,
+        "slot_accuracy_percent": 38.6,
+        "latency_ms": {
+          "mean": 25.5,
+          "p50": 25.69,
+          "p95": 28.36
+        }
+      },
+      "holdout_scenarios": {
+        "total_items": 10,
+        "passed_items": 8,
+        "pass_rate_percent": 80.0,
+        "total_slots": 8,
+        "correct_slots": 6,
+        "slot_accuracy_percent": 75.0,
+        "latency_ms": {
+          "mean": 25.71,
+          "p50": 25.7,
+          "p95": 26.39
+        }
+      },
+      "noisy_stt_scenarios": {
+        "total_items": 30,
+        "passed_items": 27,
+        "pass_rate_percent": 90.0,
+        "total_slots": 36,
+        "correct_slots": 33,
+        "slot_accuracy_percent": 91.7,
+        "latency_ms": {
+          "mean": 26.38,
+          "p50": 25.84,
+          "p95": 30.14
+        }
+      }
+    },
+    "hybrid": {
+      "name": "HybridExtractor",
+      "status": "LIVE: rules-first with Evon fallback",
+      "overall_slot_accuracy_percent": 87.1,
+      "main_scenarios": {
+        "total_items": 28,
+        "passed_items": 16,
+        "pass_rate_percent": 57.1,
+        "total_slots": 57,
+        "correct_slots": 45,
+        "slot_accuracy_percent": 78.9,
+        "latency_ms": {
+          "mean": 19.71,
+          "p50": 25.9,
+          "p95": 26.68
+        }
+      },
+      "holdout_scenarios": {
+        "total_items": 10,
+        "passed_items": 9,
+        "pass_rate_percent": 90.0,
+        "total_slots": 8,
+        "correct_slots": 7,
+        "slot_accuracy_percent": 87.5,
+        "latency_ms": {
+          "mean": 14.75,
+          "p50": 25.85,
+          "p95": 29.25
+        }
+      },
+      "noisy_stt_scenarios": {
+        "total_items": 30,
+        "passed_items": 30,
+        "pass_rate_percent": 100.0,
+        "total_slots": 36,
+        "correct_slots": 36,
+        "slot_accuracy_percent": 100.0,
+        "latency_ms": {
+          "mean": 11.53,
+          "p50": 0.38,
+          "p95": 26.78
+        }
+      }
+    }
+  }
+}
