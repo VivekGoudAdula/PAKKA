@@ -138,6 +138,12 @@ async def exotel_ws_endpoint(ws: WebSocket) -> None:
 
                     stt_client = GnaniSTTClient(sample_rate=call_sample_rate, dry_run=False)
                     tts_client = GnaniTTSClient(sample_rate=call_sample_rate, dry_run=False)
+                elif ws.query_params.get("fast_cadence") == "true":
+                    from app.voice.gnani_stt import GnaniSTTClient
+                    from app.voice.gnani_tts import GnaniTTSClient
+
+                    stt_client = GnaniSTTClient(sample_rate=call_sample_rate, dry_run=True, realtime_cadence=False)
+                    tts_client = GnaniTTSClient(sample_rate=call_sample_rate, dry_run=True, realtime_cadence=False)
 
                 session = CallSession(
                     call_sid=call_sid,

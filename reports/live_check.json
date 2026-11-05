@@ -1,0 +1,44 @@
+{
+  "mode": "mock",
+  "generated_at": "2026-11-05T16:44:47.379862+00:00",
+  "environment_variables": {
+    "GNANI_API_KEY": true,
+    "EXOTEL_API_KEY": true,
+    "EXOTEL_API_TOKEN": false,
+    "EXOTEL_ACCOUNT_SID": false,
+    "EXOPHONE_NUMBER": false,
+    "PUBLIC_WSS_URL": false
+  },
+  "steps": {
+    "tts": {
+      "step": "tts_synthesis",
+      "status": "FAIL",
+      "is_live_network": true,
+      "ttfc_ms": 0.0,
+      "duration_seconds": 0.0,
+      "total_bytes": 0,
+      "error": "TimeoutError (20.0s exceeded)"
+    },
+    "stt": {
+      "step": "stt_streaming",
+      "status": "SKIP",
+      "is_live_network": true,
+      "transcript": "",
+      "latency_ms": 0.0,
+      "error": "Input WAV missing"
+    },
+    "tunnel": {
+      "step": "tunnel_health",
+      "status": "SKIP",
+      "target_url": null,
+      "response_code": null,
+      "error": "PUBLIC_WSS_URL not configured"
+    }
+  },
+  "summary": {
+    "tts_status": "FAIL",
+    "stt_status": "SKIP",
+    "tunnel_status": "SKIP",
+    "is_fully_live": false
+  }
+}

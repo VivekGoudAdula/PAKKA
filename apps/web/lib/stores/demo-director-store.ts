@@ -83,3 +83,4 @@ export const useDemoDirectorStore = create<DemoDirectorState>((set, get) => ({
   toggleRecordingMode: () => set((state) => ({ recordingMode: !state.recordingMode })),
   resetDemo: () => set({ currentBeat: 1, isPlaying: false }),
 }));
+

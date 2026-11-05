@@ -7,7 +7,31 @@ A voice assistant for small Indian service businesses (plumbers, geyser repair) 
 
 ---
 
-## Monorepo Structure
+## Prove It With Your Own Voice (No Phone Needed)
+
+You do not need an active Exotel phone line or virtual number to test the full speech and booking brain pipeline with your own voice.
+
+### 1. Record a 5–10 Second Voice Sample
+Record yourself speaking a realistic Indian plumbing problem on your phone or laptop (e.g., *"Bhaiya geyser se paani tapak raha hai, kal subah aa sakte ho?"*).
+
+### 2. Convert Audio to Telephony Format
+Convert the recording to Exotel's telephony audio format (8000 Hz, 16-bit linear PCM mono):
+```bash
+ffmpeg -i my_voice.m4a -ar 8000 -ac 1 -sample_fmt s16 samples/my_call.wav
+```
+
+### 3. Run the Voice Telephony Simulator
+With the API running (`cd apps/api && .venv/Scripts/python -m uvicorn app.main:app --port 8000`), run the simulator with `--live-gnani` (command and flags from `scripts/exotel_simulator.py --help`):
+```bash
+python scripts/exotel_simulator.py --url ws://localhost:8000/ws/exotel --audio samples/my_call.wav --output samples/reply.wav --live-gnani
+```
+
+### 4. Listen to the Real Assistant Speech
+- The simulator establishes a bidirectional WebSocket stream with `/ws/exotel`, streaming your audio in real-time telephony chunks.
+- The backend runs real Gnani Prisma v3.0 STT to transcribe your voice, routes the utterance through the deterministic Booking Brain FSM, and synthesizes the reply.
+- `samples/reply.wav` contains **real Timbre speech** synthesized by Gnani's model. Play it back with any media player to hear the digital assistant's voice response!
+
+---
 
 ```
 pakka/

@@ -73,3 +73,4 @@ Verifiable raw log files generated during this build:
    - Holdout V2 scenarios were probed and logged in `docs/HOLDOUT_LOG.md` as Development Set 3. They are permanently treated as regression test cases rather than blind holdout benchmarks.
 3. **Synthetic Audio Tones Relocation**:
    - Mathematical test sine tones were relocated from test fixtures to `samples/synthetic_tones/` with clear labeling. Real telephony audio is never synthesized into unverified binary fixtures.
+

@@ -102,6 +102,11 @@ class DispatchFSM:
         r'(क्या यह मशीन है|क्या ये मशीन है|क्या आप रोबोट हो)',
     ]
 
+    _COMPILED_ACCEPT = [re.compile(p) for p in ACCEPT_PATTERNS]
+    _COMPILED_DECLINE = [re.compile(p) for p in DECLINE_PATTERNS]
+    _COMPILED_REPEAT = [re.compile(p) for p in REPEAT_PATTERNS]
+    _COMPILED_AI_INQUIRY = [re.compile(p) for p in AI_INQUIRY_PATTERNS]
+
     def __init__(
         self,
         technician_name: str,
@@ -143,7 +148,7 @@ class DispatchFSM:
         has_audio_difficulty = any(
             p in clean for p in ["kuch nahi sun raha", "awaz kat rahi", "sunai nahi de raha", "awaz nahi aa rahi"]
         )
-        if self._matches(clean, self.AI_INQUIRY_PATTERNS) and not has_audio_difficulty:
+        if self._matches(clean, self._COMPILED_AI_INQUIRY) and not has_audio_difficulty:
             disclosure = f'Ji haan, main {self.business_name} ki digital sahayak bol rahi hoon. Agar aap kisi insaan se baat karna chahte hain toh main callback karwa sakti hoon.'
             continuation = f'Ek naya kaam hai: {self.problem}, {self.address}, {self.slot}. Kya aap kar sakte hain?'
             return DispatchTurnResult(
@@ -153,7 +158,7 @@ class DispatchFSM:
             )
 
         # 1. Check Repeat Request
-        if self._matches(clean, self.REPEAT_PATTERNS):
+        if self._matches(clean, self._COMPILED_REPEAT):
             reply = DISPATCH_REPEAT_READOUT.format(
                 problem=self.problem,
                 address=self.address,
@@ -166,7 +171,7 @@ class DispatchFSM:
             )
 
         # 2. Check Acceptance
-        if self._matches(clean, self.ACCEPT_PATTERNS):
+        if self._matches(clean, self._COMPILED_ACCEPT):
             self.state = DispatchState.ACCEPTED
             self.confirmation_phrase = text
             self.confirmed_at = time.strftime("%I:%M %p")
@@ -184,7 +189,7 @@ class DispatchFSM:
             )
 
         # 3. Check Decline
-        if self._matches(clean, self.DECLINE_PATTERNS):
+        if self._matches(clean, self._COMPILED_DECLINE):
             self.state = DispatchState.DECLINED
             logger.info("Dispatch DECLINED by %s: '%s'", self.technician_name, text)
             return DispatchTurnResult(
@@ -220,8 +225,8 @@ class DispatchFSM:
             is_declined=True,
         )
 
-    def _matches(self, text: str, patterns: list[str]) -> bool:
-        return any(re.search(p, text) for p in patterns)
+    def _matches(self, text: str, patterns: list[re.Pattern[str]]) -> bool:
+        return any(p.search(text) for p in patterns)
 
 
 # ==============================================================================
