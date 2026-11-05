@@ -60,6 +60,7 @@ class GnaniTTSClient:
         speed: float = 1.0,
         sample_rate: int = 8000,
         dry_run: bool = False,
+        realtime_cadence: bool = True,
     ) -> None:
         self.api_key = api_key or settings.gnani_api_key
         self.ws_url = ws_url or settings.gnani_tts_ws_url
@@ -69,6 +70,7 @@ class GnaniTTSClient:
         self.speed = speed
         self.sample_rate = sample_rate
         self.dry_run = dry_run or settings.gnani_dry_run
+        self.realtime_cadence = realtime_cadence
 
     async def synthesize(self, text: str) -> AsyncGenerator[bytes, None]:
         """
@@ -83,15 +85,16 @@ class GnaniTTSClient:
 
         if self.dry_run:
             logger.info("GnaniTTSClient: [SYNTHETIC] synthesizing text: '%s'", text[:60])
-            # Simulate realistic time-to-first-chunk ~250ms
-            await asyncio.sleep(0.25)
-            # Yield ~2.4s of synthetic PCM in 3200-byte chunks at ~180ms cadence
+            if self.realtime_cadence:
+                await asyncio.sleep(0.25)
+            # Yield ~2.4s of synthetic PCM in 3200-byte chunks
             synth_pcm = generate_synthetic_pcm(duration_ms=2400, sample_rate=self.sample_rate)
             chunk_size = 3200
             for i in range(0, len(synth_pcm), chunk_size):
                 chunk = synth_pcm[i : i + chunk_size]
                 yield chunk
-                await asyncio.sleep(0.18)
+                if self.realtime_cadence:
+                    await asyncio.sleep(0.18)
             return
 
         headers = {"X-API-Key-ID": self.api_key}

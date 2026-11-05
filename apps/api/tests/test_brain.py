@@ -223,3 +223,55 @@ class TestBookingFSM:
             "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. "
             "Main abhi malik ko bata rahi hoon."
         )
+
+    def test_ai_inquiry_phrasings_across_states(self) -> None:
+        """AI disclosure given across varied phrasings without resetting dialogue flow."""
+        phrasings = [
+            "kya aap robot ho?",
+            "are you an AI?",
+            "kya ye machine hai?",
+            "recording hai kya?",
+            "real person ho ya computer?",
+            "aap kaun ho?",
+            "kaun bol raha hai?",
+            "क्या आप रोबोट हो?",
+        ]
+        for phrase in phrasings:
+            fsm = BookingFSM(business_name="Aggarwal Sanitation")
+            res = fsm.process_utterance(phrase)
+            assert "Aggarwal Sanitation ki digital sahayak" in res.bot_reply
+            assert "callback" in res.bot_reply.lower() or "connect" in res.bot_reply.lower()
+            assert res.is_terminal is False
+            assert res.current_state == BookingState.ASK_PROBLEM
+
+    def test_tank_overflow_ordering_not_emergency(self, extractor: RuleBasedExtractor) -> None:
+        """Tank overflow alone is a routine motor_pump job, not a safety emergency."""
+        res = extractor.extract("tanki bhar ke overflow ho rahi hai motor band kardo")
+        assert res.is_emergency is False
+        assert res.problem_key == "motor_pump"
+
+        # However, pipe burst with flooding is an emergency
+        res_flood = extractor.extract("bathroom ka pipe phat gaya paani bhar gaya poora doob raha hai")
+        assert res_flood.is_emergency is True
+        assert res_flood.emergency_type == "flooding"
+
+    def test_decline_intent_at_all_states(self) -> None:
+        """Decline phrases (rehne do, cancel, etc.) transition to ABANDONED gracefully."""
+        from app.brain.replies import CALL_ABANDONED
+
+        declines = ["rehne do bhaiya", "nahi karwana mujhe", "cancel kar dijiye", "baad mein dekhte hain", "abhi nahi chahiye"]
+        for phrase in declines:
+            fsm = BookingFSM()
+            res = fsm.process_utterance(phrase)
+            assert res.current_state == BookingState.ABANDONED
+            assert res.is_terminal is True
+            assert res.bot_reply == CALL_ABANDONED
+
+    def test_address_clean_leading_words(self, extractor: RuleBasedExtractor) -> None:
+        """Extract address strips leading 'address', 'mera pata', and trailing ' hai'."""
+        res1 = extractor.extract("mera address Malviya Nagar main market ke paas hai")
+        assert res1.landmark_address == "Malviya Nagar main market ke paas"
+
+        res2 = extractor.extract("address Rohini sector 15 DDA flats")
+        assert res2.landmark_address == "Rohini sector 15 DDA flats"
+

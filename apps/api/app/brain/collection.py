@@ -10,27 +10,37 @@ from __future__ import annotations
 import logging
 import re
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from app.brain.replies_collection import (
     ALREADY_PAID_REPLY,
     CALLBACK_REPLY,
     DISPUTE_REPLY,
     LINK_REQUEST_REPLY,
-    OWNER_HANDOFF_REPLY,
     REASK_DATE_REPLY,
-    REFUSED_REPLY,
-    ROBOT_DISCLOSURE_REPLY,
     SILENCE_REPLY,
     WRONG_NUMBER_REPLY,
     get_balance_statement,
+    get_owner_handoff_reply,
     get_promise_confirmation,
+    get_refused_reply,
+    get_robot_disclosure_reply,
 )
 
 logger = logging.getLogger("pakka.collection")
 
+# Broad AI inquiry intent matching Latin and Devanagari phrasings
+AI_INQUIRY_PATTERNS: list[str] = [
+    r"\b(are you (a |an )?(robot|ai|machine|computer|recording|bot))\b",
+    r"\b(robot|bot|ai|machine|computer|recording)\b",
+    r"\b(asli insaan|real person|insaan ho|insan ho)\b",
+    r"\b(kaun bol raha|kaun bol rahi|aap kaun ho|tum kaun ho)\b",
+    r"\b(kya (ye|yeh) (machine|robot|ai|computer|recording) hai)\b",
+    r"(रोबोट|मशीन|इंसान|बॉट)",
+]
 
-class CollectionState(str, Enum):
+
+class CollectionState(StrEnum):
     """Dialogue states for debt collection call flow."""
 
     GREETING = "GREETING"
@@ -41,7 +51,7 @@ class CollectionState(str, Enum):
     TERMINAL = "TERMINAL"
 
 
-class CollectionDisposition(str, Enum):
+class CollectionDisposition(StrEnum):
     """Final outcome classification of collection interaction."""
 
     PTP = "PTP"  # Promise to Pay agreed
@@ -80,11 +90,13 @@ class CollectionFSM:
         balance: int = 500,
         tone_level: int = 1,
         business_name: str = "Sharma Plumbing",
+        owner_name: str = "Ramesh",
     ) -> None:
         self.customer_name = customer_name
         self.balance = balance
         self.tone_level = tone_level
         self.business_name = business_name
+        self.owner_name = owner_name
         self.state: CollectionState = CollectionState.GREETING
         self.disposition: CollectionDisposition | None = None
         self.captured_date: str | None = None
@@ -114,11 +126,18 @@ class CollectionFSM:
                 is_terminal=False,
             )
 
-        # 2. Global AI / Robot Inquiry
-        if re.search(r"(are you (a |an )?(robot|ai)|kya aap robot ho|machine ho|computer ho)", text) and not self.ai_disclosure_given:
+        # 2. Global AI / Robot Inquiry (Latin & Devanagari)
+        if any(re.search(p, text) for p in AI_INQUIRY_PATTERNS) and not self.ai_disclosure_given:
             self.ai_disclosure_given = True
+            disclosure = get_robot_disclosure_reply(self.business_name)
+            if self.state == CollectionState.GREETING:
+                self.state = CollectionState.CAPTURE_DATE
+                prompt = get_balance_statement(self.balance, tone_level=self.tone_level)
+            else:
+                prompt = REASK_DATE_REPLY
+
             return CollectionTurnResult(
-                bot_reply=ROBOT_DISCLOSURE_REPLY,
+                bot_reply=f"{disclosure} {prompt}",
                 current_state=self.state,
                 is_terminal=False,
             )
@@ -202,7 +221,7 @@ class CollectionFSM:
             self.state = CollectionState.TERMINAL
             self.disposition = CollectionDisposition.NEEDS_OWNER
             return CollectionTurnResult(
-                bot_reply=OWNER_HANDOFF_REPLY,
+                bot_reply=get_owner_handoff_reply(self.owner_name),
                 current_state=self.state,
                 is_terminal=True,
                 disposition=CollectionDisposition.NEEDS_OWNER,
@@ -217,7 +236,7 @@ class CollectionFSM:
             self.state = CollectionState.TERMINAL
             self.disposition = CollectionDisposition.REFUSED
             return CollectionTurnResult(
-                bot_reply=REFUSED_REPLY,
+                bot_reply=get_refused_reply(self.owner_name),
                 current_state=self.state,
                 is_terminal=True,
                 disposition=CollectionDisposition.REFUSED,

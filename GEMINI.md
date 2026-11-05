@@ -12,6 +12,7 @@ Follow these rules without exception across all sessions and phases.
 - No secrets in repo (.env gitignored, .env.example kept current).
 - Never open, print or log .env or any secret value. Check only whether an env var is set (true/false).
 - Truth in reporting: No number may appear in a report or in the UI unless a script computed it from files in the repo during this run. Every reports/*.json must contain mode ("live" | "dry_run" | "mock"), generated_at, and per-case results.
+- Output log capture rule: Every test, lint, build and eval command must be run with output captured to a file, for example: `python -m pytest apps/api/tests -v 2>&1 | Tee-Object -FilePath reports/logs/pytest_01.txt`. Reports may quote ONLY from those files and must give the file path. Never retype, reorder or clean up output. If a command hangs, say so.
 
 ## 2. Technology Guidelines
 - Web: Next.js App Router, TypeScript strict, Tailwind CSS, shadcn/ui, Framer Motion, lucide-react, sonner, TanStack Query, zustand.

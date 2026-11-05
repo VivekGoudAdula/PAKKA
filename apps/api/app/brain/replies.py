@@ -27,7 +27,10 @@ REASK_SLOT = "Kaun sa time slot rakhein? Aaj shaam paanch se saat, ya kal subah?
 
 ASK_NAME = "Aapka shubh naam kya hai ji?"
 
-ROBOT_DISCLOSURE = "Ji haan, main Pakka ki digital sahayak bol rahi hoon. Kya aap human owner se baat karna chahenge?"
+ROBOT_DISCLOSURE = (
+    "Ji haan, main {business_name} ki digital sahayak bol rahi hoon. "
+    "Agar aap kisi insaan se baat karna chahte hain toh main owner se callback karwa sakti hoon."
+)
 
 BARGAINING_HOLD = "Yeh hamare dukaan ke standard rates hain. Agar aap chahein toh main shop owner se keh kar callback karwa sakti hoon."
 
@@ -61,7 +64,7 @@ SILENCE_PROMPT_2 = (
 )
 
 CALL_ABANDONED = (
-    "Theek hai ji, koi baat nahi. Jab bhi repair ki zaroorat ho, call kijiyega. Dhanyawaad."
+    "Theek hai ji, koi baat nahi. Jab zaroorat ho tab phone kijiye. Dhanyavaad."
 )
 
 BOOKING_SUCCESS = (

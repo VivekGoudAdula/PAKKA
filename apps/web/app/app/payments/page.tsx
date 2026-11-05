@@ -9,6 +9,7 @@ import {
   CheckCircle2,
   PhoneCall,
   Clock,
+  PauseCircle,
 
   History,
   MessageSquare,
@@ -74,8 +75,20 @@ export default function PaymentsPage() {
     queryFn: () => fetchPaymentPromises(daysOffset),
   });
 
-  const getStatusBadge = (status: PromiseStatus) => {
-    switch (status) {
+  const getStatusBadge = (promise: PaymentPromise) => {
+    if (
+      promise.status === "paused" ||
+      promise.status === "disputed" ||
+      ((promise.tone_level ?? 1) >= 3 && promise.status !== "paid" && promise.status !== "kept")
+    ) {
+      return (
+        <Badge variant="outline" className="bg-purple-50 text-purple-800 border-purple-300 gap-1 font-semibold">
+          <PauseCircle className="w-3 h-3 text-purple-600" />
+          Paused, waiting for owner
+        </Badge>
+      );
+    }
+    switch (promise.status) {
       case "paid":
         return (
           <Badge className="bg-emerald-50 text-emerald-800 border-emerald-300 gap-1 font-semibold">
@@ -357,7 +370,7 @@ export default function PaymentsPage() {
                     <span className="text-xs text-muted-foreground font-mono">
                       {promise.customer_phone_masked}
                     </span>
-                    {getStatusBadge(promise.status)}
+                    {getStatusBadge(promise)}
                     <span className="text-xs font-bold text-emerald-800 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
                       ₹{promise.amount}
                     </span>

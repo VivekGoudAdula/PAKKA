@@ -36,3 +36,4 @@ export async function GET() {
     holdout_v2: holdoutV2,
   });
 }
+

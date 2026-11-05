@@ -1,9 +1,12 @@
 {
-  "timestamp": "2026-11-05T10:31:03.136798+00:00",
+  "mode": "live",
+  "generated_at": "2026-11-05T15:17:36.977699+00:00",
+  "timestamp": "2026-11-05T15:17:36.977724+00:00",
   "total_scenarios": 25,
   "passed_scenarios": 25,
   "pass_rate_percent": 100.0,
   "holdout": {
+    "label": "Development set (previously probed)",
     "total_scenarios": 8,
     "passed_scenarios": 6,
     "pass_rate_percent": 75.0,
@@ -358,8 +361,8 @@
       "turns": [
         {
           "user": "Kya aap robot ho ya real person?",
-          "bot": "Ji haan, main Pakka ki digital sahayak bol rahi hoon. Agar aap kisi insaan se baat karna chahte hain to main turant malik ko connect karwa sakti hoon.",
-          "state": "GREETING"
+          "bot": "Ji haan, main Sharma Plumbing ki digital sahayak bol rahi hoon. Agar aap kisi insaan se baat karna chahte hain to main turant malik ko connect karwa sakti hoon. Aapke paanch sau rupaye baaki hain. Yeh payment aap kab tak kar payenge?",
+          "state": "CAPTURE_DATE"
         },
         {
           "user": "Achha theek hai, kal bhej dunga",

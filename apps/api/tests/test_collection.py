@@ -168,3 +168,98 @@ def test_execute_all_collection_scenarios(collection_scenarios: list[dict[str, A
 
     assert passed_count == total_main, f"{total_main - passed_count} main scenarios failed"
 
+
+def test_collection_ai_inquiry_all_phrasings() -> None:
+    """Inquiries about AI return digital sahayak disclosure and continue dialog."""
+    phrasings = [
+        "kya aap robot ho?",
+        "are you an AI?",
+        "kya ye machine bol rahi hai?",
+        "recording hai kya?",
+        "asli insaan ho?",
+        "क्या आप रोबोट हो?",
+    ]
+    for text in phrasings:
+        fsm = CollectionFSM(business_name="Aggarwal Sanitation", balance=600)
+        res = fsm.process_utterance(text)
+        assert "Aggarwal Sanitation ki digital sahayak" in res.bot_reply
+        assert res.is_terminal is False
+        assert res.current_state.value == "CAPTURE_DATE"
+
+
+def test_collection_dynamic_owner_and_business() -> None:
+    """Collection brain respects dynamic business_name and owner_name."""
+    fsm = CollectionFSM(business_name="Verma Plumbing", owner_name="Vikram")
+    res_esc = fsm.process_utterance("mujhe malik se baat karni hai")
+    assert "Vikram ji" in res_esc.bot_reply
+
+    fsm_ref = CollectionFSM(business_name="Verma Plumbing", owner_name="Vikram")
+    res_ref = fsm_ref.process_utterance("nahi dunga paise")
+    assert "Vikram ji" in res_ref.bot_reply
+
+
+def test_scheduler_suppression_tone3_and_disputes() -> None:
+    """Tone 3, paused, and disputed promises are strictly suppressed from automated calls."""
+    from app.models.domain import Promise
+    from app.services.collection_scheduler import is_promise_eligible_for_call
+
+    p1 = Promise(
+        id="p1",
+        customer_id="cust1",
+        customer_name="A",
+        customer_phone_raw="9800000001",
+        customer_phone_masked="98XXXXXX01",
+        amount=500,
+        due_date="2020-01-01",
+        status="broken",
+        tone_level=3,
+    )
+    assert is_promise_eligible_for_call(p1) is False
+
+    p2 = Promise(
+        id="p2",
+        customer_id="cust2",
+        customer_name="B",
+        customer_phone_raw="9800000002",
+        customer_phone_masked="98XXXXXX02",
+        amount=500,
+        due_date="2020-01-01",
+        status="disputed",
+        tone_level=1,
+    )
+    assert is_promise_eligible_for_call(p2) is False
+
+    p3 = Promise(
+        id="p3",
+        customer_id="cust3",
+        customer_name="C",
+        customer_phone_raw="9800000003",
+        customer_phone_masked="98XXXXXX03",
+        amount=500,
+        due_date="2020-01-01",
+        status="paused",
+        tone_level=1,
+    )
+    assert is_promise_eligible_for_call(p3) is False
+
+    p4 = Promise(
+        id="p4",
+        customer_id="cust4",
+        customer_name="D",
+        customer_phone_raw="9800000004",
+        customer_phone_masked="98XXXXXX04",
+        amount=500,
+        due_date="2020-01-01",
+        status="broken",
+        tone_level=1,
+    )
+    assert is_promise_eligible_for_call(p4) is True
+
+    # Suppressed phone check
+    assert is_promise_eligible_for_call(p4, suppressed_phones={"9800000004"}) is False
+
+    # Outbound hours check
+    assert is_promise_eligible_for_call(p4, is_outbound_open=False) is False
+
+
+

@@ -667,6 +667,7 @@ class CallSession:
 
     async def handle_mark(self, mark_name: str) -> None:
         """Acknowledge mark event from Exotel (playback reached end)."""
+        self._bot_is_speaking = False
         self._last_playback_finished_time = time.monotonic()
         logger.info(
             "Mark reached on %s: %s (playback finished at %.3f)",

@@ -56,6 +56,7 @@ class GnaniSTTClient:
         format_mode: str = "codemix",
         keyterms: str = "geyser,tap,leak,motor,pipe,bathroom,kitchen",
         dry_run: bool = False,
+        realtime_cadence: bool = True,
     ) -> None:
         self.api_key = api_key or settings.gnani_api_key
         self.ws_url = ws_url or settings.gnani_stt_ws_url
@@ -68,6 +69,7 @@ class GnaniSTTClient:
         self.format_mode = format_mode
         self.keyterms = keyterms
         self.dry_run = dry_run or settings.gnani_dry_run
+        self.realtime_cadence = realtime_cadence
 
         self._ws: WebSocketClientProtocol | None = None
         self._connected = False
@@ -198,8 +200,8 @@ class GnaniSTTClient:
             except asyncio.CancelledError:
                 return
 
-            # Simulate realistic VAD + model latency (~200ms)
-            await asyncio.sleep(0.2)
+            if self.realtime_cadence:
+                await asyncio.sleep(0.2)
             logger.info(
                 "[SYNTHETIC] Gnani STT generated simulated transcript: '%s'",
                 "Geyser kharab hai paani garam nahi ho raha",

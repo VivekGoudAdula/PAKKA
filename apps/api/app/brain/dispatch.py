@@ -11,14 +11,14 @@ import logging
 import re
 import time
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 
 from app.models.domain import Job, Technician
 
 logger = logging.getLogger(__name__)
 
 
-class DispatchState(str, Enum):
+class DispatchState(StrEnum):
     """Explicit states of the technician dispatch dialogue."""
 
     DISPATCH_GREETING = "DISPATCH_GREETING"
@@ -88,17 +88,33 @@ class DispatchFSM:
         r"(दोबारा बोलो|फिर से बोलो|सुनाई नहीं दिया|एड्रेस क्या था|क्या काम था|एक बार और)",
     ]
 
+    AI_INQUIRY_PATTERNS: list[str] = [
+        r'\b(are you (a |an )?(robot|ai|machine|computer|recording|bot))\b',
+        r'\b(robot|bot|ai|machine|computer|recording)\b',
+        r'\b(asli insaan|real person|insaan ho|insan ho)\b',
+        r'\b(kaun bol raha|kaun bol rahi|aap kaun ho|tum kaun ho)\b',
+        r'\b(kya (ye|yeh) (machine|robot|ai|computer|recording) hai)\b',
+        r'\b(kya aap (robot|machine|ai|computer) ho)\b',
+        r'\b(asli insaan ho ya machine)\b',
+        r'(रोबोट|बॉट|एआई|मशीन|कंप्यूटर|कम्प्यूटर|रिकॉर्डिंग)',
+        r'(असली इंसान|इंसान हो|इन्सान हो|रियल पर्सन)',
+        r'(कौन बोल रहा|कौन बोल रही|आप कौन हो|तुम कौन हो)',
+        r'(क्या यह मशीन है|क्या ये मशीन है|क्या आप रोबोट हो)',
+    ]
+
     def __init__(
         self,
         technician_name: str,
         problem: str,
         address: str,
         slot: str,
+        business_name: str = 'Sharma Plumbing',
     ) -> None:
         self.technician_name = technician_name
         self.problem = problem
         self.address = address
         self.slot = slot
+        self.business_name = business_name
 
         self.state: DispatchState = DispatchState.DISPATCH_GREETING
         self.unclear_count: int = 0
@@ -122,6 +138,19 @@ class DispatchFSM:
         text_lower = text.lower()
         clean = re.sub(r"[,।!?.]", " ", text_lower).strip()
         clean = re.sub(r"\s+", " ", clean)
+
+        # 0. Check AI Inquiry (unless caller explicitly notes audio difficulty like 'kuch nahi sun raha')
+        has_audio_difficulty = any(
+            p in clean for p in ["kuch nahi sun raha", "awaz kat rahi", "sunai nahi de raha", "awaz nahi aa rahi"]
+        )
+        if self._matches(clean, self.AI_INQUIRY_PATTERNS) and not has_audio_difficulty:
+            disclosure = f'Ji haan, main {self.business_name} ki digital sahayak bol rahi hoon. Agar aap kisi insaan se baat karna chahte hain toh main callback karwa sakti hoon.'
+            continuation = f'Ek naya kaam hai: {self.problem}, {self.address}, {self.slot}. Kya aap kar sakte hain?'
+            return DispatchTurnResult(
+                bot_reply=f'{disclosure} {continuation}',
+                current_state=DispatchState.LISTENING,
+                is_terminal=False,
+            )
 
         # 1. Check Repeat Request
         if self._matches(clean, self.REPEAT_PATTERNS):

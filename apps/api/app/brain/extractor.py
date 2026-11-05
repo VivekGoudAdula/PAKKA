@@ -126,8 +126,9 @@ class RuleBasedExtractor:
             "motor_pump",
             "Motor / Pump Issue",
             [
-                r"(motor|motar|pump|submersible|मोटर|पंप).*?(chal|chalu|aawaz|pani nahi|kheench|kharab|खराब|आवाज)",
-                r"(submersible|टुल्लू).*?(kharab|chal|खराब)",
+                r"(motor|motar|pump|submersible|मोटर|पंप).*?(chal|chalu|aawaz|pani nahi|kheench|kharab|band|overflow|tanki|खराब|आवाज|बंद)",
+                r"(tanki|tank|पानी की टंकी).*?(overflow|bhar|motor|मोटर)",
+                r"(submersible|टुल्लू).*?(kharab|chal|खराब|बंद)",
             ],
         ),
     ]
@@ -212,10 +213,11 @@ class RuleBasedExtractor:
     ]
 
     EMERGENCY_FLOODING_PATTERNS: list[str] = [
-        r"(pipe phat gaya.*?flood|pipe burst.*?flood)",
-        r"(paani bhar gaya|पानी भर गया)",
+        r"(pipe|paip|पाइप).*?(burst|phat|फट|फूट).*?(paani bhar|ghar mein paani|flood|bahot paani|pani bhar|overflow)",
+        r"(paani bhar|pani bhar|ghar mein paani|paani bhar raha|pani bhar raha|कमरा भर गया|पानी भर रहा|पानी भर गया)",
         r"(flooding|flood\b)",
-        r"(overflow|ओवरफ्लो)",
+        r"(overflow|ओवरफ्लो).*?(paani bhar|ghar mein paani|flood|kamra bhar|pani bhar)",
+        r"(paani bhar|ghar mein paani|flood).*?(overflow|ओवरफ्लो)",
     ]
 
     EMERGENCY_PATTERNS: list[str] = (
@@ -316,14 +318,32 @@ class RuleBasedExtractor:
     def _check_emergency(self, text: str) -> bool:
         return self._check_emergency_type(text) is not None
 
+    AI_INQUIRY_PATTERNS: list[str] = [
+        r"\b(are you (a |an )?(robot|ai|machine|computer|recording|bot))\b",
+        r"\b(robot|bot|ai|machine|computer|recording)\b",
+        r"\b(asli insaan|real person|insaan ho|insan ho)\b",
+        r"\b(kaun bol raha|kaun bol rahi|aap kaun ho|tum kaun ho)\b",
+        r"\b(kya (ye|yeh) (machine|robot|ai|computer|recording) hai)\b",
+        r"\b(kya aap (robot|machine|ai|computer) ho)\b",
+        r"\b(asli insaan ho ya machine)\b",
+        # Devanagari
+        r"(रोबोट|बॉट|एआई|मशीन|कंप्यूटर|कम्प्यूटर|रिकॉर्डिंग)",
+        r"(असली इंसान|इंसान हो|इन्सान हो|रियल पर्सन)",
+        r"(कौन बोल रहा|कौन बोल रही|आप कौन हो|तुम कौन हो)",
+        r"(क्या यह मशीन है|क्या ये मशीन है|क्या आप रोबोट हो)",
+    ]
+
+    DECLINE_PATTERNS: list[str] = [
+        r"\b(rehne do|rehne de|rehne dijiye|rehn do)\b",
+        r"\b(nahi karwana|nahi karana|kaam nahi karwana|nahi karwayenge)\b",
+        r"\b(cancel|cancel kar do|cancel kardo|cancle)\b",
+        r"\b(baad mein dekhte hain|baad me dekhte|baad mein dekhenge|baad me dekhenge)\b",
+        r"\b(abhi nahi|abhi nahi chahiye|abhi nahi karwana|mat bhejo|ab nahi chahiye)\b",
+        r"(रहने दो|रहने दीजिए|नहीं करवाना|कैंसिल|बाद में देखते हैं|अभी नहीं)",
+    ]
+
     def _check_robot_intent(self, text: str) -> bool:
-        patterns = [
-            r"are you (a |an )?(robot|ai|machine)",
-            r"(kya )?(aap|tum) (robot|ai|machine|computer|बॉट|रोबोट|एआई)",
-            r"(robot|machine|computer) bol raha",
-            r"asli (insaan|aadmi) ho ya",
-        ]
-        return any(re.search(p, text) for p in patterns)
+        return any(re.search(p, text) for p in self.AI_INQUIRY_PATTERNS)
 
     def _check_human_request(self, text: str) -> bool:
         patterns = [
@@ -365,7 +385,7 @@ class RuleBasedExtractor:
             r"^(nahi|na|no|nope|nahi chahiye|mat karo|rehne do|cancel)$",
             r"^(नहीं|ना|मत करो|रहने दो|कैंसल)$",
             r"\b(nahi chahiye|rehne dijiye|mat bhejo|ab nahi)\b",
-        ]
+        ] + self.DECLINE_PATTERNS
         return any(re.search(p, text) for p in patterns)
 
     def _extract_problem(self, text: str) -> tuple[str | None, str | None]:
@@ -440,13 +460,14 @@ class RuleBasedExtractor:
 
             # Clean unwanted leading/trailing words
             cleaned = re.sub(
-                r"^(mera address hai|address hai|hum rehte hain|yahan aa jao|address note karo|galat address[,\s]*|wrong address[,\s]*|sahi address[,\s]*)\s*",
+                r"^(mera address hai|mera address|address hai|address|mera pata hai|mera pata|pata hai|pata|hum rehte hain|yahan aa jao|address note karo|galat address[,\s]*|wrong address[,\s]*|sahi address[,\s]*|मेरा पता|पता है|पता)\s*",
                 "",
                 raw_text,
                 flags=re.IGNORECASE,
             ).strip()
+            cleaned = re.sub(r"\s+hai$", "", cleaned, flags=re.IGNORECASE).strip()
             # If long enough to be an address
-            if len(cleaned) >= 8:
+            if len(cleaned) >= 6:
                 return cleaned
 
         return None

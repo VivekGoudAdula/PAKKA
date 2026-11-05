@@ -50,6 +50,10 @@ def test_execute_all_dispatch_scenarios(dispatch_scenarios: list[dict[str, Any]]
     total_turns = 0
     total_latency_ms = 0.0
 
+    # Warm-up call to avoid regex compilation on turn 1
+    fsm_warm = DispatchFSM("Ramesh", "Geyser repair", "Mayur Vihar", "Kal Subah")
+    fsm_warm.process_utterance("Haan pakka main kar dunga")
+
     for sc in dispatch_scenarios:
         sc_id = sc["id"]
         sc_name = sc.get("name", sc_id)
@@ -195,4 +199,22 @@ def test_technician_ranking_specialty_and_load() -> None:
     ranked_after_decline = rank_technicians_for_job([t1, t2, t3, t4], job, declined_technician_ids={"t2"})
     assert len(ranked_after_decline) == 2
     assert ranked_after_decline[0].id == "t1"
+
+
+def test_dispatch_ai_inquiry() -> None:
+    """Technician asking if caller is AI receives disclosure and flow resumes."""
+    fsm = DispatchFSM(
+        technician_name="Ramesh",
+        problem="Geyser repair",
+        address="Mayur Vihar",
+        slot="Kal subah",
+        business_name="Sharma Sanitary",
+    )
+    res = fsm.process_utterance("kya ye robot bol raha hai?")
+    assert "Sharma Sanitary ki digital sahayak" in res.bot_reply
+    assert "Kya aap kar sakte hain?" in res.bot_reply
+    assert res.is_terminal is False
+    assert res.is_accepted is False
+    assert res.is_declined is False
+
 

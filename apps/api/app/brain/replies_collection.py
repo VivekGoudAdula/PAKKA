@@ -92,20 +92,34 @@ ALREADY_PAID_REPLY = (
     "Accha, theek hai ji. Main malik ko bata deti hoon, woh check kar lenge. Shukriya."
 )
 
-REFUSED_REPLY = (
-    "Theek hai ji, koi baat nahi. Main shop owner Ramesh ji ko inform kar deti hoon ki aapse direct baat kar lein. "
-    "Dhanyawaad."
-)
 
-OWNER_HANDOFF_REPLY = (
-    "Theek hai ji, main shop owner Ramesh ji ko aapka number bhej rahi hoon, "
-    "woh aapse seedhe phone par baat kar lenge."
-)
+def get_refused_reply(owner_name: str = "Ramesh") -> str:
+    """Refusal reply referencing dynamic owner name."""
+    return (
+        f"Theek hai ji, koi baat nahi. Main shop owner {owner_name} ji ko inform kar deti hoon ki aapse direct baat kar lein. "
+        f"Dhanyawaad."
+    )
 
-ROBOT_DISCLOSURE_REPLY = (
-    "Ji haan, main Pakka ki digital sahayak bol rahi hoon. "
-    "Agar aap kisi insaan se baat karna chahte hain to main turant malik ko connect karwa sakti hoon."
-)
+
+def get_owner_handoff_reply(owner_name: str = "Ramesh") -> str:
+    """Handoff reply referencing dynamic owner name."""
+    return (
+        f"Theek hai ji, main shop owner {owner_name} ji ko aapka number bhej rahi hoon, "
+        f"woh aapse seedhe phone par baat kar lenge."
+    )
+
+
+def get_robot_disclosure_reply(business_name: str = "Sharma Plumbing") -> str:
+    """AI disclosure stating digital assistant identity and offering human callback."""
+    return (
+        f"Ji haan, main {business_name} ki digital sahayak bol rahi hoon. "
+        f"Agar aap kisi insaan se baat karna chahte hain to main turant malik ko connect karwa sakti hoon."
+    )
+
+
+REFUSED_REPLY = get_refused_reply("Ramesh")
+OWNER_HANDOFF_REPLY = get_owner_handoff_reply("Ramesh")
+ROBOT_DISCLOSURE_REPLY = get_robot_disclosure_reply("Sharma Plumbing")
 
 REASK_DATE_REPLY = (
     "Main date theek se samajh nahi paayi. Kya aap kal, parson, ya koi specific din bata sakte hain?"

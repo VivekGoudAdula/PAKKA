@@ -3,9 +3,14 @@ Domain SQLModel database models for Pakka.
 Matches schema across frontend and backend.
 """
 
-from datetime import datetime
+from datetime import UTC, datetime
 
 from sqlmodel import Field, SQLModel
+
+
+def utc_now() -> datetime:
+    """Return timezone-aware current UTC datetime."""
+    return datetime.now(UTC)
 
 
 class Customer(SQLModel, table=True):
@@ -16,7 +21,7 @@ class Customer(SQLModel, table=True):
     phone_masked: str
     phone_raw: str | None = None
     default_address: str | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class Technician(SQLModel, table=True):
@@ -76,7 +81,7 @@ class Job(SQLModel, table=True):
     customer_phone_masked: str
     paid_amount: int = 0
     balance: int = 0
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class CallRecord(SQLModel, table=True):
@@ -92,7 +97,7 @@ class CallRecord(SQLModel, table=True):
     summary: str = ""
     extracted_slots_json: str = "{}"  # JSON serialized slots
     transcript_json: str = "[]"  # JSON serialized transcript messages
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class BusinessSettings(SQLModel, table=True):
@@ -124,7 +129,7 @@ class Promise(SQLModel, table=True):
     tone_level: int = 1  # 1 (gentle), 2 (firm follow-up), 3 (owner escalation)
     attempts_count: int = 0
     last_attempt_at: str | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class ReminderEvent(SQLModel, table=True):
@@ -138,7 +143,7 @@ class ReminderEvent(SQLModel, table=True):
     disposition: str = "PTP"  # PTP, PAID, DISPUTE, WRONG_NUMBER, CALLBACK, NO_ANSWER, REFUSED, NEEDS_OWNER
     snippet: str = ""
     tone_level: int = 1  # 1, 2, 3
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=utc_now)
 
 
 class SuppressedNumber(SQLModel, table=True):
@@ -147,4 +152,4 @@ class SuppressedNumber(SQLModel, table=True):
     id: str = Field(primary_key=True)
     phone_raw: str = Field(index=True, unique=True)
     reason: str = "wrong_number"  # wrong_number, opt_out, owner_flagged
-    suppressed_at: datetime = Field(default_factory=datetime.utcnow)
+    suppressed_at: datetime = Field(default_factory=utc_now)

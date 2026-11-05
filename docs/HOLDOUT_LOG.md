@@ -77,7 +77,10 @@ Following these failures:
 
 ---
 
-## 4. Remediation
+## 4. Remediation & Holdout V2 Redesignation
 
 1. In all benchmark reports (`reports/extractor_comparison.json`, `reports/booking_results.json`, `reports/collection_results.json`), these sets are explicitly labeled `"Development set (previously probed)"`.
-2. A completely fresh, unprobed 10-line holdout set [`tests/scenarios/holdout_v2.yaml`](file:///c:/HACKATHONS/73. AI INTERNSHIP - GNANI/APP/apps/api/tests/scenarios/holdout_v2.yaml) has been introduced for Phase 6.1 and run strictly once with zero code alterations.
+2. A fresh 10-line holdout set [`tests/scenarios/holdout_v2.yaml`](file:///c:/HACKATHONS/73. AI INTERNSHIP - GNANI/APP/apps/api/tests/scenarios/holdout_v2.yaml) was introduced in Phase 6.1 and run strictly once with zero code alterations (scoring 4 / 10).
+3. **Phase 7 Update**: Following the analysis of failures in Holdout V2 (tank overflow safety routing, AI disclosure phrasing, leading "address" word stripping, and greeting cancellations), fixes are being introduced in Step A. Consequently, **Holdout V2 is now formally retired as a test set and marked as Development Set 3 (Contaminated)**. It must never be used as a test again.
+4. **Holdout V3 Policy**: A new holdout set (`holdout_v3`) will be supplied exclusively by the human reviewer. Autonomous agents working on this repo must **never view it, create it, or tune code against it**.
+

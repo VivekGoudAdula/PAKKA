@@ -111,6 +111,7 @@ End every phase with a **PHASE REPORT** in exactly this format:
 - No secrets in the repo.
 - No bought engagement or bots.
 - All metrics from our own test runs only: no number may appear in a report or in the UI unless a script computed it from files in the repo during this run. Every reports/*.json must contain mode ("live" | "dry_run" | "mock"), generated_at, and per-case results.
+- Output log capture rule: Every test, lint, build and eval command must be run with output captured to a file, for example: `python -m pytest apps/api/tests -v 2>&1 | Tee-Object -FilePath reports/logs/pytest_01.txt`. Reports may quote ONLY from those files and must give the file path. Never retype, reorder or clean up output. If a command hangs, say so.
 - No new libraries without explicit owner approval.
 
 ---

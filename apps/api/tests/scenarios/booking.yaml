@@ -66,7 +66,7 @@
     final_state: "BOOKED"
     slots:
       problem_key: "tap_leak"
-      landmark_address: "Mayur Vihar Pocket 1 hai"
+      landmark_address: "Mayur Vihar Pocket 1"
       time_slot: "Kal Subah (9 AM – 11 AM)"
     is_terminal: true
 

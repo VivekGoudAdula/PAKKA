@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 from app.brain.extractor import ExtractionResult, RuleBasedExtractor
@@ -46,7 +46,7 @@ DEFAULT_PRICING: dict[str, tuple[int, int]] = {
 }
 
 
-class BookingState(str, Enum):
+class BookingState(StrEnum):
     """Explicit states of the booking conversation."""
 
     GREETING = "GREETING"
@@ -100,11 +100,13 @@ class BookingFSM:
         handoff_phone: str = "+91 98765 43210",
         price_catalog: dict[str, tuple[int, int]] | None = None,
         custom_areas: list[str] | None = None,
+        business_name: str = "Sharma Plumbing",
     ) -> None:
         self.state: BookingState = BookingState.GREETING
         self.slots = BookingSlots()
         self.extractor = RuleBasedExtractor(custom_areas=custom_areas)
         self.handoff_phone = handoff_phone
+        self.business_name = business_name
         self.pricing = price_catalog or DEFAULT_PRICING
 
         self.reask_counts: dict[str, int] = {
@@ -186,12 +188,46 @@ class BookingFSM:
                 is_urgent=True,
             )
 
-        # 2. Priority: Sincere Robot/AI Inquiry -> Answer Honestly
-        if "are_you_a_robot" in extraction.intents and not self.ai_disclosure_given:
+        # 2. Priority: Sincere Robot/AI Inquiry -> Answer Honestly and resume dialog flow
+        if "are_you_a_robot" in extraction.intents:
             self.ai_disclosure_given = True
             logger.info("AI non-denial disclosure triggered by caller inquiry.")
+            disclosure = ROBOT_DISCLOSURE.format(business_name=self.business_name)
+
+            # Ingest any slots provided in the same turn
+            if extraction.problem_key:
+                self.slots.problem_key = extraction.problem_key
+                self.slots.problem = extraction.problem
+                self._apply_pricing()
+            if extraction.landmark_address:
+                self.slots.landmark_address = extraction.landmark_address
+            if extraction.time_slot:
+                self.slots.time_slot = extraction.time_slot
+
+            # Resume dialog flow based on missing slots
+            if not self.slots.problem_key:
+                prompt_continuation = ASK_PROBLEM
+                self.state = BookingState.ASK_PROBLEM
+            elif not self.slots.landmark_address:
+                prompt_continuation = ASK_ADDRESS
+                self.state = BookingState.ASK_ADDRESS
+            elif not self.slots.time_slot:
+                prompt_continuation = ASK_SLOT
+                self.state = BookingState.ASK_SLOT
+            elif not self.asked_quote_once:
+                self.asked_quote_once = True
+                self.state = BookingState.QUOTE
+                prompt_continuation = format_quote_reply(self.slots.price_min or 350, self.slots.price_max or 600)
+            else:
+                self.state = BookingState.CONFIRM_READBACK
+                prompt_continuation = format_confirm_readback(
+                    self.slots.problem or "Plumbing Repair",
+                    self.slots.landmark_address or "Apka address",
+                    self.slots.time_slot or "Kal subah",
+                )
+
             return BrainTurnResult(
-                bot_reply=ROBOT_DISCLOSURE,
+                bot_reply=f"{disclosure} {prompt_continuation}".strip(),
                 current_state=self.state,
                 slots=self.slots,
                 ai_disclosure_triggered=True,
@@ -208,9 +244,10 @@ class BookingFSM:
                 needs_handoff=True,
             )
 
-        # 4. Priority: Explicit Refusal / Cancellation
+        # 4. Priority: Explicit Refusal / Cancellation (at EVERY booking state)
         if "no" in extraction.intents:
             self.state = BookingState.ABANDONED
+            logger.info("Call declined/abandoned at state %s with disposition 'caller_declined'", self.state.value)
             return BrainTurnResult(
                 bot_reply=CALL_ABANDONED,
                 current_state=self.state,

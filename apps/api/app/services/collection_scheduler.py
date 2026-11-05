@@ -25,6 +25,39 @@ from app.services.clock_service import clock
 logger = logging.getLogger("pakka.scheduler")
 
 
+def is_promise_eligible_for_call(
+    p: Promise,
+    suppressed_phones: set[str] | None = None,
+    is_outbound_open: bool = True,
+    current_time: datetime | None = None,
+) -> bool:
+    """Check if a promise is eligible for automated collection calling."""
+    if p.status in ("kept", "disputed", "cancelled", "paused"):
+        return False
+    if p.status not in ("due_today", "broken"):
+        return False
+    # Check tone 3 pause: suppress further automated calls until owner acts
+    if p.tone_level >= 3:
+        return False
+    # Check suppression
+    if suppressed_phones and p.customer_phone_raw and p.customer_phone_raw in suppressed_phones:
+        return False
+    # Check outbound calling window
+    if not is_outbound_open:
+        return False
+    # Check frequency limits: max 3 attempts / week, min 24h apart
+    if p.attempts_count >= 3:
+        return False
+    if p.last_attempt_at and current_time:
+        try:
+            last_attempt_dt = datetime.fromisoformat(p.last_attempt_at)
+            if (current_time - last_attempt_dt) < timedelta(hours=24):
+                return False
+        except Exception:
+            pass
+    return True
+
+
 async def evaluate_promises(session: Session) -> dict[str, Any]:
     """
     Evaluate all promises against current simulated clock time.
@@ -80,33 +113,7 @@ async def evaluate_promises(session: Session) -> dict[str, Any]:
             )
 
         # Calling Eligibility Check for due_today or broken
-        if p.status in ("due_today", "broken"):
-            # Check tone 3 pause: suppress further automated calls until owner acts
-            if p.tone_level >= 3 or p.status == "paused":
-                logger.info("Skipping automated call for tone 3 / paused promise %s", p.id)
-                continue
-
-            # Check suppression
-            if p.customer_phone_raw and p.customer_phone_raw in suppressed_phones:
-                logger.info("Skipping call for suppressed phone %s", p.customer_phone_masked)
-                continue
-
-            # Check outbound calling window
-            if not is_outbound_open:
-                continue
-
-            # Check frequency limits: max 3 attempts / week, min 24h apart
-            if p.attempts_count >= 3:
-                continue
-
-            if p.last_attempt_at:
-                try:
-                    last_attempt_dt = datetime.fromisoformat(p.last_attempt_at)
-                    if (current_time - last_attempt_dt) < timedelta(hours=24):
-                        continue
-                except Exception:
-                    pass
-
+        if is_promise_eligible_for_call(p, suppressed_phones, is_outbound_open, current_time):
             queued_calls.append(p.id)
 
     session.commit()

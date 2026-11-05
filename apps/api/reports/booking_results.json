@@ -1,5 +1,7 @@
 {
-  "timestamp": "2026-11-05T10:31:02.971702+00:00",
+  "mode": "live",
+  "generated_at": "2026-11-05T15:17:36.360989+00:00",
+  "timestamp": "2026-11-05T15:17:36.361008+00:00",
   "total_scenarios": 28,
   "passed_scenarios": 28,
   "pass_rate_percent": 100.0,
@@ -8,6 +10,7 @@
   "slot_accuracy_percent": 100.0,
   "extractor_type": "RuleBasedExtractor",
   "holdout": {
+    "label": "Development set (previously probed)",
     "total_scenarios": 10,
     "passed_scenarios": 3,
     "pass_rate_percent": 30.0,
@@ -74,7 +77,7 @@
       "turns_count": 3,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 10.06,
+      "duration_ms": 33.61,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -107,7 +110,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.68,
+      "duration_ms": 2.02,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_leak",
@@ -140,7 +143,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.34,
+      "duration_ms": 1.48,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -173,7 +176,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.37,
+      "duration_ms": 1.1,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -181,8 +184,8 @@
           "match": true
         },
         "landmark_address": {
-          "expected": "Mayur Vihar Pocket 1 hai",
-          "actual": "Mayur Vihar Pocket 1 hai",
+          "expected": "Mayur Vihar Pocket 1",
+          "actual": "Mayur Vihar Pocket 1",
           "match": true
         },
         "time_slot": {
@@ -194,7 +197,7 @@
       "extracted_slots": {
         "problem": "Tap Leakage",
         "problem_key": "tap_leak",
-        "landmark_address": "Mayur Vihar Pocket 1 hai",
+        "landmark_address": "Mayur Vihar Pocket 1",
         "time_slot": "Kal Subah (9 AM – 11 AM)",
         "price_estimate": "₹150 – ₹250"
       }
@@ -206,7 +209,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.37,
+      "duration_ms": 1.57,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -239,7 +242,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.31,
+      "duration_ms": 1.0,
       "slot_checks": {
         "problem_key": {
           "expected": "unknown",
@@ -272,7 +275,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 1.06,
+      "duration_ms": 0.98,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -305,7 +308,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.42,
+      "duration_ms": 1.41,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -333,7 +336,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.5,
+      "duration_ms": 0.98,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -361,7 +364,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.45,
+      "duration_ms": 1.02,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -389,7 +392,7 @@
       "turns_count": 6,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.71,
+      "duration_ms": 1.25,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -422,7 +425,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.13,
+      "duration_ms": 0.27,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -439,7 +442,7 @@
       "turns_count": 2,
       "final_state": "ABANDONED",
       "expected_state": "ABANDONED",
-      "duration_ms": 0.02,
+      "duration_ms": 0.04,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -456,7 +459,7 @@
       "turns_count": 1,
       "final_state": "ABANDONED",
       "expected_state": "ABANDONED",
-      "duration_ms": 0.12,
+      "duration_ms": 0.25,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -473,7 +476,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.4,
+      "duration_ms": 0.76,
       "slot_checks": {
         "problem_key": {
           "expected": "pipe_burst",
@@ -506,7 +509,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.5,
+      "duration_ms": 0.9,
       "slot_checks": {
         "problem_key": {
           "expected": "drain_blocked",
@@ -539,7 +542,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.52,
+      "duration_ms": 1.28,
       "slot_checks": {
         "problem_key": {
           "expected": "motor_pump",
@@ -572,7 +575,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.47,
+      "duration_ms": 0.99,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_leak",
@@ -605,7 +608,7 @@
       "turns_count": 3,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.26,
+      "duration_ms": 0.63,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -622,7 +625,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.48,
+      "duration_ms": 1.29,
       "slot_checks": {
         "problem_key": {
           "expected": "geyser_not_heating",
@@ -655,7 +658,7 @@
       "turns_count": 5,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.28,
+      "duration_ms": 0.79,
       "slot_checks": {
         "problem_key": {
           "expected": "tap_leak",
@@ -688,7 +691,7 @@
       "turns_count": 4,
       "final_state": "BOOKED",
       "expected_state": "BOOKED",
-      "duration_ms": 0.25,
+      "duration_ms": 0.71,
       "slot_checks": {
         "problem_key": {
           "expected": "pipe_burst",
@@ -721,7 +724,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.31,
+      "duration_ms": 2.33,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -738,7 +741,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.24,
+      "duration_ms": 0.49,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -755,7 +758,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.25,
+      "duration_ms": 0.52,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -772,7 +775,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.14,
+      "duration_ms": 0.39,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -789,7 +792,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.16,
+      "duration_ms": 1.6,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
@@ -806,7 +809,7 @@
       "turns_count": 1,
       "final_state": "HANDOFF",
       "expected_state": "HANDOFF",
-      "duration_ms": 0.21,
+      "duration_ms": 0.53,
       "slot_checks": {},
       "extracted_slots": {
         "problem": null,
