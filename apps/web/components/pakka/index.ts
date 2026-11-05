@@ -10,3 +10,4 @@ export { Sidebar } from "./sidebar";
 export { BottomNav } from "./bottom-nav";
 export { TopBar } from "./top-bar";
 export { Footer } from "./footer";
+export { DemoDirector } from "./demo-director";

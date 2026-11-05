@@ -25,7 +25,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PakkaStamp } from "@/components/pakka/pakka-stamp";
+import { PakkaStamp, DemoDirector } from "@/components/pakka";
 import { useModeStore } from "@/lib/stores/mode-store";
 import {
   DemoEventSource,
@@ -286,7 +286,7 @@ export default function LiveConsolePage() {
   const currentStepIndex = FSM_STEPS.findIndex((s) => s.id === fsmState);
 
   return (
-    <div className="space-y-6 pb-20 md:pb-8">
+    <div className="space-y-6 pb-36 md:pb-36">
       {/* ── Top Bar Header & Controls ───────────────────────────────────────── */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-2xl bg-card border border-border shadow-xs">
         <div className="flex items-center gap-3">
@@ -777,6 +777,9 @@ export default function LiveConsolePage() {
           </Card>
         </div>
       </div>
+
+      {/* Floating Demo Director */}
+      <DemoDirector onResetData={handleRestart} />
     </div>
   );
 }

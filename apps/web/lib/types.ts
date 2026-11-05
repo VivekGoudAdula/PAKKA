@@ -73,7 +73,7 @@ export interface Technician {
   active_job_id?: string;
 }
 
-export type PromiseStatus = "pending" | "due_today" | "broken" | "paid";
+export type PromiseStatus = "pending" | "due_today" | "broken" | "paid" | "paused" | "disputed";
 
 export interface ReminderEvent {
   id: string;

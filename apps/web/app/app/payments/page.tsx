@@ -23,9 +23,10 @@ import {
 import { useClockStore } from "@/lib/stores/clock-store";
 import { useModeStore } from "@/lib/stores/mode-store";
 import { fetchPaymentPromises, fetchOverviewStats } from "@/lib/api/client";
-import { PaymentPromise, PromiseStatus } from "@/lib/types";
+import { PaymentPromise } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { DemoDirector } from "@/components/pakka";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
@@ -79,7 +80,7 @@ export default function PaymentsPage() {
     if (
       promise.status === "paused" ||
       promise.status === "disputed" ||
-      ((promise.tone_level ?? 1) >= 3 && promise.status !== "paid" && promise.status !== "kept")
+      ((promise.tone_level ?? 1) >= 3 && promise.status !== "paid")
     ) {
       return (
         <Badge variant="outline" className="bg-purple-50 text-purple-800 border-purple-300 gap-1 font-semibold">
@@ -199,7 +200,7 @@ export default function PaymentsPage() {
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-300">
+    <div className="space-y-6 pb-36 animate-in fade-in duration-300">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -515,6 +516,9 @@ export default function PaymentsPage() {
           </DialogContent>
         )}
       </Dialog>
+
+      {/* Floating Demo Director */}
+      <DemoDirector onResetData={() => { resetClock(); refetch(); }} />
     </div>
   );
 }
