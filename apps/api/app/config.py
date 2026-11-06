@@ -74,6 +74,24 @@ class Settings(BaseSettings):
     gnani_tts_language: str = Field(default="hi-en", description="TTS language code")
     gnani_tts_speed: float = Field(default=1.0, description="TTS speech rate multiplier")
 
+    # ── Gnani REST API (Phase 8 Browser Voice) ─────────────────────────────
+    gnani_stt_rest_url: str = Field(
+        default="https://api.vachana.ai/stt/v3",
+        description="Gnani STT REST API endpoint",
+    )
+    gnani_tts_rest_url: str = Field(
+        default="https://api.vachana.ai/api/v1/tts/inference",
+        description="Gnani TTS REST API endpoint",
+    )
+    max_gnani_calls_per_hour: int = Field(
+        default=150,
+        description="Rate limit guard for outbound Gnani REST calls per hour",
+    )
+    tts_cache_dir: str = Field(
+        default="cache/tts",
+        description="Directory to cache synthesized TTS WAV files",
+    )
+
     # ── Exotel ─────────────────────────────────────────────────────────────
     exotel_api_key: str = Field(default="", description="Exotel API key")
     exotel_api_token: str = Field(default="", description="Exotel API token")

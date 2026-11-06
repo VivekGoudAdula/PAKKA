@@ -48,6 +48,8 @@ apps/api/reports/live_transcripts.jsonl
 
 # ─── Generated evaluation audio ─────────────────────────────────────────────
 apps/api/data/test_audio/*.wav
+apps/api/cache/
+cache/
 samples/synthetic_tones/*.wav
 .nyc_output/
 htmlcov/
