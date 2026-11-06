@@ -98,9 +98,13 @@ export function Sidebar() {
       <div className="h-16 flex items-center justify-between px-4 border-b border-border">
         {!collapsed && <PakkaLogo size="sm" showTagline={false} />}
         {collapsed && (
-          <div className="w-full flex justify-center">
-            <span className="font-black text-xl text-primary tracking-tight">P✓</span>
-          </div>
+          <Link href="/app" className="w-full flex justify-center py-1" aria-label="पक्का Home">
+            <div className="relative flex flex-col items-center justify-center w-8 h-8 rounded-lg border-2 border-amber-500 text-amber-600 bg-amber-400/20 dark:border-amber-400 dark:text-amber-400 rotate-[-7deg] transition-transform hover:rotate-0 hover:scale-105 shadow-xs select-none">
+              <span className="absolute inset-[1.5px] rounded-[inherit] border border-amber-500/40 dark:border-amber-400/40 pointer-events-none" />
+              <span className="font-black text-[7.5px] tracking-tighter leading-none select-none">PAKKA</span>
+              <span className="font-black text-[7.5px] leading-none -mt-0.5 select-none">✓</span>
+            </div>
+          </Link>
         )}
         <Button
           variant="ghost"
