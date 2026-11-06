@@ -105,6 +105,7 @@ class BusinessSettings(SQLModel, table=True):
 
     id: str = Field(default="default", primary_key=True)
     business_name: str = "Sharma Plumbing & Geyser Care"
+    owner_name: str = "Ramesh Sharma"
     handoff_phone: str = "+91 98765 43210"
     outbound_start: str = "09:00"
     outbound_end: str = "20:00"

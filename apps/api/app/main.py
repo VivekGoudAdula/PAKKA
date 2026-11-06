@@ -25,6 +25,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """Application lifespan — startup and shutdown hooks."""
     logger.info("Pakka API starting", env=settings.app_env)
     init_db()
+    gnani_mode_str = "LIVE" if (not settings.gnani_dry_run and settings.gnani_api_key) else "DRY RUN"
+    print(f"Gnani mode: {gnani_mode_str}")
+    logger.info("Gnani mode initialized", mode=gnani_mode_str)
     yield
     logger.info("Pakka API shutting down")
 

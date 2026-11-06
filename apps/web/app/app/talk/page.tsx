@@ -17,6 +17,7 @@ import {
   Activity,
   Layers,
   UserCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -41,7 +42,12 @@ interface ChatMessage {
     stt: number;
     tts: number;
     total: number;
+    stt_wall?: number;
+    stt_gnani_proc?: number;
+    tts_wall?: number;
+    total_wall?: number;
   };
+  gnaniProcessingTimeS?: number;
   typed?: boolean;
 }
 
@@ -69,7 +75,12 @@ interface TurnApiResponse {
     stt: number;
     tts: number;
     total: number;
+    stt_wall?: number;
+    stt_gnani_proc?: number;
+    tts_wall?: number;
+    total_wall?: number;
   };
+  gnani_processing_time_s?: number;
 }
 
 export default function TalkToPakkaPage() {
@@ -82,6 +93,7 @@ export default function TalkToPakkaPage() {
   const [isTerminal, setIsTerminal] = useState<boolean>(false);
   const [isUrgent, setIsUrgent] = useState<boolean>(false);
   const [needsHuman, setNeedsHuman] = useState<boolean>(false);
+  const [settingsOk, setSettingsOk] = useState<boolean>(true);
   const [isDryRun, setIsDryRun] = useState<boolean>(true);
   const [audioMuted, setAudioMuted] = useState<boolean>(false);
   const [showTypedInput, setShowTypedInput] = useState<boolean>(false);
@@ -169,6 +181,7 @@ export default function TalkToPakkaPage() {
       const data = await res.json();
       setSessionId(data.session_id);
       setCurrentState(data.state);
+      setSettingsOk(data.settings_ok !== false);
       setIsDryRun(data.mode === "dry_run" || data.mode === "mock");
       setIsTerminal(false);
       setIsUrgent(false);
@@ -177,19 +190,21 @@ export default function TalkToPakkaPage() {
 
       // Set initial greeting
       const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+      const greetingMsg = data.initial_reply || data.greeting_text || "Namaste, Sharma Plumbing ki digital sahayak bol rahi hoon.";
+      const greetingAudio = data.initial_audio_b64 || data.greeting_audio_b64 || "";
       setMessages([
         {
           id: "msg_init",
           role: "bot",
-          text: data.initial_reply,
+          text: greetingMsg,
           timestamp: nowStr,
-          audioB64: data.initial_audio_b64,
+          audioB64: greetingAudio,
         },
       ]);
 
       // Play greeting audio if available
-      if (data.initial_audio_b64 && !audioMuted) {
-        playAudioB64(data.initial_audio_b64);
+      if (greetingAudio && !audioMuted) {
+        playAudioB64(greetingAudio);
       } else {
         setVoiceState("idle");
       }
@@ -218,23 +233,26 @@ export default function TalkToPakkaPage() {
         if (!active) return;
         setSessionId(data.session_id);
         setCurrentState(data.state);
+        setSettingsOk(data.settings_ok !== false);
         setIsDryRun(data.mode === "dry_run" || data.mode === "mock");
         setIsTerminal(false);
         setIsUrgent(false);
         setNeedsHuman(false);
         setSlots({});
         const nowStr = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+        const greetingMsg = data.initial_reply || data.greeting_text || "Namaste, Sharma Plumbing ki digital sahayak bol rahi hoon.";
+        const greetingAudio = data.initial_audio_b64 || data.greeting_audio_b64 || "";
         setMessages([
           {
             id: "msg_init",
             role: "bot",
-            text: data.initial_reply,
+            text: greetingMsg,
             timestamp: nowStr,
-            audioB64: data.initial_audio_b64,
+            audioB64: greetingAudio,
           },
         ]);
-        if (data.initial_audio_b64 && !audioMuted) {
-          playAudioB64(data.initial_audio_b64);
+        if (greetingAudio && !audioMuted) {
+          playAudioB64(greetingAudio);
         } else {
           setVoiceState("idle");
         }
@@ -273,6 +291,7 @@ export default function TalkToPakkaPage() {
       timestamp: nowStr,
       audioB64: turnResult.audio_b64,
       latency: turnResult.latency_ms,
+      gnaniProcessingTimeS: turnResult.gnani_processing_time_s,
     };
 
     setMessages((prev) => [...prev, userMsg, botMsg]);
@@ -565,7 +584,14 @@ export default function TalkToPakkaPage() {
         </div>
       </div>
 
-      {/* Warning Banners (Emergency Hazard / Human Escalation / Mic Denied / Usage) */}
+      {/* Warning Banners (Emergency Hazard / Settings Error / Human Escalation / Mic Denied / Usage) */}
+      {!settingsOk && (
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-3 flex items-center gap-2.5 text-xs text-amber-700 dark:text-amber-400">
+          <AlertTriangle className="h-4 w-4 shrink-0 text-amber-600" />
+          <span>Warning: Business settings could not be loaded from database. Operating with fallback configuration.</span>
+        </div>
+      )}
+
       {isUrgent && (
         <div className="bg-destructive/10 border-2 border-destructive/40 rounded-xl p-4 flex items-start gap-3.5 animate-bounce-subtle">
           <Flame className="h-6 w-6 text-destructive shrink-0 mt-0.5" />
@@ -682,8 +708,15 @@ export default function TalkToPakkaPage() {
                             <Volume2 className="h-3 w-3" /> Replay Voice
                           </button>
                           {msg.latency && (
-                            <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground">
-                              {msg.latency.stt > 0 && <span>STT: {msg.latency.stt}ms</span>}
+                            <div className="flex items-center gap-1.5 text-[10px] font-mono text-muted-foreground flex-wrap">
+                              {msg.latency.stt > 0 && (
+                                <span>
+                                  STT: {msg.latency.stt}ms
+                                  {msg.latency.stt_gnani_proc !== undefined && (
+                                    <span className="text-primary font-semibold"> (Gnani proc: {(msg.latency.stt_gnani_proc / 1000).toFixed(2)}s)</span>
+                                  )}
+                                </span>
+                              )}
                               <span>TTS: {msg.latency.tts}ms</span>
                               <span className="font-bold text-foreground">Σ {msg.latency.total}ms</span>
                             </div>

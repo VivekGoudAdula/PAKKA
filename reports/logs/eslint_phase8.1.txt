@@ -1,0 +1,6 @@
+﻿
+C:\HACKATHONS\73. AI INTERNSHIP - GNANI\APP\apps\web\app\app\talk\page.tsx
+  438:6  warning  React Hook useCallback has missing dependencies: 'startRecording' and 'stopRecordingAndSubmit'. Either include them or remove the dependency array  react-hooks/exhaustive-deps
+
+✖ 1 problem (0 errors, 1 warning)
+

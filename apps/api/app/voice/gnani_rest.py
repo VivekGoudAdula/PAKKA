@@ -34,7 +34,20 @@ from app.config import settings
 logger = logging.getLogger(__name__)
 
 # Global single-flight lock for all outbound Gnani REST requests
-_GNANI_GLOBAL_LOCK = asyncio.Lock()
+_GNANI_GLOBAL_LOCK: asyncio.Lock | None = None
+
+
+def _get_gnani_lock() -> asyncio.Lock:
+    """Return the single-flight asyncio lock bound to the active event loop."""
+    global _GNANI_GLOBAL_LOCK
+    try:
+        current_loop = asyncio.get_running_loop()
+    except RuntimeError:
+        current_loop = None
+
+    if _GNANI_GLOBAL_LOCK is None or getattr(_GNANI_GLOBAL_LOCK, "_loop", None) != current_loop:
+        _GNANI_GLOBAL_LOCK = asyncio.Lock()
+    return _GNANI_GLOBAL_LOCK
 
 
 # ─── Typed Exceptions ──────────────────────────────────────────────────────────
@@ -310,7 +323,8 @@ class GnaniRestClient:
         """
         Executes an HTTP request inside the global lock with 429 retry backoff.
         """
-        async with _GNANI_GLOBAL_LOCK:
+        lock = _get_gnani_lock()
+        async with lock:
             usage_tracker.check_and_record_budget(settings.max_gnani_calls_per_hour)
 
             for attempt in range(2):

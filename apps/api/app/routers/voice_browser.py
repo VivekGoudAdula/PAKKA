@@ -86,20 +86,23 @@ def _cleanup_expired_sessions() -> None:
         del _SESSIONS[sid]
 
 
-def _get_business_info() -> tuple[str, str, str]:
-    """Retrieve business name, owner name, and handoff phone from DB or defaults."""
+def _get_business_info() -> tuple[str, str, str, bool]:
+    """Retrieve business name, owner name, handoff phone, and settings status from DB or defaults."""
     try:
         with Session(engine) as db:
             bs = db.exec(select(BusinessSettings)).first()
             if bs:
                 return (
                     bs.business_name or "Sharma Plumbing",
-                    bs.owner_name or "Ramesh Sharma",
-                    bs.phone or settings.telephony_handoff_number,
+                    getattr(bs, "owner_name", "Ramesh Sharma") or "Ramesh Sharma",
+                    getattr(bs, "handoff_phone", settings.telephony_handoff_number) or settings.telephony_handoff_number,
+                    True,
                 )
+            logger.error("Failed to fetch business settings: No record found in database")
+            return "Sharma Plumbing", "Ramesh Sharma", settings.telephony_handoff_number, False
     except Exception as exc:
-        logger.warning("Failed to fetch business settings: %s", exc)
-    return "Sharma Plumbing", "Ramesh Sharma", settings.telephony_handoff_number
+        logger.error("Failed to fetch business settings from database: %s", exc)
+        return "Sharma Plumbing", "Ramesh Sharma", settings.telephony_handoff_number, False
 
 
 def _build_collection_greeting(fsm: CollectionFSM, business_name: str) -> str:
@@ -196,6 +199,9 @@ class VoiceStartResponse(BaseModel):
     greeting_audio_b64: str
     state: str
     mode: str
+    settings_ok: bool = True
+    initial_reply: str = ""
+    initial_audio_b64: str = ""
 
 
 class TextTurnRequest(BaseModel):
@@ -214,6 +220,7 @@ class VoiceTurnResponse(BaseModel):
     is_urgent: bool
     needs_human: bool
     latency_ms: dict[str, float]
+    gnani_processing_time_s: float | None = None
     cached: bool
     mode: str
     typed: bool = False
@@ -228,7 +235,7 @@ async def start_voice_session(req: VoiceStartRequest) -> VoiceStartResponse:
     Initialize a new 15-minute voice session with mandatory digital sahayak greeting.
     """
     _cleanup_expired_sessions()
-    business_name, owner_name, handoff_phone = _get_business_info()
+    business_name, owner_name, handoff_phone, settings_ok = _get_business_info()
     session_id = f"vses_{uuid.uuid4().hex[:12]}"
 
     if req.flow == "collection":
@@ -297,8 +304,11 @@ async def start_voice_session(req: VoiceStartRequest) -> VoiceStartResponse:
         flow=req.flow,
         greeting_text=greeting_text,
         greeting_audio_b64=audio_b64,
+        initial_reply=greeting_text,
+        initial_audio_b64=audio_b64,
         state=initial_state,
         mode=mode,
+        settings_ok=settings_ok,
     )
 
 
@@ -350,6 +360,7 @@ async def process_voice_turn(
     transcript_text = stt_res.get("transcript", "")
     detected_lang = stt_res.get("detected_language", "hi-IN")
     stt_mode = stt_res.get("mode", "dry_run")
+    gnani_proc_s = float(stt_res.get("processing_time") or 0.0)
 
     session_obj.history.append({"role": "caller", "text": transcript_text, "timestamp": time.time()})
 
@@ -416,7 +427,12 @@ async def process_voice_turn(
             "stt": round(stt_latency_ms, 1),
             "tts": round(tts_latency_ms, 1),
             "total": round(total_latency_ms, 1),
+            "stt_wall": round(stt_latency_ms, 1),
+            "stt_gnani_proc": round(gnani_proc_s * 1000.0, 1),
+            "tts_wall": round(tts_latency_ms, 1),
+            "total_wall": round(total_latency_ms, 1),
         },
+        gnani_processing_time_s=round(gnani_proc_s, 3),
         cached=was_cached,
         mode=effective_mode,
         typed=False,
@@ -515,7 +531,11 @@ async def process_text_turn(req: TextTurnRequest) -> VoiceTurnResponse:
 @router.get("/usage")
 def get_voice_usage() -> dict[str, Any]:
     """Retrieve usage telemetry, cached hit rates, and hourly quota limits."""
-    return usage_tracker.get_stats()
+    stats = usage_tracker.get_stats()
+    effective_mode = "live" if (not settings.gnani_dry_run and bool(settings.gnani_api_key)) else "dry_run"
+    stats["gnani_mode"] = effective_mode
+    stats["mode"] = effective_mode
+    return stats
 
 
 # ─── FSM Helper & Persistence ──────────────────────────────────────────────────

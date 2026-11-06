@@ -88,7 +88,7 @@ async def test_stt_rest_success() -> None:
     """STT REST parses successful transcription response."""
     test_audio = make_test_wav(1.0)
 
-    def handler(request: httpx.Request) -> httpx.Response:
+    async def handler(request: httpx.Request) -> httpx.Response:
         assert request.url == httpx.URL("https://api.vachana.ai/stt/v3")
         assert request.headers.get("x-api-key-id") == "live_key"
         return httpx.Response(
@@ -350,8 +350,8 @@ def test_voice_turn_booking_happy_path(monkeypatch: pytest.MonkeyPatch) -> None:
     assert turn_data["slots"]["problem_key"] == "geyser_leak"
 
 
-def test_voice_turn_emergency_path(monkeypatch: pytest.MonkeyPatch) -> None:
-    """Emergency utterance routes to urgent handoff with exact emergency string."""
+def test_voice_turn_emergency_path_electric(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Emergency electric hazard routes to urgent handoff with exact instruction."""
     client = TestClient(app)
     start_res = client.post("/api/voice/start", json={"flow": "booking"}).json()
     session_id = start_res["session_id"]
@@ -370,7 +370,62 @@ def test_voice_turn_emergency_path(monkeypatch: pytest.MonkeyPatch) -> None:
     data = resp.json()
     assert data["is_urgent"] is True
     assert data["needs_human"] is True
-    assert "Kripya geyser aur main switch band kar dijiye" in data["reply_text"]
+    assert (
+        data["reply_text"]
+        == "Kripya geyser aur main switch band kar dijiye aur geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+    )
+
+
+def test_voice_turn_emergency_path_fire_gas(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Emergency fire/smoke/gas hazard routes to urgent handoff with exact instruction."""
+    client = TestClient(app)
+    start_res = client.post("/api/voice/start", json={"flow": "booking"}).json()
+    session_id = start_res["session_id"]
+
+    emergency_utterance = "geyser se aag nikal rahi hai aur dhuan bhar gaya hai"
+
+    async def mock_stt(self: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        return {"transcript": emergency_utterance, "detected_language": "hi-IN", "mode": "dry_run"}
+
+    monkeypatch.setattr(GnaniRestClient, "speech_to_text", mock_stt)
+
+    test_wav = make_test_wav(1.0)
+    files = {"audio": ("audio.wav", test_wav, "audio/wav")}
+    resp = client.post("/api/voice/turn", data={"session_id": session_id}, files=files)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["is_urgent"] is True
+    assert data["needs_human"] is True
+    assert (
+        data["reply_text"]
+        == "Kripya koi switch ya aag mat jalaiye. Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. Main malik ko bhi bata rahi hoon."
+    )
+
+
+def test_voice_turn_emergency_path_flooding(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Emergency pipe burst / flooding hazard routes to urgent handoff with exact instruction."""
+    client = TestClient(app)
+    start_res = client.post("/api/voice/start", json={"flow": "booking"}).json()
+    session_id = start_res["session_id"]
+
+    emergency_utterance = "pipe phat gaya hai aur poora paani bhar gaya bathroom mein"
+
+    async def mock_stt(self: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
+        return {"transcript": emergency_utterance, "detected_language": "hi-IN", "mode": "dry_run"}
+
+    monkeypatch.setattr(GnaniRestClient, "speech_to_text", mock_stt)
+
+    test_wav = make_test_wav(1.0)
+    files = {"audio": ("audio.wav", test_wav, "audio/wav")}
+    resp = client.post("/api/voice/turn", data={"session_id": session_id}, files=files)
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["is_urgent"] is True
+    assert data["needs_human"] is True
+    assert (
+        data["reply_text"]
+        == "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon."
+    )
 
 
 def test_voice_turn_decline_and_ai_inquiry(monkeypatch: pytest.MonkeyPatch) -> None:

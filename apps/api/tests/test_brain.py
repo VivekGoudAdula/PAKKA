@@ -163,12 +163,6 @@ class TestBookingFSM:
 
     def test_emergency_hazard_handling(self) -> None:
         """Emergency hazard halts routine booking with exact branch safety instruction."""
-        from app.brain.replies import (
-            EMERGENCY_ELECTRIC_INSTRUCTION,
-            EMERGENCY_FIRE_GAS_INSTRUCTION,
-            EMERGENCY_FLOODING_INSTRUCTION,
-        )
-
         # 1. Electric Shock / Current
         fsm_elec = BookingFSM()
         res_elec = fsm_elec.process_utterance("Geyser se current aa raha hai, paani chhoo nahi sakte")
@@ -176,7 +170,10 @@ class TestBookingFSM:
         assert res_elec.is_terminal is True
         assert res_elec.needs_handoff is True
         assert res_elec.is_urgent is True
-        assert res_elec.bot_reply == EMERGENCY_ELECTRIC_INSTRUCTION
+        assert (
+            res_elec.bot_reply
+            == "Kripya geyser aur main switch band kar dijiye aur geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon, woh turant aapko phone karenge."
+        )
 
         # 2. Fire / Smoke / Gas Smell
         fsm_fire = BookingFSM()
@@ -185,7 +182,10 @@ class TestBookingFSM:
         assert res_fire.is_terminal is True
         assert res_fire.needs_handoff is True
         assert res_fire.is_urgent is True
-        assert res_fire.bot_reply == EMERGENCY_FIRE_GAS_INSTRUCTION
+        assert (
+            res_fire.bot_reply
+            == "Kripya koi switch ya aag mat jalaiye. Khidkiyan kholiye, sabko ghar se bahar nikaliye aur turant 112 par phone kijiye. Main malik ko bhi bata rahi hoon."
+        )
 
         # 3. Flooding / Pipe Burst
         fsm_flood = BookingFSM()
@@ -194,7 +194,10 @@ class TestBookingFSM:
         assert res_flood.is_terminal is True
         assert res_flood.needs_handoff is True
         assert res_flood.is_urgent is True
-        assert res_flood.bot_reply == EMERGENCY_FLOODING_INSTRUCTION
+        assert (
+            res_flood.bot_reply
+            == "Kripya paani ka main valve band kar dijiye aur bijli ke switch ya geyser ko haath mat lagaiye. Main abhi malik ko bata rahi hoon."
+        )
 
     def test_custom_areas_extraction(self) -> None:
         """Extractor recognizes custom areas passed from settings."""
