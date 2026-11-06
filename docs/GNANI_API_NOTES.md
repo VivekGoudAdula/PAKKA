@@ -90,7 +90,71 @@ Verified facts from Gnani Vachana API documentation. If actual docs differ from 
 
 ---
 
-## Evon v3.3
+## STT REST API — Prisma v3.0
+
+**Endpoint:** `POST https://api.vachana.ai/stt/v3`  
+**Header:** `x-api-key-id: <your-api-key>`  
+**Content-Type:** `multipart/form-data`
+
+### Form Fields (Multipart)
+
+| Field | Type | Required | Description / Verified Value |
+|---|---|---|---|
+| `audio_file` | File | Yes | Audio file binary (WAV, MP3, OGG, FLAC, AAC, M4A). 8–44.1 kHz, max 30 s. |
+| `model` | string | Yes | `prisma-v3.0` |
+| `language_code` | string | Yes | e.g. `indic-auto` (Auto-LID) or `hi-IN` / `hi-IN,en-IN` |
+| `format` | string | No | `codemix` \| `verbatim` \| `transcribe` \| `transliterate` |
+| `keyterms` | string | No | Optional comma-separated boost terms (e.g. `geyser,leak,plumber`) |
+
+### Successful Response (JSON, HTTP 200)
+
+```json
+{
+  "transcript": "Mera geyser leak kar raha hai",
+  "detected_language_code": "hi-IN",
+  "processing_time": 0.45
+}
+```
+
+### Error Responses & Status Codes
+
+- `401 Unauthorized`: `MISSING/INVALID_API_KEY`
+- `402 Payment Required`: `insufficient credit`
+- `403 Forbidden`: `SCOPE_NOT_ALLOWED`
+- `429 Too Many Requests`: `RATE_LIMITED` ("Only 1 active request is allowed at a time")
+- `500 / 503 Internal Server Error`: Gnani service or gateway error
+
+---
+
+## TTS REST API — Timbre v2.5 / v3.0
+
+**Endpoint:** `POST https://api.vachana.ai/api/v1/tts/inference`  
+**Header:** `X-API-Key-ID: <your-api-key>`, `Content-Type: application/json`
+
+### JSON Request Body
+
+```json
+{
+  "text": "Namaste, main Pakka ki digital sahayak bol rahi hoon.",
+  "voice": "Poorvi",
+  "model": "timbre-v2.5",
+  "language": "hi-en",
+  "speed": 1.0,
+  "audio_config": {
+    "sample_rate": 16000,
+    "num_channels": 1,
+    "sample_width": 2,
+    "encoding": "linear_pcm",
+    "container": "wav"
+  }
+}
+```
+
+### Response
+
+- Binary WAV audio bytes (`Content-Type: audio/wav`).
+
+---
 
 - **Deployment:** Self-hosted via vLLM (separate process)
 - **Base URL:** Configurable via `EVON_BASE_URL` env var (default: `http://localhost:8001/v1`)
