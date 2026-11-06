@@ -367,7 +367,7 @@ class GnaniRestClient:
             }
 
         headers = {
-            "x-api-key-id": self.api_key,
+            "X-API-Key-ID": self.api_key,
         }
         files = {
             "audio_file": (filename, audio_bytes, content_type),
