@@ -24,9 +24,8 @@ from fastapi import APIRouter, File, Form, HTTPException, UploadFile, status
 from pydantic import BaseModel, Field
 from sqlmodel import Session, select
 
-from app.brain.collection import CollectionFSM, CollectionState
+from app.brain.collection import CollectionFSM
 from app.brain.fsm import BookingFSM, BookingState
-from app.brain.replies import MANDATORY_GREETING
 from app.config import settings
 from app.db import engine
 from app.events.hub import hub
@@ -34,7 +33,6 @@ from app.models.domain import BusinessSettings, CallRecord, Job
 from app.voice.audio import number_to_spoken_words
 from app.voice.gnani_rest import (
     GnaniQuotaExceededError,
-    GnaniRateLimitError,
     GnaniRestClient,
     GnaniRestError,
     usage_tracker,

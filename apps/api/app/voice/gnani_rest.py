@@ -299,11 +299,7 @@ class GnaniRestClient:
         self._custom_client = http_client
 
     def _is_dry_run(self) -> bool:
-        if self.dry_run:
-            return True
-        if not self.api_key or self.api_key.startswith("your_"):
-            return True
-        return False
+        return bool(self.dry_run or not self.api_key or self.api_key.startswith("your_"))
 
     async def _execute_with_lock_and_retry(
         self,
@@ -413,7 +409,6 @@ class GnaniRestClient:
                 }
 
             # Handle Typed Errors
-            err_msg = f"HTTP {resp.status_code}"
             usage_tracker.log_call(kind="stt", ok=False, latency_ms=lat_ms, cached=False)
 
             if resp.status_code == 401:
@@ -429,7 +424,7 @@ class GnaniRestClient:
 
             raise GnaniRestError(f"STT request failed with status {resp.status_code}", status_code=resp.status_code)
 
-        except Exception as exc:
+        except Exception:
             lat_ms = (time.monotonic() - t0) * 1000.0
             usage_tracker.log_call(kind="stt", ok=False, latency_ms=lat_ms, cached=False)
             raise
@@ -530,7 +525,7 @@ class GnaniRestClient:
 
             raise GnaniRestError(f"TTS request failed with status {resp.status_code}", status_code=resp.status_code)
 
-        except Exception as exc:
+        except Exception:
             lat_ms = (time.monotonic() - t0) * 1000.0
             usage_tracker.log_call(kind="tts", ok=False, latency_ms=lat_ms, cached=False)
             raise

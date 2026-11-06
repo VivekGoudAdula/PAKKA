@@ -15,6 +15,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Headphones,
+  Mic,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PakkaLogo } from "@/components/pakka/pakka-logo";
@@ -22,6 +23,13 @@ import { Button } from "@/components/ui/button";
 import { useModeStore } from "@/lib/stores/mode-store";
 
 const navItems = [
+  {
+    name: "Talk to Pakka",
+    href: "/app/talk",
+    icon: Mic,
+    badge: "VOICE",
+    isLive: false,
+  },
   {
     name: "Live Console",
     href: "/app/live",

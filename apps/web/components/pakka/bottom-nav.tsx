@@ -9,10 +9,12 @@ import {
   Briefcase,
   Users,
   IndianRupee,
+  Mic,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const mobileItems = [
+  { name: "Talk", href: "/app/talk", icon: Mic },
   { name: "Live", href: "/app/live", icon: Radio, isLive: true },
   { name: "Overview", href: "/app", icon: LayoutDashboard },
   { name: "Calls", href: "/app/calls", icon: PhoneCall },

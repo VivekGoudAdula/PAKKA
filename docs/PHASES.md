@@ -31,7 +31,10 @@
 - [x] **Phase 7 — Polish + Landing Page + Demo Director**  
   Full public landing page at `/` (Hero with Stamp, 3-step lifecycle, Gnani AI stack strip, trust & ethics section), Demo Director widget with 5 beats across `/app/live` and `/app/payments` (Play/Pause, beat jumping, hotkeys Space & R, 1080p recording mode, reset), safety compliance enhancements (broadened AI-inquiry across states, priority emergency ordering before routine problems, decline handling across states, leading address prefix stripping, Tone 3/dispute automated call suppression in scheduler + UI chip, dynamic business/owner names), 96 passing pytest tests, zero ruff/eslint/tsc errors, successful Next.js production build, 21 responsive Playwright screenshots captured at 360, 768, 1440 px and 1080p beats, and complete documentation in `docs/SUBMISSION_NOTES.md` and `README.md`.
 
-- [ ] **Phase 8 — Demo Video + Post + Submission**  
+- [x] **Phase 8 — Browser Voice Demo over Gnani REST ("Talk to Pakka")**  
+  Interactive browser speech dialogue over Gnani REST STT (Prisma v3.0, `POST /stt/v3`) and TTS (Timbre v2.5, `POST /api/v1/tts/inference`) with async `GnaniRestClient`, single in-flight lock serialization, 429 retry backoff, disk SHA-256 caching (`cache/tts`), 150 calls/hr rate budget guard (`reports/usage_log.jsonl`), preflight live test script (`scripts/live_rest_check.py` returning mode="live" with verified TTS/STT on the wire), cache warming CLI (`scripts/warm_tts_cache.py`), browser voice endpoints (`POST /api/voice/start`, `POST /api/voice/turn`, `POST /api/voice/text-turn`, `GET /api/voice/usage`), WAV audio validation (16-bit mono 8-48kHz 0.3-30s), `/app/talk` interactive page with tap-to-talk mic, Space bar hotkey, real-time audio waveform canvas, prefixed daisyUI chat bubbles, turn latency breakdown chips (STT/TTS/Total), rule-based FSM dialogue stepper, extracted slots inspector, emergency danger alert banner, PakkaStamp animation, typed fallback, Demo Director integration (Beat 6), 15 offline pytest tests with MockTransport, 111/111 passing tests in full suite, clean ruff/tsc/eslint, Next.js production build, and 6 responsive Playwright screenshots at 360, 768, 1440 px.
+
+- [ ] **Phase 9 — Demo Video + Post + Submission**  
   60-second product demo video, LinkedIn/Twitter launch post, submission documentation pack.
 
 ---

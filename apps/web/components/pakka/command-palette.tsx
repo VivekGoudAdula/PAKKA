@@ -13,6 +13,7 @@ import {
   FastForward,
   RotateCcw,
   Sparkles,
+  Mic,
 } from "lucide-react";
 import {
   CommandDialog,
@@ -60,6 +61,13 @@ export function CommandPalette() {
       <CommandList>
         <CommandEmpty>No results found.</CommandEmpty>
         <CommandGroup heading="Navigation">
+          <CommandItem
+            onSelect={() => runCommand(() => router.push("/app/talk"))}
+            className="cursor-pointer"
+          >
+            <Mic className="mr-2 h-4 w-4 text-primary" />
+            <span>Talk to Pakka (Voice Assistant)</span>
+          </CommandItem>
           <CommandItem
             onSelect={() => runCommand(() => router.push("/app"))}
             className="cursor-pointer"

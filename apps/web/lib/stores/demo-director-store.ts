@@ -44,6 +44,13 @@ export const DEMO_BEATS: DemoBeat[] = [
     description: "Automated polite payment recovery call with PTP date capture",
     route: "/app/payments?beat=5",
   },
+  {
+    id: 6,
+    name: "Talk to Pakka",
+    shortLabel: "Browser Voice",
+    description: "Interactive voice dialogue with tap-to-talk mic and real-time STT/TTS",
+    route: "/app/talk",
+  },
 ];
 
 interface DemoDirectorState {

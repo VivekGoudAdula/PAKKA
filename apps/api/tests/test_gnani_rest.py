@@ -20,7 +20,6 @@ from __future__ import annotations
 
 import asyncio
 import io
-import json
 import math
 import struct
 import time
@@ -29,6 +28,7 @@ from typing import Any
 
 import httpx
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
 from app.config import settings
@@ -37,16 +37,13 @@ from app.routers.voice_browser import _SESSIONS, validate_wav_audio
 from app.voice.gnani_rest import (
     GnaniAuthError,
     GnaniCreditError,
-    GnaniNetworkError,
     GnaniQuotaExceededError,
-    GnaniRateLimitError,
     GnaniResponseError,
     GnaniRestClient,
     GnaniScopeError,
     GnaniTimeoutError,
     GnaniTTSCache,
     GnaniUsageTracker,
-    generate_synthetic_wav,
 )
 
 
@@ -258,7 +255,7 @@ def test_validate_wav_audio_success_and_failures() -> None:
     assert rate == 16000
 
     # Non-WAV / Header too small
-    with pytest.raises(Exception):
+    with pytest.raises(HTTPException):
         validate_wav_audio(b"not a wav")
 
     # Stereo rejected
@@ -331,10 +328,12 @@ def test_voice_turn_booking_happy_path(monkeypatch: pytest.MonkeyPatch) -> None:
 
     for utterance, expected_state in script:
         # Monkeypatch speech_to_text to return deterministic utterance
-        async def mock_stt(self: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
-            return {"transcript": utterance, "detected_language": "hi-IN", "mode": "dry_run"}
+        def _get_mock(u: str) -> Any:
+            async def mock_stt(self: Any, *args: Any, **kwargs: Any) -> dict[str, Any]:
+                return {"transcript": u, "detected_language": "hi-IN", "mode": "dry_run"}
+            return mock_stt
 
-        monkeypatch.setattr(GnaniRestClient, "speech_to_text", mock_stt)
+        monkeypatch.setattr(GnaniRestClient, "speech_to_text", _get_mock(utterance))
 
         test_wav = make_test_wav(1.0)
         files = {"audio": ("audio.wav", test_wav, "audio/wav")}

@@ -1,0 +1,30 @@
+{
+  "mode": "live",
+  "generated_at": "2026-11-06T05:02:36.157796+00:00",
+  "steps": {
+    "tts": {
+      "status": "PASS",
+      "is_live_network": true,
+      "latency_ms": 3892.43,
+      "bytes_received": 92204,
+      "error": null,
+      "was_cached": false,
+      "mode": "live"
+    },
+    "stt": {
+      "status": "PASS",
+      "is_live_network": true,
+      "transcript": "\u0928\u092e\u0938\u094d\u0924\u0947, \u092e\u0948\u0902 \u092a\u093e\u0915\u094d\u0915\u093e \u0915\u0940 digital \u0938\u0939\u093e\u092f\u0915 \u092c\u094b\u0932 \u0930\u0939\u0940 \u0939\u0942\u0901\u0964",
+      "latency_ms": 3622.86,
+      "processing_time": 0.12413525581359863,
+      "error": null,
+      "detected_language": "hi-IN",
+      "mode": "live"
+    }
+  },
+  "summary": {
+    "tts_status": "PASS",
+    "stt_status": "PASS",
+    "is_fully_live": true
+  }
+}
